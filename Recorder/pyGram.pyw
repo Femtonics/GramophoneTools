@@ -40,7 +40,6 @@ class aboutWindow(ABOUT_WIN_BASE, ABOUT_WIN_UI):
         self.close_btn.clicked.connect(self.close)
 
 
-
 class licenseWindow(LICENSE_WIN_BASE, LICENSE_WIN_UI):
     """ The window shown if the user clicks the License
         option in the Help menu. Displays the open source
@@ -659,11 +658,12 @@ class VelLogModel(QAbstractTableModel):
         plt.legend()
         plt.show()
 
-
-
-if __name__ == '__main__':
+def start():
     APP = QApplication(sys.argv)
     WIN = pyGramWindow()
     # WIN.show_elements()
     WIN.show()
     sys.exit(APP.exec_())
+
+if __name__ == '__main__':
+    start()
