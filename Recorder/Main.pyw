@@ -27,7 +27,6 @@ LICENSE_WIN_BASE, LICENSE_WIN_UI = loadUiType(DIR+'\\license.ui')
 MAIN_WIN_BASE, MAIN_WIN_UI = loadUiType(DIR+'\\main.ui')
 
 
-
 class aboutWindow(ABOUT_WIN_BASE, ABOUT_WIN_UI):
     """ The window shown if the user clicks the About
         option in the Help menu. Displays basic info
@@ -364,7 +363,8 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         if self.recording != bool(rec_state):
             self.recording = bool(rec_state)
             if self.recording:
-                self.current_record = GramLogging.MemoryRecord(self.counter_box.value())
+                self.current_record = GramLogging.MemoryRecord(
+                    self.counter_box.value())
                 self.current_record.start()
                 self.gram.all_sig.connect(self.current_record.append)
 
