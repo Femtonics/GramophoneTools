@@ -1,0 +1,17 @@
+<RCC>
+  <qresource prefix="images">
+    <file>femtonics_logo.png</file>
+    <file>femtonics_logo_small.png</file>
+  </qresource>
+  <qresource prefix="icons">
+    <file>appbar.information.png</file>
+    <file>appbar.folder.open.png</file>
+    <file>appbar.book.png</file>
+    <file>vinyl.png</file>
+    <file>appbar.close.png</file>
+    <file>appbar.new.window.png</file>
+    <file>appbar.save.png</file>
+    <file>appbar.page.png</file>
+    <file>appbar.refresh.png</file>
+  </qresource>
+</RCC>
