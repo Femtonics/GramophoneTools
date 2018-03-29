@@ -18,7 +18,7 @@ from PyQt5.QtCore import QAbstractTableModel, QModelIndex, pyqtSlot
 from PyQt5.QtWidgets import QApplication, QMessageBox, QHeaderView, QFileDialog
 from PyQt5.QtSerialPort import QSerialPort
 
-import GramLogging
+import GramophoneTools.Recorder.GramLogging
 from GramophoneTools.IO.QGramophone import QGramophone
 
 # GLOBALS
