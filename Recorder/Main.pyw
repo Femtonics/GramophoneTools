@@ -9,7 +9,6 @@ from collections import deque
 from statistics import mean
 
 import h5py
-import numpy as np
 import matplotlib.pyplot as plt
 
 from PyQt5 import QtCore
@@ -169,7 +168,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         if self.select_file(mode='open'):
             log_file = h5py.File(self.log.filename, "r")
             for key in list(log_file.keys()):
-                loaded_record = Record.from_file_entry(key, log_file)
+                loaded_record = GramLogging.FileRecord(key)
                 self.log_model.add_record(loaded_record)
 
             log_file.close()
@@ -367,7 +366,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
             if self.recording:
                 self.current_record = GramLogging.MemoryRecord(self.counter_box.value())
                 self.current_record.start()
-                self.gram.all_sig.connect(self.current_record.append_rec)
+                self.gram.all_sig.connect(self.current_record.append)
 
                 # Update GUI
                 self.statusbar.showMessage('Recording started', 3000)
@@ -381,7 +380,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
                 # self.log_model.insertRow(currentRowCount)
                 # self.records_table.resizeColumnsToContents()
                 # self.records_table.horizontalHeader().geometriesChanged().emit()
-                self.gram.all_sig.disconnect(self.current_record.append_rec)
+                self.gram.all_sig.disconnect(self.current_record.append)
                 self.log_model.add_record(self.current_record)
 
                 # Update GUI
@@ -531,7 +530,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         """ Function only available for developers. Creates
             a dummy record in the current velocity log with
             randomized data. """
-        dummy = DummyRecord()
+        dummy = GramLogging.DummyRecord()
         self.log_model.add_record(dummy)
         self.update_table_size()
         self.log_changed()
