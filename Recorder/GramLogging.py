@@ -1,5 +1,5 @@
 import time
-from abc import ABC, abstractmethod, abstractproperty
+from abc import ABC, abstractmethod
 
 import h5py
 import numpy as np
