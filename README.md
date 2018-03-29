@@ -8,9 +8,3 @@ To install run the following command in the terminal:
 
 # Usage
 ## Gramophone recorder
-You can start the recorder from the Python interpreter
-
-```Python
-from GramophoneTools.Recorder import Main
-Main.start()
-```
