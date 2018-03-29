@@ -366,7 +366,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         if self.recording != bool(rec_state):
             self.recording = bool(rec_state)
             if self.recording:
-                self.current_record = Record(self.counter_box.value())
+                self.current_record = GramLogging.MemoryRecord(self.counter_box.value())
                 self.current_record.start()
                 self.gram.all_sig.connect(self.current_record.append_rec)
 
