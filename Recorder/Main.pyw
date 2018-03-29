@@ -658,12 +658,10 @@ class VelLogModel(QAbstractTableModel):
         plt.legend()
         plt.show()
 
-def start():
+
+if __name__ == '__main__':
     APP = QApplication(sys.argv)
     WIN = pyGramWindow()
     # WIN.show_elements()
     WIN.show()
     sys.exit(APP.exec_())
-
-if __name__ == '__main__':
-    start()
