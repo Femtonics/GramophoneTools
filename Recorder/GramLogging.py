@@ -1,8 +1,11 @@
+""" Module for logging Velocity data form the Gramophone into HDF5 files. """
+
 import time
 from abc import ABC, abstractmethod
 
 import h5py
 import numpy as np
+
 
 class VelocityLog(object):
     """ A container object for velocity recordins. Handles
@@ -20,6 +23,7 @@ class VelocityLog(object):
             record.save(log_file)
 
         log_file.close()
+
 
 class Record(ABC):
     """ Abstract class for velocity records. """
@@ -125,38 +129,47 @@ class FileRecord(Record):
 
     @property
     def times(self):
+        """ Returns the time data form file """
         return self.file_group['time']
 
     @property
     def velocities(self):
+        """ Returns the velocity data form file """
         return self.file_group['velocity']
 
     @property
     def start_time(self):
+        """ Returns the start time form file """
         return self.file_group.attrs['start_time']
-    
+
     @property
     def finish_time(self):
+        """ Returns the finish time form file """
         return self.file_group.attrs['finish_time']
-    
+
     @property
     def rec_id(self):
+        """ Returns the record's ID form file """
         return self.file_group.attrs['id']
-    
+
     @rec_id.setter
     def rec_id(self, value):
+        """ Sets the record's ID in the file """
         self.file_group.attrs['id'] = value
 
     @property
     def comment(self):
+        """ Returns the record's comment form file """
         return self.file_group.attrs['comment']
 
     @comment.setter
     def comment(self, value):
+        """ Sets the record's comment in the file """
         self.file_group.attrs['comment'] = value
 
     @property
     def mean_vel(self):
+        """ Returns the record's mean velocity form file """
         return self.file_group.attrs['mean_velocity']
 
 
