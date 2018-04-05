@@ -22,16 +22,26 @@ class Event(object):
 
     @property
     def triggerable(self):
-        ''' Tell whether it makes sense to trigger this event at the moment '''
+        ''' Tell whether it makes sense to trigger this event at the moment. '''
         return True
 
     def set_session(self, session):
-        ''' Sets the session the event can be triggered in '''
+        ''' 
+        Sets the Session the event will be triggered in. 
+
+        :param session: The session this Event will be triggered in
+        :type session: Session
+        '''
         self.session = session
 
 
 class Teleport(Event):
-    ''' Teleports to a set location '''
+    '''
+    Teleports to a set location 
+    
+    :param target_position: The target of the teleportation.
+    :type target_position: int
+    '''
 
     def __init__(self, level, target_position):
         super().__init__(level)
@@ -50,7 +60,12 @@ class Teleport(Event):
 
 
 class RandomTeleport(Event):
-    ''' Teleports to a type of zone that is on the given list randomly '''
+    ''' 
+    Teleports to a type of zone that is on the given list randomly. 
+    
+    :param list_of_target_zones: The possible Zones this teleport can land is.
+    :type list_of_target_zones: [Zone]
+    '''
 
     def __init__(self, level, list_of_target_zones):
         super().__init__(level)
@@ -69,7 +84,12 @@ class RandomTeleport(Event):
 
 
 class PortOn(Event):
-    ''' Turns on a port on the Level's gramophone '''
+    '''
+    Turns on a port on the Level's Gramophone.
+
+    :param port: Which output to use on the device.
+    :type port: str -- 'A', 'B' or 'C'
+    '''
 
     def __init__(self, level, port):
         super().__init__(level)
