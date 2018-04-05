@@ -4,10 +4,11 @@ import os
 import numpy as np
 from PIL import Image
 
-from GramophoneTools.LinMaze import Frame, Event, Rule
+from GramophoneTools.LinMaze import LinMaze, Frame, Event, Rule
 from GramophoneTools.LinMaze.Zone import Zone
 from GramophoneTools.LinMaze.Tools import Stopwatch
 from GramophoneTools.LinMaze.Tools.filehandler import select_file
+
 
 class Level(object):
     ''' An object that can be played for conditioning.
@@ -51,7 +52,8 @@ class Level(object):
     def dummy_frame(self):
         ''' A frame that looks like the begining of the level '''
         dummy_frame = Frame.Frame(self.screen_width, self.screen_height)
-        dummy_frame.texture = self.combined_frame.texture[:, :self.screen_width].astype(np.uint8)
+        dummy_frame.texture = self.combined_frame.texture[:, :self.screen_width].astype(
+            np.uint8)
         dummy_frame.made = True
         return dummy_frame
 
@@ -190,6 +192,5 @@ class Level(object):
 
     def play(self, *args, **kwargs):
         ''' Plays the level '''
-        from GramophoneTools.LinMaze import pyVR
-        play_session = pyVR.Session(self, *args, **kwargs)
+        play_session = LinMaze.Session(self, *args, **kwargs)
         # play_session.start()

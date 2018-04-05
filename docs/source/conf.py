@@ -12,9 +12,11 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-# import os
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
+import os
+import sys
+sys.path.insert(0, os.path.abspath('../../Recorder'))
+sys.path.insert(0, os.path.abspath('../../LinMaze'))
+sys.path.insert(0, os.path.abspath('../../IO'))
 
 
 # -- Project information -----------------------------------------------------
@@ -24,9 +26,9 @@ copyright = '2018, Femtonics Ltd.'
 author = 'Femtonics Ltd.'
 
 # The short X.Y version
-version = ''
+version = '0.1'
 # The full version, including alpha/beta/rc tags
-release = '0.1'
+release = '0.1-beta'
 
 
 # -- General configuration ---------------------------------------------------
@@ -85,7 +87,12 @@ html_theme = 'alabaster'
 # further.  For a list of options available for each theme, see the
 # documentation.
 #
-# html_theme_options = {}
+html_theme_options = {
+    'logo': './vinyl.png',
+    'logo_name': True,
+    'github_user': 'Femtonics',
+    'github_repo': 'GramophoneTools',
+}
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
@@ -100,7 +107,7 @@ html_static_path = ['_static']
 # default: ``['localtoc.html', 'relations.html', 'sourcelink.html',
 # 'searchbox.html']``.
 #
-# html_sidebars = {}
+html_sidebars = { '**': ['globaltoc.html', 'relations.html', 'searchbox.html'], }
 
 
 # -- Options for HTMLHelp output ---------------------------------------------

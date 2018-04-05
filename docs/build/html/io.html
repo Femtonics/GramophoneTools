@@ -1,0 +1,161 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Gramophone IO module &#8212; GramophoneTools 0.1-beta documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="LinMaze module" href="linmaze.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="gramophone-io-module">
+<h1>Gramophone IO module<a class="headerlink" href="#gramophone-io-module" title="Permalink to this headline">¶</a></h1>
+<p>This is the module that handles all the communication with the Gramophone device. Two different serial communication modules are available. QGramophone inherits QSerialPort from pyqt5, while SerGramophone uses the pyserial package for communication.</p>
+<div class="section" id="qgramophone">
+<h2>QGramophone<a class="headerlink" href="#qgramophone" title="Permalink to this headline">¶</a></h2>
+<p>Inherits the QSerialPort form the pyqt5 package and signals out the received values.</p>
+<span class="target" id="module-QGramophone"></span><p>A QT based interface for communicationg with Femto-Gramophone</p>
+<dl class="class">
+<dt id="QGramophone.QGramophone">
+<em class="property">class </em><code class="descclassname">QGramophone.</code><code class="descname">QGramophone</code><a class="reference internal" href="_modules/QGramophone.html#QGramophone"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#QGramophone.QGramophone" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gramophone object for serial communication with the device.
+Emits read values as QT signals.</p>
+<dl class="staticmethod">
+<dt id="QGramophone.QGramophone.find_grams">
+<em class="property">static </em><code class="descname">find_grams</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/QGramophone.html#QGramophone.find_grams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#QGramophone.QGramophone.find_grams" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list of QSerialPortInfo objects that are Gramophones.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="QGramophone.QGramophone.open">
+<code class="descname">open</code><span class="sig-paren">(</span><em>qport</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/QGramophone.html#QGramophone.open"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#QGramophone.QGramophone.open" title="Permalink to this definition">¶</a></dt>
+<dd><p>Starts the communication with the device on the given port.
+Expects the port as a QSerialPortInfo object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="QGramophone.QGramophone.read_bytes">
+<code class="descname">read_bytes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/QGramophone.html#QGramophone.read_bytes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#QGramophone.QGramophone.read_bytes" title="Permalink to this definition">¶</a></dt>
+<dd><p>A function automatically called when there is serial data
+available for reading. Emits the decoded velocity data as
+pyqtSignals</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="sergramophone">
+<h2>SerGramophone<a class="headerlink" href="#sergramophone" title="Permalink to this headline">¶</a></h2>
+<p>Uses pyserial for communication. Does not use signals, values can be read manually or in the background on a separate thread.</p>
+<span class="target" id="module-QGramophone"></span><p>A QT based interface for communicationg with Femto-Gramophone</p>
+<dl class="class">
+<dt>
+<em class="property">class </em><code class="descclassname">QGramophone.</code><code class="descname">QGramophone</code><a class="reference internal" href="_modules/QGramophone.html#QGramophone"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Gramophone object for serial communication with the device.
+Emits read values as QT signals.</p>
+<dl class="staticmethod">
+<dt>
+<em class="property">static </em><code class="descname">find_grams</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/QGramophone.html#QGramophone.find_grams"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Returns a list of QSerialPortInfo objects that are Gramophones.</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">open</code><span class="sig-paren">(</span><em>qport</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/QGramophone.html#QGramophone.open"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Starts the communication with the device on the given port.
+Expects the port as a QSerialPortInfo object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">read_bytes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/QGramophone.html#QGramophone.read_bytes"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>A function automatically called when there is serial data
+available for reading. Emits the decoded velocity data as
+pyqtSignals</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="index.html">Table Of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="gramrec.html">Gramophone Recorder module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="linmaze.html">LinMaze module</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Gramophone IO module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#qgramophone">QGramophone</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#sergramophone">SerGramophone</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="linmaze.html" title="previous chapter">LinMaze module</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Femtonics Ltd..
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/io.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
