@@ -2,15 +2,23 @@
 
 
 class Event(object):
-    ''' Generic Event object all specific Events inherit from.  '''
+    ''' 
+    Generic Event object all specific Events inherit from.
+
+    :param level: The Level this Event will be used on
+    :type level: Level
+    '''
 
     def __init__(self, level):
         self.level = level
         self.session = None
+        self.trigger_count = 0
 
     def trigger(self):
-        ''' Triggers the event '''
-        print(self, '\n')
+        ''' Triggers the Event. Prints Event information. '''
+        self.trigger_count += 1
+        print(self, "["+str(self.trigger_count)+"]", '\n')
+
 
     @property
     def triggerable(self):
