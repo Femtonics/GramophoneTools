@@ -11,8 +11,26 @@ from GramophoneTools.LinMaze.Tools.filehandler import select_file
 
 
 class Level(object):
-    ''' An object that can be played for conditioning.
-    You can add frames, events and rules to it to tune your conditioning. '''
+    ''' 
+    An object that can be played for conditioning.
+    You can add frames, events and rules to it to tune your conditioning. 
+    
+    :param name: The name this Level will be refered to by (eg. in the default filename when saving)
+    :type name:  str
+
+    :param screen_res: The resolution of the simulation window. Set it to the resolution of the monitor 
+        if you are going to make the simulation full screen. eg.: (800,600)
+    :type screen_res: tuple of ints
+
+    :param zone_offset: Zone offset in pixels, ie. what is the position of the mouse on the screen from the left.
+    :type zone_offset: int
+
+    :param transition_width: How long should the transition (gradual fade) shold be between zones in pixels.
+    :type transition_width: int
+
+    :param rgb: Red, Green and Blue levels of the frames as floats between 0 and 1.
+    :type rgb: tuple of floats
+    '''
 
     def __init__(self, name, screen_res, zone_offset,
                  transition_width=100, rgb=(1, 1, 1)):
@@ -50,7 +68,7 @@ class Level(object):
 
     @property
     def dummy_frame(self):
-        ''' A frame that looks like the begining of the level '''
+        ''' A frame that looks like the begining of the level. '''
         dummy_frame = Frame.Frame(self.screen_width, self.screen_height)
         dummy_frame.texture = self.combined_frame.texture[:, :self.screen_width].astype(
             np.uint8)
@@ -59,7 +77,7 @@ class Level(object):
 
     @property
     def combined_frame(self):
-        ''' All the frames combined left to right '''
+        ''' All the frames combined left to right. '''
         if not self.rendered:
             self.render()
 
@@ -67,7 +85,7 @@ class Level(object):
 
     @property
     def image(self):
-        ''' An image of the Level's combined frames '''
+        ''' An image of the Level's combined frames. '''
         return self.combined_frame.make_img()
 
     def add_block(self, frame_type, *args, **kwargs):
@@ -117,7 +135,18 @@ class Level(object):
         print(str(zone))
 
     def add_event(self, name, event_type, *args):
-        ''' Adds an Event to the level which can be triggered by Rules '''
+        ''' 
+        Adds an Event to the level which can be triggered by Rules.
+
+        :param name: The name this Event can be referenced by
+        :type name: string
+
+        :param event_type: type of the event can be 'teleport', 'random_teleport', 
+            'start_burst', 'stop_burst', 'port_on', 'port_off', 'pause', 'unpause'
+        :type event_type: string
+
+        :param *args: The arguments for the Event of the given type.
+        '''
 
         if event_type == "teleport":
             self.events[name] = Event.Teleport(self, args[0])
@@ -145,7 +174,17 @@ class Level(object):
             self.events[name] = Event.UnPause(self, args[0])
 
     def add_rule(self, rule_type, event_name, *args):
-        ''' Adds a rule that triggers events based on animal behaviour '''
+        '''
+        Adds a rule that triggers events based on animal behaviour.
+
+        :param rule_type: The type of this rule, can be 'zone', 'velocity' or 'speed'.
+        :type rule_type: string
+
+        :param event_name: The name of the Event this Rule can trigger.
+        :type event_name: string
+
+        :param *args: The arguments for the Rule of the given type.
+        '''
         if rule_type == "zone":
             self.rules.append(Rule.ZoneRule(
                 self, self.events[event_name], args[0], args[1]))
@@ -191,6 +230,12 @@ class Level(object):
             summary_file.write(str(self))
 
     def play(self, *args, **kwargs):
-        ''' Plays the level '''
-        play_session = LinMaze.Session(self, *args, **kwargs)
+        '''
+        Plays the Level by making a Session for it.
+
+        :param *args: Arguments of the Session created.
+        :param *kwargs: Keyword arguments of the Session created.
+
+        '''
+        LinMaze.Session(self, *args, **kwargs)
         # play_session.start()
