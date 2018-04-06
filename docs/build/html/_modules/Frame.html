@@ -47,7 +47,14 @@
 
 
 <div class="viewcode-block" id="multi_make"><a class="viewcode-back" href="../linmaze.html#Frame.multi_make">[docs]</a><span class="k">def</span> <span class="nf">multi_make</span><span class="p">(</span><span class="n">list_of_frames</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; Renders a list of frames with multiprocessing &#39;&#39;&#39;</span>
+    <span class="sd">&#39;&#39;&#39; </span>
+<span class="sd">    Renders a list of frames with multiprocessing.</span>
+<span class="sd">    </span>
+<span class="sd">    :param list_of_frames: A list of Frame objects that sould be rendered.</span>
+<span class="sd">    :type list_of_frames: [Frame]</span>
+
+<span class="sd">    :returns: A list of rendered Frames.</span>
+<span class="sd">     &#39;&#39;&#39;</span>
 
     <span class="n">pool</span> <span class="o">=</span> <span class="n">Pool</span><span class="p">()</span>
     <span class="n">runtime</span> <span class="o">=</span> <span class="n">Stopwatch</span><span class="o">.</span><span class="n">Stopwatch</span><span class="p">()</span>
@@ -67,7 +74,17 @@
 
 
 <div class="viewcode-block" id="transition"><a class="viewcode-back" href="../linmaze.html#Frame.transition">[docs]</a><span class="k">def</span> <span class="nf">transition</span><span class="p">(</span><span class="n">list_of_frames</span><span class="p">,</span> <span class="n">transition_width</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; Makes a list of frames with smooth transitions between them &#39;&#39;&#39;</span>
+    <span class="sd">&#39;&#39;&#39; </span>
+<span class="sd">    Makes a list of frames with smooth transitions between them.</span>
+<span class="sd">    </span>
+<span class="sd">    :param list_of_frames: A list of Frame objects without transitions.</span>
+<span class="sd">    :type list_of_frames: [Frame]</span>
+
+<span class="sd">    :param transition_width: The width of the smooth transition between the given Frames in pixels.</span>
+<span class="sd">    :type transition_width: int</span>
+<span class="sd">        </span>
+<span class="sd">    :returns: A list of Frames with transitions.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">frames</span> <span class="o">=</span> <span class="n">list_of_frames</span>
     <span class="k">if</span> <span class="n">transition_width</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">transition_width</span> <span class="o">%</span> <span class="mi">2</span><span class="p">:</span>
@@ -99,7 +116,14 @@
 
 
 <div class="viewcode-block" id="combine"><a class="viewcode-back" href="../linmaze.html#Frame.combine">[docs]</a><span class="k">def</span> <span class="nf">combine</span><span class="p">(</span><span class="n">list_of_frames</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; Makes a frame that is a combination of a list of frames &#39;&#39;&#39;</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Makes a Frame that is a combination of a list of Frames.</span>
+<span class="sd">    </span>
+<span class="sd">    :param list_of_frames: A list of Frame objects without transitions.</span>
+<span class="sd">    :type list_of_frames: [Frame]</span>
+
+<span class="sd">    :returns: Frame</span>
+<span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">combined</span> <span class="o">=</span> <span class="n">list_of_frames</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">texture</span>
     <span class="k">for</span> <span class="n">fid</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">list_of_frames</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
         <span class="n">combined</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
@@ -112,7 +136,18 @@
 
 
 <div class="viewcode-block" id="Frame"><a class="viewcode-back" href="../linmaze.html#Frame.Frame">[docs]</a><span class="k">class</span> <span class="nc">Frame</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; A 2D array that represents an image. &#39;&#39;&#39;</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    The visual component of the blocks that the mouse navigates in.</span>
+<span class="sd">    </span>
+<span class="sd">    :param width: The width of the Frame in pixels.</span>
+<span class="sd">    :type width: int</span>
+<span class="sd">    </span>
+<span class="sd">    :param height: The height of the Frame in pixels.</span>
+<span class="sd">    :type height: int</span>
+
+<span class="sd">    :param rgb: The Red, Green and Blue levels of the Frame.</span>
+<span class="sd">    :type rgb: (float, float, float)</span>
+<span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">frame_id</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">display_name</span> <span class="o">=</span> <span class="s2">&quot;Frame&quot;</span>
 
@@ -132,12 +167,12 @@
         <span class="k">return</span> <span class="n">string</span>
 
     <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; Compares frames based on type and all properties except id &#39;&#39;&#39;</span>
+        <span class="sd">&#39;&#39;&#39; Compares Frames based on type and all properties except id. &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">type</span><span class="p">(</span><span class="n">other</span><span class="p">)</span> <span class="ow">and</span> \
             <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">())[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">==</span> <span class="nb">list</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">())[</span><span class="mi">1</span><span class="p">:]</span>
 
     <span class="k">def</span> <span class="nf">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; The hash of the frame &#39;&#39;&#39;</span>
+        <span class="sd">&#39;&#39;&#39; The hash of the Frame. &#39;&#39;&#39;</span>
         <span class="kn">import</span> <span class="nn">binascii</span>
         <span class="n">hash_keys</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;width&#39;</span><span class="p">,</span> <span class="s1">&#39;height&#39;</span><span class="p">,</span> <span class="s1">&#39;seed&#39;</span><span class="p">,</span>
                      <span class="s1">&#39;side_length&#39;</span><span class="p">,</span> <span class="s1">&#39;wavelength&#39;</span><span class="p">,</span> <span class="s1">&#39;angle&#39;</span><span class="p">]</span>
@@ -149,8 +184,10 @@
 
 <div class="viewcode-block" id="Frame.ext_make"><a class="viewcode-back" href="../linmaze.html#Frame.Frame.ext_make">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">ext_make</span><span class="p">(</span><span class="n">frame</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; Tries to load the given frame from cache or makes it and returns</span>
-<span class="sd">            the rendered frame &#39;&#39;&#39;</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Tries to load the given Frame from cache or makes it and returns</span>
+<span class="sd">        the rendered Frame.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
         <span class="n">frame</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">from_cache</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">frame</span><span class="o">.</span><span class="n">made</span><span class="p">:</span>
             <span class="n">frame</span><span class="o">.</span><span class="n">make</span><span class="p">()</span>
@@ -158,7 +195,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">filename</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; The file that contains the cached frame &#39;&#39;&#39;</span>
+        <span class="sd">&#39;&#39;&#39; The file that contains the cached Frame. &#39;&#39;&#39;</span>
         <span class="n">appdata_root</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;ALLUSERSPROFILE&#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">appdata_root</span> <span class="o">+</span> <span class="s1">&#39;/pyVR/&#39;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="si">%08X</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.vrf&#39;</span>
 
@@ -172,13 +209,13 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">appdata_root</span> <span class="o">+</span> <span class="s1">&#39;/pyVR&#39;</span><span class="p">):</span>
             <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">appdata_root</span> <span class="o">+</span> <span class="s1">&#39;/pyVR&#39;</span><span class="p">)</span>
 
-        <span class="c1"># Cache the rendered frame</span>
+        <span class="c1"># Cache the rendered Frame</span>
         <span class="n">file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;bw&#39;</span><span class="p">)</span>
         <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span>
         <span class="n">file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="Frame.from_cache"><a class="viewcode-back" href="../linmaze.html#Frame.Frame.from_cache">[docs]</a>    <span class="k">def</span> <span class="nf">from_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; Tries to load the frame from cache &#39;&#39;&#39;</span>
+        <span class="sd">&#39;&#39;&#39; Tries to load the Frame from cache. &#39;&#39;&#39;</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">):</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;br&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ffile</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">ffile</span><span class="p">)</span>
@@ -186,7 +223,7 @@
             <span class="k">return</span> <span class="bp">self</span></div>
 
 <div class="viewcode-block" id="Frame.make_img"><a class="viewcode-back" href="../linmaze.html#Frame.Frame.make_img">[docs]</a>    <span class="k">def</span> <span class="nf">make_img</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; Makes a bitmap image of the Frame. &#39;&#39;&#39;</span>
+        <span class="sd">&#39;&#39;&#39; Makes a PIL Image of the Frame. &#39;&#39;&#39;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">made</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">make</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">Image</span><span class="o">.</span><span class="n">fromarray</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">texture</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span></div>
@@ -196,12 +233,17 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">make_img</span><span class="p">()</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="Frame.save_img"><a class="viewcode-back" href="../linmaze.html#Frame.Frame.save_img">[docs]</a>    <span class="k">def</span> <span class="nf">save_img</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; Saves the bitmap image of the Frame with the given filename. &#39;&#39;&#39;</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Saves the bitmap image of the Frame with the given filename.</span>
+<span class="sd">        </span>
+<span class="sd">        :param filename: The filename the image should be saved as.</span>
+<span class="sd">        :type filename: str</span>
+<span class="sd">        &#39;&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">make_img</span><span class="p">()</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s1">&#39;RGB&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Frame.make_texture"><a class="viewcode-back" href="../linmaze.html#Frame.Frame.make_texture">[docs]</a>    <span class="k">def</span> <span class="nf">make_texture</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; The frame as an RGB matrix &#39;&#39;&#39;</span>
-        <span class="c1"># Flip frame up and down to fit with opengl indexing</span>
+        <span class="sd">&#39;&#39;&#39; Makes the Frame&#39;s texture field that stores RGB data to be used as an OpenGL texture . &#39;&#39;&#39;</span>
+        <span class="c1"># Flip Frame up and down to fit with opengl indexing</span>
         <span class="n">flipped_frame</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
         <span class="n">frame_r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rgb</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">flipped_frame</span><span class="p">)</span>
@@ -211,12 +253,16 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">texture</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Frame.mirror"><a class="viewcode-back" href="../linmaze.html#Frame.Frame.mirror">[docs]</a>    <span class="k">def</span> <span class="nf">mirror</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; Horizontally mirrors the frame &#39;&#39;&#39;</span>
+        <span class="sd">&#39;&#39;&#39; Horizontally mirrors the Frame &#39;&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">frame</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="RandomFrame"><a class="viewcode-back" href="../linmaze.html#Frame.RandomFrame">[docs]</a><span class="k">class</span> <span class="nc">RandomFrame</span><span class="p">(</span><span class="n">Frame</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; Abstract class all randomly generated frames inherit from &#39;&#39;&#39;</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Abstract class all randomly generated Frames inherit from.</span>
+
+<span class="sd">    :param seed: The seed of the random number generator</span>
+<span class="sd">    &#39;&#39;&#39;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">seed</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span>
@@ -224,7 +270,7 @@
 
 
 <div class="viewcode-block" id="BinaryNoise"><a class="viewcode-back" href="../linmaze.html#Frame.BinaryNoise">[docs]</a><span class="k">class</span> <span class="nc">BinaryNoise</span><span class="p">(</span><span class="n">RandomFrame</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; Creates a frame with noise, that only has black and white pixels &#39;&#39;&#39;</span>
+    <span class="sd">&#39;&#39;&#39; Creates a Frame with noise, that only has black and white pixels &#39;&#39;&#39;</span>
     <span class="n">display_name</span> <span class="o">=</span> <span class="s2">&quot;Binary noise&quot;</span>
 
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -250,11 +296,17 @@
 
 
 <div class="viewcode-block" id="Checkerboard"><a class="viewcode-back" href="../linmaze.html#Frame.Checkerboard">[docs]</a><span class="k">class</span> <span class="nc">Checkerboard</span><span class="p">(</span><span class="n">Frame</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; A frame with a checkerboard pattern &#39;&#39;&#39;</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    A Frame with a checkerboard pattern.</span>
+<span class="sd">    </span>
+<span class="sd">    :param side_length: The lenght of sides of the squares that make up </span>
+<span class="sd">        the checkerboard pattern in pixels.</span>
+<span class="sd">    :type side_length: int</span>
+<span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">display_name</span> <span class="o">=</span> <span class="s2">&quot;Checkerboard&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">side_length</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">length</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">side_length</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">side_length</span> <span class="o">=</span> <span class="n">side_length</span>
 
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -277,7 +329,7 @@
 
 
 <div class="viewcode-block" id="Cloud"><a class="viewcode-back" href="../linmaze.html#Frame.Cloud">[docs]</a><span class="k">class</span> <span class="nc">Cloud</span><span class="p">(</span><span class="n">RandomFrame</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; A Frame with a random cloud pattern in it &#39;&#39;&#39;</span>
+    <span class="sd">&#39;&#39;&#39; A Frame with a random cloud pattern in it. &#39;&#39;&#39;</span>
     <span class="n">display_name</span> <span class="o">=</span> <span class="s2">&quot;Cloud&quot;</span>
 
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -290,7 +342,7 @@
 
 
 <div class="viewcode-block" id="Marble"><a class="viewcode-back" href="../linmaze.html#Frame.Marble">[docs]</a><span class="k">class</span> <span class="nc">Marble</span><span class="p">(</span><span class="n">RandomFrame</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; Generates a frame with a marble pattern &#39;&#39;&#39;</span>
+    <span class="sd">&#39;&#39;&#39; Generates a Frame with a marble pattern. &#39;&#39;&#39;</span>
     <span class="n">display_name</span> <span class="o">=</span> <span class="s2">&quot;Marble&quot;</span>
 
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -303,7 +355,7 @@
 
 
 <div class="viewcode-block" id="Wood"><a class="viewcode-back" href="../linmaze.html#Frame.Wood">[docs]</a><span class="k">class</span> <span class="nc">Wood</span><span class="p">(</span><span class="n">RandomFrame</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; Generates a frame with a Wood pattern &#39;&#39;&#39;</span>
+    <span class="sd">&#39;&#39;&#39; Generates a Frame with a wood grain pattern. &#39;&#39;&#39;</span>
     <span class="n">display_name</span> <span class="o">=</span> <span class="s2">&quot;Wood&quot;</span>
 
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -316,7 +368,16 @@
 
 
 <div class="viewcode-block" id="WaveFrame"><a class="viewcode-back" href="../linmaze.html#Frame.WaveFrame">[docs]</a><span class="k">class</span> <span class="nc">WaveFrame</span><span class="p">(</span><span class="n">Frame</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; Generic grating frame &#39;&#39;&#39;</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Generic grating Frame, for more specific ones to inherit form.</span>
+<span class="sd">    </span>
+<span class="sd">    :param wavelength: The wavelength of the grating in pixels, </span>
+<span class="sd">        ie. the distance between the middles of the white portions.</span>
+<span class="sd">    :type wavelength: int</span>
+
+<span class="sd">    :param angle: The angle of the graing where 0 is vertical.</span>
+<span class="sd">    :type angle: float</span>
+<span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">display_name</span> <span class="o">=</span> <span class="s2">&quot;Generic wave&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">wavelength</span><span class="p">,</span> <span class="n">angle</span><span class="p">):</span>
@@ -348,7 +409,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">frame</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">))</span>
 
         <span class="k">def</span> <span class="nf">norm</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
-            <span class="sd">&quot;&quot;&quot; Distance from origin along a line with angle &quot;&quot;&quot;</span>
+            <span class="sd">&quot;&quot;&quot; Distance from origin along a line with angle. &quot;&quot;&quot;</span>
             <span class="k">return</span> <span class="nb">abs</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">angle</span><span class="p">)</span> <span class="o">*</span> <span class="n">y</span> <span class="o">+</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">angle</span><span class="p">)</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="p">[</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">],</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">ndenumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="p">):</span>
@@ -371,7 +432,7 @@
 
 
 <div class="viewcode-block" id="SineWave"><a class="viewcode-back" href="../linmaze.html#Frame.SineWave">[docs]</a><span class="k">class</span> <span class="nc">SineWave</span><span class="p">(</span><span class="n">WaveFrame</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; Sine wave modulated grating pattern frame &#39;&#39;&#39;</span>
+    <span class="sd">&#39;&#39;&#39; Sine wave modulated grating pattern Frame. &#39;&#39;&#39;</span>
     <span class="n">display_name</span> <span class="o">=</span> <span class="s2">&quot;Sine wave&quot;</span>
 
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -384,7 +445,7 @@
 
 
 <div class="viewcode-block" id="SquareWave"><a class="viewcode-back" href="../linmaze.html#Frame.SquareWave">[docs]</a><span class="k">class</span> <span class="nc">SquareWave</span><span class="p">(</span><span class="n">WaveFrame</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; Square wave modulated grating pattern frame &#39;&#39;&#39;</span>
+    <span class="sd">&#39;&#39;&#39; Square wave modulated grating pattern Frame. &#39;&#39;&#39;</span>
     <span class="n">display_name</span> <span class="o">=</span> <span class="s2">&quot;Square wave&quot;</span>
 
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -397,7 +458,12 @@
 
 
 <div class="viewcode-block" id="ImageFile"><a class="viewcode-back" href="../linmaze.html#Frame.ImageFile">[docs]</a><span class="k">class</span> <span class="nc">ImageFile</span><span class="p">(</span><span class="n">Frame</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; A frame made from a given image file. &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A Frame made from a given image file.</span>
+
+<span class="sd">    :param filename: The name of the file the Frame should be made from.</span>
+<span class="sd">    :type filename: string</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">display_name</span> <span class="o">=</span> <span class="s2">&quot;Image file&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
@@ -412,7 +478,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">made</span> <span class="o">=</span> <span class="kc">True</span></div>
 
 <div class="viewcode-block" id="ImageFile.make_texture"><a class="viewcode-back" href="../linmaze.html#Frame.ImageFile.make_texture">[docs]</a>    <span class="k">def</span> <span class="nf">make_texture</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; The frame as an RGB matrix &#39;&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">texture</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span></div></div>
 </pre></div>
 

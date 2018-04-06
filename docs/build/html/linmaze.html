@@ -305,7 +305,7 @@ if you are going to make the simulation full screen. eg.: (800,600)</li>
 <dl class="class">
 <dt id="Frame.BinaryNoise">
 <em class="property">class </em><code class="descclassname">Frame.</code><code class="descname">BinaryNoise</code><span class="sig-paren">(</span><em>width</em>, <em>height</em>, <em>seed</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Frame.html#BinaryNoise"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Frame.BinaryNoise" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates a frame with noise, that only has black and white pixels</p>
+<dd><p>Creates a Frame with noise, that only has black and white pixels</p>
 <dl class="method">
 <dt id="Frame.BinaryNoise.make">
 <code class="descname">make</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Frame.html#BinaryNoise.make"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Frame.BinaryNoise.make" title="Permalink to this definition">¶</a></dt>
@@ -316,8 +316,17 @@ if you are going to make the simulation full screen. eg.: (800,600)</li>
 
 <dl class="class">
 <dt id="Frame.Checkerboard">
-<em class="property">class </em><code class="descclassname">Frame.</code><code class="descname">Checkerboard</code><span class="sig-paren">(</span><em>width</em>, <em>length</em>, <em>side_length</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Frame.html#Checkerboard"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Frame.Checkerboard" title="Permalink to this definition">¶</a></dt>
-<dd><p>A frame with a checkerboard pattern</p>
+<em class="property">class </em><code class="descclassname">Frame.</code><code class="descname">Checkerboard</code><span class="sig-paren">(</span><em>width</em>, <em>height</em>, <em>side_length</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Frame.html#Checkerboard"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Frame.Checkerboard" title="Permalink to this definition">¶</a></dt>
+<dd><p>A Frame with a checkerboard pattern.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>side_length</strong> (<em>int</em>) – The lenght of sides of the squares that make up 
+the checkerboard pattern in pixels.</td>
+</tr>
+</tbody>
+</table>
 <dl class="method">
 <dt id="Frame.Checkerboard.make">
 <code class="descname">make</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Frame.html#Checkerboard.make"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Frame.Checkerboard.make" title="Permalink to this definition">¶</a></dt>
@@ -329,7 +338,7 @@ if you are going to make the simulation full screen. eg.: (800,600)</li>
 <dl class="class">
 <dt id="Frame.Cloud">
 <em class="property">class </em><code class="descclassname">Frame.</code><code class="descname">Cloud</code><span class="sig-paren">(</span><em>width</em>, <em>height</em>, <em>seed</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Frame.html#Cloud"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Frame.Cloud" title="Permalink to this definition">¶</a></dt>
-<dd><p>A Frame with a random cloud pattern in it</p>
+<dd><p>A Frame with a random cloud pattern in it.</p>
 <dl class="method">
 <dt id="Frame.Cloud.make">
 <code class="descname">make</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Frame.html#Cloud.make"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Frame.Cloud.make" title="Permalink to this definition">¶</a></dt>
@@ -341,24 +350,37 @@ if you are going to make the simulation full screen. eg.: (800,600)</li>
 <dl class="class">
 <dt id="Frame.Frame">
 <em class="property">class </em><code class="descclassname">Frame.</code><code class="descname">Frame</code><span class="sig-paren">(</span><em>width</em>, <em>height</em>, <em>rgb=(1</em>, <em>1</em>, <em>1)</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Frame.html#Frame"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Frame.Frame" title="Permalink to this definition">¶</a></dt>
-<dd><p>A 2D array that represents an image.</p>
+<dd><p>The visual component of the blocks that the mouse navigates in.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>width</strong> (<em>int</em>) – The width of the Frame in pixels.</li>
+<li><strong>height</strong> (<em>int</em>) – The height of the Frame in pixels.</li>
+<li><strong>rgb</strong> (<em>(</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>)</em>) – The Red, Green and Blue levels of the Frame.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 <dl class="staticmethod">
 <dt id="Frame.Frame.ext_make">
 <em class="property">static </em><code class="descname">ext_make</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Frame.html#Frame.ext_make"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Frame.Frame.ext_make" title="Permalink to this definition">¶</a></dt>
-<dd><p>Tries to load the given frame from cache or makes it and returns
-the rendered frame</p>
+<dd><p>Tries to load the given Frame from cache or makes it and returns
+the rendered Frame.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="Frame.Frame.filename">
 <code class="descname">filename</code><a class="headerlink" href="#Frame.Frame.filename" title="Permalink to this definition">¶</a></dt>
-<dd><p>The file that contains the cached frame</p>
+<dd><p>The file that contains the cached Frame.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="Frame.Frame.from_cache">
 <code class="descname">from_cache</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Frame.html#Frame.from_cache"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Frame.Frame.from_cache" title="Permalink to this definition">¶</a></dt>
-<dd><p>Tries to load the frame from cache</p>
+<dd><p>Tries to load the Frame from cache.</p>
 </dd></dl>
 
 <dl class="method">
@@ -370,25 +392,33 @@ the rendered frame</p>
 <dl class="method">
 <dt id="Frame.Frame.make_img">
 <code class="descname">make_img</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Frame.html#Frame.make_img"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Frame.Frame.make_img" title="Permalink to this definition">¶</a></dt>
-<dd><p>Makes a bitmap image of the Frame.</p>
+<dd><p>Makes a PIL Image of the Frame.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="Frame.Frame.make_texture">
 <code class="descname">make_texture</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Frame.html#Frame.make_texture"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Frame.Frame.make_texture" title="Permalink to this definition">¶</a></dt>
-<dd><p>The frame as an RGB matrix</p>
+<dd><p>Makes the Frame’s texture field that stores RGB data to be used as an OpenGL texture .</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="Frame.Frame.mirror">
 <code class="descname">mirror</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Frame.html#Frame.mirror"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Frame.Frame.mirror" title="Permalink to this definition">¶</a></dt>
-<dd><p>Horizontally mirrors the frame</p>
+<dd><p>Horizontally mirrors the Frame</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="Frame.Frame.save_img">
 <code class="descname">save_img</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Frame.html#Frame.save_img"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Frame.Frame.save_img" title="Permalink to this definition">¶</a></dt>
 <dd><p>Saves the bitmap image of the Frame with the given filename.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<em>str</em>) – The filename the image should be saved as.</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -414,7 +444,15 @@ the rendered frame</p>
 <dl class="class">
 <dt id="Frame.ImageFile">
 <em class="property">class </em><code class="descclassname">Frame.</code><code class="descname">ImageFile</code><span class="sig-paren">(</span><em>height</em>, <em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Frame.html#ImageFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Frame.ImageFile" title="Permalink to this definition">¶</a></dt>
-<dd><p>A frame made from a given image file.</p>
+<dd><p>A Frame made from a given image file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<em>string</em>) – The name of the file the Frame should be made from.</td>
+</tr>
+</tbody>
+</table>
 <dl class="method">
 <dt id="Frame.ImageFile.make">
 <code class="descname">make</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Frame.html#ImageFile.make"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Frame.ImageFile.make" title="Permalink to this definition">¶</a></dt>
@@ -424,7 +462,7 @@ the rendered frame</p>
 <dl class="method">
 <dt id="Frame.ImageFile.make_texture">
 <code class="descname">make_texture</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Frame.html#ImageFile.make_texture"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Frame.ImageFile.make_texture" title="Permalink to this definition">¶</a></dt>
-<dd><p>The frame as an RGB matrix</p>
+<dd><p>Makes the Frame’s texture field that stores RGB data to be used as an OpenGL texture .</p>
 </dd></dl>
 
 </dd></dl>
@@ -432,7 +470,7 @@ the rendered frame</p>
 <dl class="class">
 <dt id="Frame.Marble">
 <em class="property">class </em><code class="descclassname">Frame.</code><code class="descname">Marble</code><span class="sig-paren">(</span><em>width</em>, <em>height</em>, <em>seed</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Frame.html#Marble"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Frame.Marble" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generates a frame with a marble pattern</p>
+<dd><p>Generates a Frame with a marble pattern.</p>
 <dl class="method">
 <dt id="Frame.Marble.make">
 <code class="descname">make</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Frame.html#Marble.make"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Frame.Marble.make" title="Permalink to this definition">¶</a></dt>
@@ -444,13 +482,21 @@ the rendered frame</p>
 <dl class="class">
 <dt id="Frame.RandomFrame">
 <em class="property">class </em><code class="descclassname">Frame.</code><code class="descname">RandomFrame</code><span class="sig-paren">(</span><em>width</em>, <em>height</em>, <em>seed</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Frame.html#RandomFrame"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Frame.RandomFrame" title="Permalink to this definition">¶</a></dt>
-<dd><p>Abstract class all randomly generated frames inherit from</p>
+<dd><p>Abstract class all randomly generated Frames inherit from.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>seed</strong> – The seed of the random number generator</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="class">
 <dt id="Frame.SineWave">
 <em class="property">class </em><code class="descclassname">Frame.</code><code class="descname">SineWave</code><span class="sig-paren">(</span><em>width</em>, <em>height</em>, <em>wavelength</em>, <em>angle</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Frame.html#SineWave"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Frame.SineWave" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sine wave modulated grating pattern frame</p>
+<dd><p>Sine wave modulated grating pattern Frame.</p>
 <dl class="method">
 <dt id="Frame.SineWave.make">
 <code class="descname">make</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Frame.html#SineWave.make"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Frame.SineWave.make" title="Permalink to this definition">¶</a></dt>
@@ -462,7 +508,7 @@ the rendered frame</p>
 <dl class="class">
 <dt id="Frame.SquareWave">
 <em class="property">class </em><code class="descclassname">Frame.</code><code class="descname">SquareWave</code><span class="sig-paren">(</span><em>width</em>, <em>height</em>, <em>wavelength</em>, <em>angle</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Frame.html#SquareWave"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Frame.SquareWave" title="Permalink to this definition">¶</a></dt>
-<dd><p>Square wave modulated grating pattern frame</p>
+<dd><p>Square wave modulated grating pattern Frame.</p>
 <dl class="method">
 <dt id="Frame.SquareWave.make">
 <code class="descname">make</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Frame.html#SquareWave.make"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Frame.SquareWave.make" title="Permalink to this definition">¶</a></dt>
@@ -474,7 +520,20 @@ the rendered frame</p>
 <dl class="class">
 <dt id="Frame.WaveFrame">
 <em class="property">class </em><code class="descclassname">Frame.</code><code class="descname">WaveFrame</code><span class="sig-paren">(</span><em>width</em>, <em>height</em>, <em>wavelength</em>, <em>angle</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Frame.html#WaveFrame"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Frame.WaveFrame" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generic grating frame</p>
+<dd><p>Generic grating Frame, for more specific ones to inherit form.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>wavelength</strong> (<em>int</em>) – The wavelength of the grating in pixels, 
+ie. the distance between the middles of the white portions.</li>
+<li><strong>angle</strong> (<em>float</em>) – The angle of the graing where 0 is vertical.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 <dl class="method">
 <dt id="Frame.WaveFrame.make">
 <code class="descname">make</code><span class="sig-paren">(</span><em>wave_temp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Frame.html#WaveFrame.make"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Frame.WaveFrame.make" title="Permalink to this definition">¶</a></dt>
@@ -498,7 +557,7 @@ the rendered frame</p>
 <dl class="class">
 <dt id="Frame.Wood">
 <em class="property">class </em><code class="descclassname">Frame.</code><code class="descname">Wood</code><span class="sig-paren">(</span><em>width</em>, <em>height</em>, <em>seed</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Frame.html#Wood"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Frame.Wood" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generates a frame with a Wood pattern</p>
+<dd><p>Generates a Frame with a wood grain pattern.</p>
 <dl class="method">
 <dt id="Frame.Wood.make">
 <code class="descname">make</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Frame.html#Wood.make"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Frame.Wood.make" title="Permalink to this definition">¶</a></dt>
@@ -510,19 +569,54 @@ the rendered frame</p>
 <dl class="function">
 <dt id="Frame.combine">
 <code class="descclassname">Frame.</code><code class="descname">combine</code><span class="sig-paren">(</span><em>list_of_frames</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Frame.html#combine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Frame.combine" title="Permalink to this definition">¶</a></dt>
-<dd><p>Makes a frame that is a combination of a list of frames</p>
+<dd><p>Makes a Frame that is a combination of a list of Frames.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>list_of_frames</strong> (<em>[</em><a class="reference internal" href="#Frame.Frame" title="Frame.Frame"><em>Frame</em></a><em>]</em>) – A list of Frame objects without transitions.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Frame</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="Frame.multi_make">
 <code class="descclassname">Frame.</code><code class="descname">multi_make</code><span class="sig-paren">(</span><em>list_of_frames</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Frame.html#multi_make"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Frame.multi_make" title="Permalink to this definition">¶</a></dt>
-<dd><p>Renders a list of frames with multiprocessing</p>
+<dd><p>Renders a list of frames with multiprocessing.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>list_of_frames</strong> (<em>[</em><a class="reference internal" href="#Frame.Frame" title="Frame.Frame"><em>Frame</em></a><em>]</em>) – A list of Frame objects that sould be rendered.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A list of rendered Frames.</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="Frame.transition">
 <code class="descclassname">Frame.</code><code class="descname">transition</code><span class="sig-paren">(</span><em>list_of_frames</em>, <em>transition_width</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Frame.html#transition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Frame.transition" title="Permalink to this definition">¶</a></dt>
-<dd><p>Makes a list of frames with smooth transitions between them</p>
+<dd><p>Makes a list of frames with smooth transitions between them.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>list_of_frames</strong> (<em>[</em><a class="reference internal" href="#Frame.Frame" title="Frame.Frame"><em>Frame</em></a><em>]</em>) – A list of Frame objects without transitions.</li>
+<li><strong>transition_width</strong> (<em>int</em>) – The width of the smooth transition between the given Frames in pixels.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A list of Frames with transitions.</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>
