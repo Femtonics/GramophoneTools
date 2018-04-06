@@ -1,8 +1,8 @@
 Gramophone Recorder module
 ==========================
 
-Main window module
-------------------
+Main module
+-----------
 
 .. automodule:: Main
    :members:
