@@ -1,4 +1,4 @@
 The Zone class
 ==============
-.. autoclass:: Zone
+.. autoclass:: Zone.Zone
    :members:
