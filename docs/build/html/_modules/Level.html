@@ -178,7 +178,7 @@
 <span class="sd">            &#39;start_burst&#39;, &#39;stop_burst&#39;, &#39;port_on&#39;, &#39;port_off&#39;, &#39;pause&#39;, &#39;unpause&#39;</span>
 <span class="sd">        :type event_type: string</span>
 
-<span class="sd">        :param *args: The arguments for the Event of the given type.</span>
+<span class="sd">        :param args: The arguments for the Event of the given type.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
 
         <span class="k">if</span> <span class="n">event_type</span> <span class="o">==</span> <span class="s2">&quot;teleport&quot;</span><span class="p">:</span>
@@ -216,7 +216,7 @@
 <span class="sd">        :param event_name: The name of the Event this Rule can trigger.</span>
 <span class="sd">        :type event_name: string</span>
 
-<span class="sd">        :param *args: The arguments for the Rule of the given type.</span>
+<span class="sd">        :param args: The arguments for the Rule of the given type.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">if</span> <span class="n">rule_type</span> <span class="o">==</span> <span class="s2">&quot;zone&quot;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">rules</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Rule</span><span class="o">.</span><span class="n">ZoneRule</span><span class="p">(</span>
@@ -266,8 +266,8 @@
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Plays the Level by making a Session for it.</span>
 
-<span class="sd">        :param *args: Arguments of the Session created.</span>
-<span class="sd">        :param *kwargs: Keyword arguments of the Session created.</span>
+<span class="sd">        :param args: Arguments of the Session created.</span>
+<span class="sd">        :param kwargs: Keyword arguments of the Session created.</span>
 
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="n">LinMaze</span><span class="o">.</span><span class="n">Session</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
