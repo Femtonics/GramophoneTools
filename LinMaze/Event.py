@@ -108,7 +108,12 @@ class PortOn(Event):
 
 
 class PortOff(Event):
-    ''' Turns off a port on the Level's gramophone '''
+    '''
+    Turns off a port on the Level's Gramophone.
+
+    :param port: Which output to use on the device.
+    :type port: str -- 'A', 'B' or 'C'
+    '''
 
     def __init__(self, level, port):
         super().__init__(level)
