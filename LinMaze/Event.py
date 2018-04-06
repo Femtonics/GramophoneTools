@@ -125,6 +125,7 @@ class PortOff(Event):
     def __str__(self):
         return "Turn OFF port " + str(self.port)
 
+
 class StartBurst(Event):
     ''' Starts bursting a port on the Level's gramophone '''
 

@@ -1,4 +1,4 @@
-''' Everything related to making Frames for pyVR. '''
+''' Everything related to making LinMaze Frames. '''
 import os
 import math
 from time import sleep
