@@ -36,7 +36,7 @@
 <span class="kn">from</span> <span class="nn">GramophoneTools.LinMaze.Tools.Timer</span> <span class="k">import</span> <span class="n">Timer</span>
 
 
-<div class="viewcode-block" id="Rule"><a class="viewcode-back" href="../linmaze.html#Rule.Rule">[docs]</a><span class="k">class</span> <span class="nc">Rule</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="Rule"><a class="viewcode-back" href="../rule.html#Rule.Rule">[docs]</a><span class="k">class</span> <span class="nc">Rule</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; Generic Rule all specific Rules intherit from &#39;&#39;&#39;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
@@ -44,7 +44,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">event</span> <span class="o">=</span> <span class="n">event</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">done</span> <span class="o">=</span> <span class="kc">False</span>
 
-<div class="viewcode-block" id="Rule.trigger"><a class="viewcode-back" href="../linmaze.html#Rule.Rule.trigger">[docs]</a>    <span class="k">def</span> <span class="nf">trigger</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Rule.trigger"><a class="viewcode-back" href="../rule.html#Rule.Rule.trigger">[docs]</a>    <span class="k">def</span> <span class="nf">trigger</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; Triggers the associated event and prints out a message about it &#39;&#39;&#39;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">triggerable</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;rule triggered&quot;</span><span class="p">)</span>
@@ -52,12 +52,12 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">done</span> <span class="o">=</span> <span class="kc">True</span></div>
             <span class="c1"># print(self.event)</span>
 
-<div class="viewcode-block" id="Rule.check"><a class="viewcode-back" href="../linmaze.html#Rule.Rule.check">[docs]</a>    <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Rule.check"><a class="viewcode-back" href="../rule.html#Rule.Rule.check">[docs]</a>    <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; Used to check whether the rules&#39;s event should be triggered &#39;&#39;&#39;</span>
         <span class="k">pass</span></div></div>
 
 
-<div class="viewcode-block" id="ZoneRule"><a class="viewcode-back" href="../linmaze.html#Rule.ZoneRule">[docs]</a><span class="k">class</span> <span class="nc">ZoneRule</span><span class="p">(</span><span class="n">Rule</span><span class="p">):</span>
+<div class="viewcode-block" id="ZoneRule"><a class="viewcode-back" href="../rule.html#Rule.ZoneRule">[docs]</a><span class="k">class</span> <span class="nc">ZoneRule</span><span class="p">(</span><span class="n">Rule</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; A Rule that triggers if the animal is in a given type of zone &#39;&#39;&#39;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="n">zone_type</span><span class="p">,</span> <span class="n">delay</span><span class="p">):</span>
@@ -70,7 +70,7 @@
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s2">&quot;In &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">zone_type</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; zone for &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">delay</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; sec&quot;</span>
 
-<div class="viewcode-block" id="ZoneRule.check"><a class="viewcode-back" href="../linmaze.html#Rule.ZoneRule.check">[docs]</a>    <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">current_zone_type</span><span class="p">):</span>
+<div class="viewcode-block" id="ZoneRule.check"><a class="viewcode-back" href="../rule.html#Rule.ZoneRule.check">[docs]</a>    <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">current_zone_type</span><span class="p">):</span>
         <span class="c1"># print(&#39;Checking &#39;,self)</span>
         <span class="c1"># print(&#39;CZ&#39;,current_zone_type)</span>
         <span class="k">if</span> <span class="n">current_zone_type</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">zone_type</span><span class="p">:</span>
@@ -90,7 +90,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">False</span></div></div>
 
 
-<div class="viewcode-block" id="VelocityRule"><a class="viewcode-back" href="../linmaze.html#Rule.VelocityRule">[docs]</a><span class="k">class</span> <span class="nc">VelocityRule</span><span class="p">(</span><span class="n">Rule</span><span class="p">):</span>
+<div class="viewcode-block" id="VelocityRule"><a class="viewcode-back" href="../rule.html#Rule.VelocityRule">[docs]</a><span class="k">class</span> <span class="nc">VelocityRule</span><span class="p">(</span><span class="n">Rule</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; A Rule that triggers if the velocity is above or below a certain threshold &#39;&#39;&#39;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="n">vel_rule_type</span><span class="p">,</span> <span class="n">threshold</span><span class="p">,</span> <span class="n">delay</span><span class="p">):</span>
@@ -105,7 +105,7 @@
         <span class="k">return</span> <span class="s2">&quot;Velocity &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vel_rule_type</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">threshold</span><span class="p">)</span> <span class="o">+</span>\
             <span class="s2">&quot; for &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">delay</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; sec&quot;</span>
 
-<div class="viewcode-block" id="VelocityRule.check"><a class="viewcode-back" href="../linmaze.html#Rule.VelocityRule.check">[docs]</a>    <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vel</span><span class="p">):</span>
+<div class="viewcode-block" id="VelocityRule.check"><a class="viewcode-back" href="../rule.html#Rule.VelocityRule.check">[docs]</a>    <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vel</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">vel_rule_type</span> <span class="o">==</span> <span class="s2">&quot;above&quot;</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">vel</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">True</span>
@@ -127,7 +127,7 @@
             <span class="c1"># self.delay_timer.reset()</span>
 
 
-<div class="viewcode-block" id="SpeedRule"><a class="viewcode-back" href="../linmaze.html#Rule.SpeedRule">[docs]</a><span class="k">class</span> <span class="nc">SpeedRule</span><span class="p">(</span><span class="n">Rule</span><span class="p">):</span>
+<div class="viewcode-block" id="SpeedRule"><a class="viewcode-back" href="../rule.html#Rule.SpeedRule">[docs]</a><span class="k">class</span> <span class="nc">SpeedRule</span><span class="p">(</span><span class="n">Rule</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; A Rule that triggers if the absolute integral of the velocity on a</span>
 <span class="sd">     given range is above or below a given threshold &#39;&#39;&#39;</span>
 
@@ -142,7 +142,7 @@
         <span class="k">return</span> <span class="s2">&quot;Absolute sum of the last &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bin_size</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; velocities &quot;</span> <span class="o">+</span>\
             <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">speed_rule_type</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">threshold</span><span class="p">)</span>
 
-<div class="viewcode-block" id="SpeedRule.check"><a class="viewcode-back" href="../linmaze.html#Rule.SpeedRule.check">[docs]</a>    <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vel</span><span class="p">):</span>
+<div class="viewcode-block" id="SpeedRule.check"><a class="viewcode-back" href="../rule.html#Rule.SpeedRule.check">[docs]</a>    <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vel</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">record</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">record</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">record</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">vel</span><span class="p">)</span>
         <span class="n">norm</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">record</span><span class="p">)</span>

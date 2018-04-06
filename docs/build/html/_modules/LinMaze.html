@@ -48,7 +48,7 @@
 
 
 
-<div class="viewcode-block" id="VRWindow"><a class="viewcode-back" href="../linmaze.html#LinMaze.VRWindow">[docs]</a><span class="k">class</span> <span class="nc">VRWindow</span><span class="p">(</span><span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">Window</span><span class="p">):</span>
+<div class="viewcode-block" id="VRWindow"><a class="viewcode-back" href="../linmaze_main.html#LinMaze.VRWindow">[docs]</a><span class="k">class</span> <span class="nc">VRWindow</span><span class="p">(</span><span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">Window</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; A pyglet window that can display VR on a given screen &#39;&#39;&#39;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">screen_number</span><span class="p">,</span>
@@ -86,7 +86,7 @@
         <span class="n">glTexParameteri</span><span class="p">(</span><span class="n">GL_TEXTURE_2D</span><span class="p">,</span> <span class="n">GL_TEXTURE_MAG_FILTER</span><span class="p">,</span> <span class="n">GL_NEAREST</span><span class="p">)</span>
         <span class="n">glTexParameteri</span><span class="p">(</span><span class="n">GL_TEXTURE_2D</span><span class="p">,</span> <span class="n">GL_TEXTURE_MIN_FILTER</span><span class="p">,</span> <span class="n">GL_NEAREST</span><span class="p">)</span>
 
-<div class="viewcode-block" id="VRWindow.on_key_press"><a class="viewcode-back" href="../linmaze.html#LinMaze.VRWindow.on_key_press">[docs]</a>    <span class="k">def</span> <span class="nf">on_key_press</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">symbol</span><span class="p">,</span> <span class="n">modifiers</span><span class="p">):</span>
+<div class="viewcode-block" id="VRWindow.on_key_press"><a class="viewcode-back" href="../linmaze_main.html#LinMaze.VRWindow.on_key_press">[docs]</a>    <span class="k">def</span> <span class="nf">on_key_press</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">symbol</span><span class="p">,</span> <span class="n">modifiers</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">symbol</span> <span class="o">==</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">SPACE</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">paused</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">unpause</span><span class="p">()</span>
@@ -105,10 +105,10 @@
         <span class="k">if</span> <span class="n">symbol</span> <span class="o">==</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">R</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">gramophone</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="VRWindow.on_close"><a class="viewcode-back" href="../linmaze.html#LinMaze.VRWindow.on_close">[docs]</a>    <span class="k">def</span> <span class="nf">on_close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="VRWindow.on_close"><a class="viewcode-back" href="../linmaze_main.html#LinMaze.VRWindow.on_close">[docs]</a>    <span class="k">def</span> <span class="nf">on_close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">pyglet</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="VRWindow.on_draw"><a class="viewcode-back" href="../linmaze.html#LinMaze.VRWindow.on_draw">[docs]</a>    <span class="k">def</span> <span class="nf">on_draw</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="VRWindow.on_draw"><a class="viewcode-back" href="../linmaze_main.html#LinMaze.VRWindow.on_draw">[docs]</a>    <span class="k">def</span> <span class="nf">on_draw</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">switch_to</span><span class="p">()</span>
 
         <span class="c1"># Clean canvas</span>
@@ -315,7 +315,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">vrl</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
 
-<div class="viewcode-block" id="Session"><a class="viewcode-back" href="../linmaze.html#LinMaze.Session">[docs]</a><span class="k">class</span> <span class="nc">Session</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="Session"><a class="viewcode-back" href="../linmaze_main.html#LinMaze.Session">[docs]</a><span class="k">class</span> <span class="nc">Session</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; A play/simulation session for a VR Level &#39;&#39;&#39;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="p">,</span> <span class="n">vel_ratio</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">runtime_limit</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -474,7 +474,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">flush_all</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
-<div class="viewcode-block" id="Session.movement"><a class="viewcode-back" href="../linmaze.html#LinMaze.Session.movement">[docs]</a>    <span class="k">def</span> <span class="nf">movement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vel</span><span class="p">):</span>
+<div class="viewcode-block" id="Session.movement"><a class="viewcode-back" href="../linmaze_main.html#LinMaze.Session.movement">[docs]</a>    <span class="k">def</span> <span class="nf">movement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vel</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; Move on the map with given velocity &#39;&#39;&#39;</span>
 
         <span class="c1"># Base movement (used to calculate others, loops around)</span>
@@ -497,7 +497,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">virtual_position</span> <span class="o">=</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">position</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">level</span><span class="o">.</span><span class="n">zone_offset</span></div>
 
-<div class="viewcode-block" id="Session.pause"><a class="viewcode-back" href="../linmaze.html#LinMaze.Session.pause">[docs]</a>    <span class="k">def</span> <span class="nf">pause</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Session.pause"><a class="viewcode-back" href="../linmaze_main.html#LinMaze.Session.pause">[docs]</a>    <span class="k">def</span> <span class="nf">pause</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; Pauses the level at the given position or</span>
 <span class="sd">            at the current one if pos=None &#39;&#39;&#39;</span>
 
@@ -506,7 +506,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">teleport</span><span class="p">(</span><span class="n">position</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">paused</span> <span class="o">=</span> <span class="kc">True</span></div>
 
-<div class="viewcode-block" id="Session.unpause"><a class="viewcode-back" href="../linmaze.html#LinMaze.Session.unpause">[docs]</a>    <span class="k">def</span> <span class="nf">unpause</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Session.unpause"><a class="viewcode-back" href="../linmaze_main.html#LinMaze.Session.unpause">[docs]</a>    <span class="k">def</span> <span class="nf">unpause</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; Continues the level at the given position</span>
 <span class="sd">            or at the current one if pos=None &#39;&#39;&#39;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">paused</span><span class="p">:</span>
@@ -516,12 +516,12 @@
             <span class="c1">#     zr.delay_timer.reset()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">paused</span> <span class="o">=</span> <span class="kc">False</span></div>
 
-<div class="viewcode-block" id="Session.teleport"><a class="viewcode-back" href="../linmaze.html#LinMaze.Session.teleport">[docs]</a>    <span class="k">def</span> <span class="nf">teleport</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_pos</span><span class="p">):</span>
+<div class="viewcode-block" id="Session.teleport"><a class="viewcode-back" href="../linmaze_main.html#LinMaze.Session.teleport">[docs]</a>    <span class="k">def</span> <span class="nf">teleport</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_pos</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; Teleports to the given position and logs the teleportation &#39;&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">position</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="n">target_pos</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">level</span><span class="o">.</span><span class="n">zone_offset</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">teleported</span> <span class="o">=</span> <span class="kc">True</span></div>
 
-<div class="viewcode-block" id="Session.random_teleport"><a class="viewcode-back" href="../linmaze.html#LinMaze.Session.random_teleport">[docs]</a>    <span class="k">def</span> <span class="nf">random_teleport</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_zone_types</span><span class="p">):</span>
+<div class="viewcode-block" id="Session.random_teleport"><a class="viewcode-back" href="../linmaze_main.html#LinMaze.Session.random_teleport">[docs]</a>    <span class="k">def</span> <span class="nf">random_teleport</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_zone_types</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; Teleports to the middle of a random zone</span>
 <span class="sd">        with one of the given zone types (excluding current) &#39;&#39;&#39;</span>
         <span class="n">zone_selection</span> <span class="o">=</span> <span class="p">[</span>
@@ -534,12 +534,12 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">teleport</span><span class="p">(</span><span class="n">middle_of_target</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Session.check_zone"><a class="viewcode-back" href="../linmaze.html#LinMaze.Session.check_zone">[docs]</a>    <span class="k">def</span> <span class="nf">check_zone</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Session.check_zone"><a class="viewcode-back" href="../linmaze_main.html#LinMaze.Session.check_zone">[docs]</a>    <span class="k">def</span> <span class="nf">check_zone</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; Updates the current zone &#39;&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">current_zone</span> <span class="o">=</span> <span class="p">[</span><span class="n">zone</span> <span class="k">for</span> <span class="n">zone</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">level</span><span class="o">.</span><span class="n">zones</span>
                              <span class="k">if</span> <span class="n">zone</span><span class="o">.</span><span class="n">check</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">virtual_position</span><span class="p">)][</span><span class="mi">0</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="Session.check_rules"><a class="viewcode-back" href="../linmaze.html#LinMaze.Session.check_rules">[docs]</a>    <span class="k">def</span> <span class="nf">check_rules</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vel</span><span class="p">):</span>
+<div class="viewcode-block" id="Session.check_rules"><a class="viewcode-back" href="../linmaze_main.html#LinMaze.Session.check_rules">[docs]</a>    <span class="k">def</span> <span class="nf">check_rules</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vel</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; Checks all the rules of the level &#39;&#39;&#39;</span>
 
         <span class="c1"># Check zone rules</span>

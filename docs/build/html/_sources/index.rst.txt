@@ -7,7 +7,7 @@ GramophoneTools' documentation
 ==============================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 5
 
    gramrec
    linmaze

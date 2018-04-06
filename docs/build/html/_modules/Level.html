@@ -43,7 +43,7 @@
 <span class="kn">from</span> <span class="nn">GramophoneTools.LinMaze.Tools.filehandler</span> <span class="k">import</span> <span class="n">select_file</span>
 
 
-<div class="viewcode-block" id="Level"><a class="viewcode-back" href="../linmaze.html#Level.Level">[docs]</a><span class="k">class</span> <span class="nc">Level</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="Level"><a class="viewcode-back" href="../level.html#Level.Level">[docs]</a><span class="k">class</span> <span class="nc">Level</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; </span>
 <span class="sd">    An object that can be played for conditioning.</span>
 <span class="sd">    You can add frames, events and rules to it to tune your conditioning. </span>
@@ -121,7 +121,7 @@
         <span class="sd">&#39;&#39;&#39; An image of the Level&#39;s combined frames. &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">combined_frame</span><span class="o">.</span><span class="n">make_img</span><span class="p">()</span>
 
-<div class="viewcode-block" id="Level.add_block"><a class="viewcode-back" href="../linmaze.html#Level.Level.add_block">[docs]</a>    <span class="k">def</span> <span class="nf">add_block</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame_type</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="Level.add_block"><a class="viewcode-back" href="../level.html#Level.Level.add_block">[docs]</a>    <span class="k">def</span> <span class="nf">add_block</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame_type</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; Adds a block of the specified type and parameters to the level. &#39;&#39;&#39;</span>
 
         <span class="n">frame_type</span> <span class="o">=</span> <span class="n">frame_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
@@ -167,7 +167,7 @@
         <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">frame</span><span class="p">))</span>
         <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">zone</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="Level.add_event"><a class="viewcode-back" href="../linmaze.html#Level.Level.add_event">[docs]</a>    <span class="k">def</span> <span class="nf">add_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">event_type</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+<div class="viewcode-block" id="Level.add_event"><a class="viewcode-back" href="../level.html#Level.Level.add_event">[docs]</a>    <span class="k">def</span> <span class="nf">add_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">event_type</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; </span>
 <span class="sd">        Adds an Event to the level which can be triggered by Rules.</span>
 
@@ -206,7 +206,7 @@
         <span class="k">if</span> <span class="n">event_type</span> <span class="o">==</span> <span class="s2">&quot;unpause&quot;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">Event</span><span class="o">.</span><span class="n">UnPause</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span></div>
 
-<div class="viewcode-block" id="Level.add_rule"><a class="viewcode-back" href="../linmaze.html#Level.Level.add_rule">[docs]</a>    <span class="k">def</span> <span class="nf">add_rule</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rule_type</span><span class="p">,</span> <span class="n">event_name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+<div class="viewcode-block" id="Level.add_rule"><a class="viewcode-back" href="../level.html#Level.Level.add_rule">[docs]</a>    <span class="k">def</span> <span class="nf">add_rule</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rule_type</span><span class="p">,</span> <span class="n">event_name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Adds a rule that triggers events based on animal behaviour.</span>
 
@@ -230,7 +230,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">rules</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Rule</span><span class="o">.</span><span class="n">SpeedRule</span><span class="p">(</span>
                 <span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="p">[</span><span class="n">event_name</span><span class="p">],</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">args</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span></div>
 
-<div class="viewcode-block" id="Level.render"><a class="viewcode-back" href="../linmaze.html#Level.Level.render">[docs]</a>    <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Level.render"><a class="viewcode-back" href="../level.html#Level.Level.render">[docs]</a>    <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; Renders all the frames of the level, making it ready to be played. &#39;&#39;&#39;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">rendered</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Rendering&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;:&#39;</span><span class="p">)</span>
@@ -238,11 +238,11 @@
             <span class="n">Frame</span><span class="o">.</span><span class="n">transition</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">transition_width</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">rendered</span> <span class="o">=</span> <span class="kc">True</span></div>
 
-<div class="viewcode-block" id="Level.show_image"><a class="viewcode-back" href="../linmaze.html#Level.Level.show_image">[docs]</a>    <span class="k">def</span> <span class="nf">show_image</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Level.show_image"><a class="viewcode-back" href="../level.html#Level.Level.show_image">[docs]</a>    <span class="k">def</span> <span class="nf">show_image</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; Displays the level as a picture &#39;&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Level.save_image"><a class="viewcode-back" href="../linmaze.html#Level.Level.save_image">[docs]</a>    <span class="k">def</span> <span class="nf">save_image</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Level.save_image"><a class="viewcode-back" href="../level.html#Level.Level.save_image">[docs]</a>    <span class="k">def</span> <span class="nf">save_image</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; Saves the picture of the Level &#39;&#39;&#39;</span>
         <span class="n">filename</span> <span class="o">=</span> <span class="n">select_file</span><span class="p">(</span><span class="n">defaultextension</span><span class="o">=</span><span class="s1">&#39;.bmp&#39;</span><span class="p">,</span>
                                <span class="n">filetypes</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;VR Level image&#39;</span><span class="p">,</span> <span class="s1">&#39;.bmp&#39;</span><span class="p">)],</span>
@@ -251,7 +251,7 @@
                                <span class="n">initialfile</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s1">&#39;RGB&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Level.save_summary"><a class="viewcode-back" href="../linmaze.html#Level.Level.save_summary">[docs]</a>    <span class="k">def</span> <span class="nf">save_summary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Level.save_summary"><a class="viewcode-back" href="../level.html#Level.Level.save_summary">[docs]</a>    <span class="k">def</span> <span class="nf">save_summary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; Saves a human readable summary of the Level &#39;&#39;&#39;</span>
         <span class="n">filename</span> <span class="o">=</span> <span class="n">select_file</span><span class="p">(</span><span class="n">defaultextension</span><span class="o">=</span><span class="s1">&#39;.txt&#39;</span><span class="p">,</span>
                                <span class="n">filetypes</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;Text summary&#39;</span><span class="p">,</span> <span class="s1">&#39;.txt&#39;</span><span class="p">)],</span>
@@ -262,7 +262,7 @@
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">summary_file</span><span class="p">:</span>
             <span class="n">summary_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="Level.play"><a class="viewcode-back" href="../linmaze.html#Level.Level.play">[docs]</a>    <span class="k">def</span> <span class="nf">play</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="Level.play"><a class="viewcode-back" href="../level.html#Level.Level.play">[docs]</a>    <span class="k">def</span> <span class="nf">play</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Plays the Level by making a Session for it.</span>
 

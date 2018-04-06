@@ -34,7 +34,7 @@
 <span></span><span class="sd">&#39;&#39;&#39; Events define something that can happen while the level is being played. Triggered by rules. &#39;&#39;&#39;</span>
 
 
-<div class="viewcode-block" id="Event"><a class="viewcode-back" href="../linmaze.html#Event.Event">[docs]</a><span class="k">class</span> <span class="nc">Event</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="Event"><a class="viewcode-back" href="../event.html#Event.Event">[docs]</a><span class="k">class</span> <span class="nc">Event</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; </span>
 <span class="sd">    Generic Event object all specific Events inherit from.</span>
 
@@ -47,7 +47,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">trigger_count</span> <span class="o">=</span> <span class="mi">0</span>
 
-<div class="viewcode-block" id="Event.trigger"><a class="viewcode-back" href="../linmaze.html#Event.Event.trigger">[docs]</a>    <span class="k">def</span> <span class="nf">trigger</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Event.trigger"><a class="viewcode-back" href="../event.html#Event.Event.trigger">[docs]</a>    <span class="k">def</span> <span class="nf">trigger</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; Triggers the Event. Prints Event information. &#39;&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">trigger_count</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;[&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trigger_count</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;]&quot;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span></div>
@@ -58,7 +58,7 @@
         <span class="sd">&#39;&#39;&#39; Tell whether it makes sense to trigger this event at the moment. &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="kc">True</span>
 
-<div class="viewcode-block" id="Event.set_session"><a class="viewcode-back" href="../linmaze.html#Event.Event.set_session">[docs]</a>    <span class="k">def</span> <span class="nf">set_session</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">):</span>
+<div class="viewcode-block" id="Event.set_session"><a class="viewcode-back" href="../event.html#Event.Event.set_session">[docs]</a>    <span class="k">def</span> <span class="nf">set_session</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; </span>
 <span class="sd">        Sets the Session the event will be triggered in. </span>
 
@@ -68,7 +68,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="o">=</span> <span class="n">session</span></div></div>
 
 
-<div class="viewcode-block" id="Teleport"><a class="viewcode-back" href="../linmaze.html#Event.Teleport">[docs]</a><span class="k">class</span> <span class="nc">Teleport</span><span class="p">(</span><span class="n">Event</span><span class="p">):</span>
+<div class="viewcode-block" id="Teleport"><a class="viewcode-back" href="../event.html#Event.Teleport">[docs]</a><span class="k">class</span> <span class="nc">Teleport</span><span class="p">(</span><span class="n">Event</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Teleports to a set location </span>
 <span class="sd">    </span>
@@ -80,7 +80,7 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">level</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">target_position</span> <span class="o">=</span> <span class="n">target_position</span>
 
-<div class="viewcode-block" id="Teleport.trigger"><a class="viewcode-back" href="../linmaze.html#Event.Teleport.trigger">[docs]</a>    <span class="k">def</span> <span class="nf">trigger</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Teleport.trigger"><a class="viewcode-back" href="../event.html#Event.Teleport.trigger">[docs]</a>    <span class="k">def</span> <span class="nf">trigger</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">teleport</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target_position</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">trigger</span><span class="p">()</span></div>
 
@@ -92,7 +92,7 @@
         <span class="k">return</span> <span class="s2">&quot;Teleport to position &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target_position</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="RandomTeleport"><a class="viewcode-back" href="../linmaze.html#Event.RandomTeleport">[docs]</a><span class="k">class</span> <span class="nc">RandomTeleport</span><span class="p">(</span><span class="n">Event</span><span class="p">):</span>
+<div class="viewcode-block" id="RandomTeleport"><a class="viewcode-back" href="../event.html#Event.RandomTeleport">[docs]</a><span class="k">class</span> <span class="nc">RandomTeleport</span><span class="p">(</span><span class="n">Event</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; </span>
 <span class="sd">    Teleports to a type of zone that is on the given list randomly. </span>
 <span class="sd">    </span>
@@ -104,7 +104,7 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">level</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">list_of_target_zones</span> <span class="o">=</span> <span class="n">list_of_target_zones</span>
 
-<div class="viewcode-block" id="RandomTeleport.trigger"><a class="viewcode-back" href="../linmaze.html#Event.RandomTeleport.trigger">[docs]</a>    <span class="k">def</span> <span class="nf">trigger</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="RandomTeleport.trigger"><a class="viewcode-back" href="../event.html#Event.RandomTeleport.trigger">[docs]</a>    <span class="k">def</span> <span class="nf">trigger</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">random_teleport</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">list_of_target_zones</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">trigger</span><span class="p">()</span></div>
 
@@ -116,7 +116,7 @@
         <span class="k">return</span> <span class="s2">&quot;Teleport to a random zone with type: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">list_of_target_zones</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="PortOn"><a class="viewcode-back" href="../linmaze.html#Event.PortOn">[docs]</a><span class="k">class</span> <span class="nc">PortOn</span><span class="p">(</span><span class="n">Event</span><span class="p">):</span>
+<div class="viewcode-block" id="PortOn"><a class="viewcode-back" href="../event.html#Event.PortOn">[docs]</a><span class="k">class</span> <span class="nc">PortOn</span><span class="p">(</span><span class="n">Event</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Turns on a port on the Level&#39;s Gramophone.</span>
 
@@ -128,7 +128,7 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">level</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="n">port</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
 
-<div class="viewcode-block" id="PortOn.trigger"><a class="viewcode-back" href="../linmaze.html#Event.PortOn.trigger">[docs]</a>    <span class="k">def</span> <span class="nf">trigger</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="PortOn.trigger"><a class="viewcode-back" href="../event.html#Event.PortOn.trigger">[docs]</a>    <span class="k">def</span> <span class="nf">trigger</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">gramophone</span><span class="o">.</span><span class="n">port_on</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">trigger</span><span class="p">()</span></div>
 
@@ -140,14 +140,19 @@
         <span class="k">return</span> <span class="ow">not</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">gramophone</span><span class="o">.</span><span class="n">ports</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">]</span><span class="o">.</span><span class="n">state</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="PortOff"><a class="viewcode-back" href="../linmaze.html#Event.PortOff">[docs]</a><span class="k">class</span> <span class="nc">PortOff</span><span class="p">(</span><span class="n">Event</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; Turns off a port on the Level&#39;s gramophone &#39;&#39;&#39;</span>
+<div class="viewcode-block" id="PortOff"><a class="viewcode-back" href="../event.html#Event.PortOff">[docs]</a><span class="k">class</span> <span class="nc">PortOff</span><span class="p">(</span><span class="n">Event</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Turns off a port on the Level&#39;s Gramophone.</span>
+
+<span class="sd">    :param port: Which output to use on the device.</span>
+<span class="sd">    :type port: str -- &#39;A&#39;, &#39;B&#39; or &#39;C&#39;</span>
+<span class="sd">    &#39;&#39;&#39;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="p">,</span> <span class="n">port</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">level</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="n">port</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
 
-<div class="viewcode-block" id="PortOff.trigger"><a class="viewcode-back" href="../linmaze.html#Event.PortOff.trigger">[docs]</a>    <span class="k">def</span> <span class="nf">trigger</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="PortOff.trigger"><a class="viewcode-back" href="../event.html#Event.PortOff.trigger">[docs]</a>    <span class="k">def</span> <span class="nf">trigger</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">gramophone</span><span class="o">.</span><span class="n">port_off</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">trigger</span><span class="p">()</span></div>
 
@@ -158,7 +163,8 @@
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s2">&quot;Turn OFF port &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="StartBurst"><a class="viewcode-back" href="../linmaze.html#Event.StartBurst">[docs]</a><span class="k">class</span> <span class="nc">StartBurst</span><span class="p">(</span><span class="n">Event</span><span class="p">):</span>
+
+<div class="viewcode-block" id="StartBurst"><a class="viewcode-back" href="../event.html#Event.StartBurst">[docs]</a><span class="k">class</span> <span class="nc">StartBurst</span><span class="p">(</span><span class="n">Event</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; Starts bursting a port on the Level&#39;s gramophone &#39;&#39;&#39;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">on_time</span><span class="p">,</span> <span class="n">pause_time</span><span class="p">):</span>
@@ -167,7 +173,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">on_time</span> <span class="o">=</span> <span class="n">on_time</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pause_time</span> <span class="o">=</span> <span class="n">pause_time</span>
 
-<div class="viewcode-block" id="StartBurst.trigger"><a class="viewcode-back" href="../linmaze.html#Event.StartBurst.trigger">[docs]</a>    <span class="k">def</span> <span class="nf">trigger</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="StartBurst.trigger"><a class="viewcode-back" href="../event.html#Event.StartBurst.trigger">[docs]</a>    <span class="k">def</span> <span class="nf">trigger</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">gramophone</span><span class="o">.</span><span class="n">start_burst</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_time</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pause_time</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">trigger</span><span class="p">()</span></div>
@@ -181,14 +187,14 @@
             <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pause_time</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; sec pauses on port &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="StopBurst"><a class="viewcode-back" href="../linmaze.html#Event.StopBurst">[docs]</a><span class="k">class</span> <span class="nc">StopBurst</span><span class="p">(</span><span class="n">Event</span><span class="p">):</span>
+<div class="viewcode-block" id="StopBurst"><a class="viewcode-back" href="../event.html#Event.StopBurst">[docs]</a><span class="k">class</span> <span class="nc">StopBurst</span><span class="p">(</span><span class="n">Event</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; Stops bursting a port on the Level&#39;s gramophone &#39;&#39;&#39;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="p">,</span> <span class="n">port</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">level</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="n">port</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
 
-<div class="viewcode-block" id="StopBurst.trigger"><a class="viewcode-back" href="../linmaze.html#Event.StopBurst.trigger">[docs]</a>    <span class="k">def</span> <span class="nf">trigger</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="StopBurst.trigger"><a class="viewcode-back" href="../event.html#Event.StopBurst.trigger">[docs]</a>    <span class="k">def</span> <span class="nf">trigger</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">gramophone</span><span class="o">.</span><span class="n">stop_burst</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">trigger</span><span class="p">()</span></div>
 
@@ -201,14 +207,14 @@
         <span class="k">return</span> <span class="s2">&quot;Stop the bursts on port &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="Pause"><a class="viewcode-back" href="../linmaze.html#Event.Pause">[docs]</a><span class="k">class</span> <span class="nc">Pause</span><span class="p">(</span><span class="n">Event</span><span class="p">):</span>
+<div class="viewcode-block" id="Pause"><a class="viewcode-back" href="../event.html#Event.Pause">[docs]</a><span class="k">class</span> <span class="nc">Pause</span><span class="p">(</span><span class="n">Event</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; Pauses the Level where it is or at a given position &#39;&#39;&#39;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="p">,</span> <span class="n">pause_position</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">level</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pause_position</span> <span class="o">=</span> <span class="n">pause_position</span>
 
-<div class="viewcode-block" id="Pause.trigger"><a class="viewcode-back" href="../linmaze.html#Event.Pause.trigger">[docs]</a>    <span class="k">def</span> <span class="nf">trigger</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Pause.trigger"><a class="viewcode-back" href="../event.html#Event.Pause.trigger">[docs]</a>    <span class="k">def</span> <span class="nf">trigger</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">pause</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pause_position</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">trigger</span><span class="p">()</span></div>
 
@@ -221,14 +227,14 @@
         <span class="k">return</span> <span class="s2">&quot;Pause at &quot;</span> <span class="o">+</span> <span class="n">pos_name</span> <span class="o">+</span> <span class="s2">&quot; position&quot;</span></div>
 
 
-<div class="viewcode-block" id="UnPause"><a class="viewcode-back" href="../linmaze.html#Event.UnPause">[docs]</a><span class="k">class</span> <span class="nc">UnPause</span><span class="p">(</span><span class="n">Event</span><span class="p">):</span>
+<div class="viewcode-block" id="UnPause"><a class="viewcode-back" href="../event.html#Event.UnPause">[docs]</a><span class="k">class</span> <span class="nc">UnPause</span><span class="p">(</span><span class="n">Event</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; Unpauses the Level where it is or at a given position &#39;&#39;&#39;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="p">,</span> <span class="n">unpause_position</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">level</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">unpause_position</span> <span class="o">=</span> <span class="n">unpause_position</span>
 
-<div class="viewcode-block" id="UnPause.trigger"><a class="viewcode-back" href="../linmaze.html#Event.UnPause.trigger">[docs]</a>    <span class="k">def</span> <span class="nf">trigger</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="UnPause.trigger"><a class="viewcode-back" href="../event.html#Event.UnPause.trigger">[docs]</a>    <span class="k">def</span> <span class="nf">trigger</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">unpause</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unpause_position</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">trigger</span><span class="p">()</span></div>
 

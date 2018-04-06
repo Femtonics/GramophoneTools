@@ -3,36 +3,43 @@ LinMaze module
 
 Main module
 -----------
+.. toctree::
+   :maxdepth: 2
 
-.. automodule:: LinMaze
-   :members:
+   linmaze_main
 
 Level
 -----------
+.. toctree::
+   :maxdepth: 2
 
-.. automodule:: Level
-   :members:
+   level
 
 Frame
 -----------
+.. toctree::
+   :maxdepth: 2
 
-.. automodule:: Frame
-   :members:
+   frame
+
 
 Event
 -----------
+.. toctree::
+   :maxdepth: 2
 
-.. automodule:: Event
-   :members:
+   event
 
 Rule
 -----------
+.. toctree::
+   :maxdepth: 2
 
-.. automodule:: Rule
-   :members:
+   rule
 
 Zone
 -----------
+.. toctree::
+   :maxdepth: 2
 
-.. automodule:: Zone
-   :members:
+   zone

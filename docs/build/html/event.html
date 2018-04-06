@@ -1,0 +1,355 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Abstract Event class &#8212; GramophoneTools 0.1-beta documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Gramophone IO module" href="io.html" />
+    <link rel="prev" title="Static functions" href="frame.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="abstract-event-class">
+<h1>Abstract Event class<a class="headerlink" href="#abstract-event-class" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="Event.Event">
+<em class="property">class </em><code class="descclassname">Event.</code><code class="descname">Event</code><span class="sig-paren">(</span><em>level</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Event.html#Event"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Event.Event" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generic Event object all specific Events inherit from.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>level</strong> (<em>Level</em>) – The Level this Event will be used on</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="Event.Event.set_session">
+<code class="descname">set_session</code><span class="sig-paren">(</span><em>session</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Event.html#Event.set_session"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Event.Event.set_session" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the Session the event will be triggered in.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>session</strong> (<a class="reference internal" href="linmaze.html#LinMaze.Session" title="LinMaze.Session"><em>Session</em></a>) – The session this Event will be triggered in</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Event.Event.trigger">
+<code class="descname">trigger</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Event.html#Event.trigger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Event.Event.trigger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Triggers the Event. Prints Event information.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Event.Event.triggerable">
+<code class="descname">triggerable</code><a class="headerlink" href="#Event.Event.triggerable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tell whether it makes sense to trigger this event at the moment.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="specific-events">
+<h1>Specific Events<a class="headerlink" href="#specific-events" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="teleportation">
+<h2>Teleportation<a class="headerlink" href="#teleportation" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="Event.Teleport">
+<em class="property">class </em><code class="descclassname">Event.</code><code class="descname">Teleport</code><span class="sig-paren">(</span><em>level</em>, <em>target_position</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Event.html#Teleport"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Event.Teleport" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#Event.Event" title="Event.Event"><code class="xref py py-class docutils literal notranslate"><span class="pre">Event.Event</span></code></a></p>
+<p>Teleports to a set location</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>target_position</strong> (<em>int</em>) – The target of the teleportation.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="Event.Teleport.trigger">
+<code class="descname">trigger</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Event.html#Teleport.trigger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Event.Teleport.trigger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Triggers the Event. Prints Event information.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Event.Teleport.triggerable">
+<code class="descname">triggerable</code><a class="headerlink" href="#Event.Teleport.triggerable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tell whether it makes sense to trigger this event at the moment.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="random-teleportation">
+<h2>Random Teleportation<a class="headerlink" href="#random-teleportation" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="Event.RandomTeleport">
+<em class="property">class </em><code class="descclassname">Event.</code><code class="descname">RandomTeleport</code><span class="sig-paren">(</span><em>level</em>, <em>list_of_target_zones</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Event.html#RandomTeleport"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Event.RandomTeleport" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#Event.Event" title="Event.Event"><code class="xref py py-class docutils literal notranslate"><span class="pre">Event.Event</span></code></a></p>
+<p>Teleports to a type of zone that is on the given list randomly.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>list_of_target_zones</strong> (<em>[</em><a class="reference internal" href="linmaze.html#Zone.Zone" title="Zone.Zone"><em>Zone</em></a><em>]</em>) – The possible Zones this teleport can land is.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="Event.RandomTeleport.trigger">
+<code class="descname">trigger</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Event.html#RandomTeleport.trigger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Event.RandomTeleport.trigger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Triggers the Event. Prints Event information.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Event.RandomTeleport.triggerable">
+<code class="descname">triggerable</code><a class="headerlink" href="#Event.RandomTeleport.triggerable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tell whether it makes sense to trigger this event at the moment.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="port-on-off">
+<h2>Port On/Off<a class="headerlink" href="#port-on-off" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="Event.PortOn">
+<em class="property">class </em><code class="descclassname">Event.</code><code class="descname">PortOn</code><span class="sig-paren">(</span><em>level</em>, <em>port</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Event.html#PortOn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Event.PortOn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#Event.Event" title="Event.Event"><code class="xref py py-class docutils literal notranslate"><span class="pre">Event.Event</span></code></a></p>
+<p>Turns on a port on the Level’s Gramophone.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>port</strong> (<em>str -- 'A'</em><em>, </em><em>'B'</em><em> or </em><em>'C'</em>) – Which output to use on the device.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="Event.PortOn.trigger">
+<code class="descname">trigger</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Event.html#PortOn.trigger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Event.PortOn.trigger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Triggers the Event. Prints Event information.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Event.PortOn.triggerable">
+<code class="descname">triggerable</code><a class="headerlink" href="#Event.PortOn.triggerable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tell whether it makes sense to trigger this event at the moment.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="Event.PortOff">
+<em class="property">class </em><code class="descclassname">Event.</code><code class="descname">PortOff</code><span class="sig-paren">(</span><em>level</em>, <em>port</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Event.html#PortOff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Event.PortOff" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#Event.Event" title="Event.Event"><code class="xref py py-class docutils literal notranslate"><span class="pre">Event.Event</span></code></a></p>
+<p>Turns off a port on the Level’s Gramophone.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>port</strong> (<em>str -- 'A'</em><em>, </em><em>'B'</em><em> or </em><em>'C'</em>) – Which output to use on the device.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="Event.PortOff.trigger">
+<code class="descname">trigger</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Event.html#PortOff.trigger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Event.PortOff.trigger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Triggers the Event. Prints Event information.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Event.PortOff.triggerable">
+<code class="descname">triggerable</code><a class="headerlink" href="#Event.PortOff.triggerable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tell whether it makes sense to trigger this event at the moment.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="starting-stopping-bursting">
+<h2>Starting/Stopping bursting<a class="headerlink" href="#starting-stopping-bursting" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="Event.StartBurst">
+<em class="property">class </em><code class="descclassname">Event.</code><code class="descname">StartBurst</code><span class="sig-paren">(</span><em>level</em>, <em>port</em>, <em>on_time</em>, <em>pause_time</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Event.html#StartBurst"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Event.StartBurst" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#Event.Event" title="Event.Event"><code class="xref py py-class docutils literal notranslate"><span class="pre">Event.Event</span></code></a></p>
+<p>Starts bursting a port on the Level’s gramophone</p>
+<dl class="method">
+<dt id="Event.StartBurst.trigger">
+<code class="descname">trigger</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Event.html#StartBurst.trigger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Event.StartBurst.trigger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Triggers the Event. Prints Event information.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Event.StartBurst.triggerable">
+<code class="descname">triggerable</code><a class="headerlink" href="#Event.StartBurst.triggerable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tell whether it makes sense to trigger this event at the moment.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="Event.StopBurst">
+<em class="property">class </em><code class="descclassname">Event.</code><code class="descname">StopBurst</code><span class="sig-paren">(</span><em>level</em>, <em>port</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Event.html#StopBurst"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Event.StopBurst" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#Event.Event" title="Event.Event"><code class="xref py py-class docutils literal notranslate"><span class="pre">Event.Event</span></code></a></p>
+<p>Stops bursting a port on the Level’s gramophone</p>
+<dl class="method">
+<dt id="Event.StopBurst.trigger">
+<code class="descname">trigger</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Event.html#StopBurst.trigger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Event.StopBurst.trigger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Triggers the Event. Prints Event information.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Event.StopBurst.triggerable">
+<code class="descname">triggerable</code><a class="headerlink" href="#Event.StopBurst.triggerable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tell whether it makes sense to trigger this event at the moment.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="pausing-unpausing">
+<h2>Pausing/Unpausing<a class="headerlink" href="#pausing-unpausing" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="Event.Pause">
+<em class="property">class </em><code class="descclassname">Event.</code><code class="descname">Pause</code><span class="sig-paren">(</span><em>level</em>, <em>pause_position=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Event.html#Pause"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Event.Pause" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#Event.Event" title="Event.Event"><code class="xref py py-class docutils literal notranslate"><span class="pre">Event.Event</span></code></a></p>
+<p>Pauses the Level where it is or at a given position</p>
+<dl class="method">
+<dt id="Event.Pause.trigger">
+<code class="descname">trigger</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Event.html#Pause.trigger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Event.Pause.trigger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Triggers the Event. Prints Event information.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Event.Pause.triggerable">
+<code class="descname">triggerable</code><a class="headerlink" href="#Event.Pause.triggerable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tell whether it makes sense to trigger this event at the moment.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="Event.UnPause">
+<em class="property">class </em><code class="descclassname">Event.</code><code class="descname">UnPause</code><span class="sig-paren">(</span><em>level</em>, <em>unpause_position=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Event.html#UnPause"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Event.UnPause" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#Event.Event" title="Event.Event"><code class="xref py py-class docutils literal notranslate"><span class="pre">Event.Event</span></code></a></p>
+<p>Unpauses the Level where it is or at a given position</p>
+<dl class="method">
+<dt id="Event.UnPause.trigger">
+<code class="descname">trigger</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Event.html#UnPause.trigger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Event.UnPause.trigger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Triggers the Event. Prints Event information.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Event.UnPause.triggerable">
+<code class="descname">triggerable</code><a class="headerlink" href="#Event.UnPause.triggerable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tell whether it makes sense to trigger this event at the moment.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="index.html">Table Of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="gramrec.html">Gramophone Recorder module</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="linmaze.html">LinMaze module</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="linmaze.html#module-LinMaze">Main module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linmaze.html#level">Level</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linmaze.html#frame">Frame</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="linmaze.html#event">Event</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Abstract Event class</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#specific-events">Specific Events</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#teleportation">Teleportation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#random-teleportation">Random Teleportation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#port-on-off">Port On/Off</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#starting-stopping-bursting">Starting/Stopping bursting</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pausing-unpausing">Pausing/Unpausing</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="linmaze.html#module-Rule">Rule</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linmaze.html#module-Zone">Zone</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="io.html">Gramophone IO module</a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="linmaze.html">LinMaze module</a><ul>
+      <li>Previous: <a href="frame.html" title="previous chapter">Static functions</a></li>
+      <li>Next: <a href="io.html" title="next chapter">Gramophone IO module</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Femtonics Ltd..
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/event.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
