@@ -44,8 +44,26 @@
 
 
 <div class="viewcode-block" id="Level"><a class="viewcode-back" href="../linmaze.html#Level.Level">[docs]</a><span class="k">class</span> <span class="nc">Level</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; An object that can be played for conditioning.</span>
-<span class="sd">    You can add frames, events and rules to it to tune your conditioning. &#39;&#39;&#39;</span>
+    <span class="sd">&#39;&#39;&#39; </span>
+<span class="sd">    An object that can be played for conditioning.</span>
+<span class="sd">    You can add frames, events and rules to it to tune your conditioning. </span>
+<span class="sd">    </span>
+<span class="sd">    :param name: The name this Level will be refered to by (eg. in the default filename when saving)</span>
+<span class="sd">    :type name:  str</span>
+
+<span class="sd">    :param screen_res: The resolution of the simulation window. Set it to the resolution of the monitor </span>
+<span class="sd">        if you are going to make the simulation full screen. eg.: (800,600)</span>
+<span class="sd">    :type screen_res: tuple of ints</span>
+
+<span class="sd">    :param zone_offset: Zone offset in pixels, ie. what is the position of the mouse on the screen from the left.</span>
+<span class="sd">    :type zone_offset: int</span>
+
+<span class="sd">    :param transition_width: How long should the transition (gradual fade) shold be between zones in pixels.</span>
+<span class="sd">    :type transition_width: int</span>
+
+<span class="sd">    :param rgb: Red, Green and Blue levels of the frames as floats between 0 and 1.</span>
+<span class="sd">    :type rgb: tuple of floats</span>
+<span class="sd">    &#39;&#39;&#39;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">screen_res</span><span class="p">,</span> <span class="n">zone_offset</span><span class="p">,</span>
                  <span class="n">transition_width</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">rgb</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)):</span>
@@ -83,7 +101,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">dummy_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; A frame that looks like the begining of the level &#39;&#39;&#39;</span>
+        <span class="sd">&#39;&#39;&#39; A frame that looks like the begining of the level. &#39;&#39;&#39;</span>
         <span class="n">dummy_frame</span> <span class="o">=</span> <span class="n">Frame</span><span class="o">.</span><span class="n">Frame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">screen_width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">screen_height</span><span class="p">)</span>
         <span class="n">dummy_frame</span><span class="o">.</span><span class="n">texture</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">combined_frame</span><span class="o">.</span><span class="n">texture</span><span class="p">[:,</span> <span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">screen_width</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span>
             <span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
@@ -92,7 +110,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">combined_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; All the frames combined left to right &#39;&#39;&#39;</span>
+        <span class="sd">&#39;&#39;&#39; All the frames combined left to right. &#39;&#39;&#39;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">rendered</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="p">()</span>
 
@@ -100,7 +118,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">image</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; An image of the Level&#39;s combined frames &#39;&#39;&#39;</span>
+        <span class="sd">&#39;&#39;&#39; An image of the Level&#39;s combined frames. &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">combined_frame</span><span class="o">.</span><span class="n">make_img</span><span class="p">()</span>
 
 <div class="viewcode-block" id="Level.add_block"><a class="viewcode-back" href="../linmaze.html#Level.Level.add_block">[docs]</a>    <span class="k">def</span> <span class="nf">add_block</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame_type</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -150,7 +168,18 @@
         <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">zone</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="Level.add_event"><a class="viewcode-back" href="../linmaze.html#Level.Level.add_event">[docs]</a>    <span class="k">def</span> <span class="nf">add_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">event_type</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; Adds an Event to the level which can be triggered by Rules &#39;&#39;&#39;</span>
+        <span class="sd">&#39;&#39;&#39; </span>
+<span class="sd">        Adds an Event to the level which can be triggered by Rules.</span>
+
+<span class="sd">        :param name: The name this Event can be referenced by</span>
+<span class="sd">        :type name: string</span>
+
+<span class="sd">        :param event_type: type of the event can be &#39;teleport&#39;, &#39;random_teleport&#39;, </span>
+<span class="sd">            &#39;start_burst&#39;, &#39;stop_burst&#39;, &#39;port_on&#39;, &#39;port_off&#39;, &#39;pause&#39;, &#39;unpause&#39;</span>
+<span class="sd">        :type event_type: string</span>
+
+<span class="sd">        :param *args: The arguments for the Event of the given type.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
 
         <span class="k">if</span> <span class="n">event_type</span> <span class="o">==</span> <span class="s2">&quot;teleport&quot;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">Event</span><span class="o">.</span><span class="n">Teleport</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
@@ -178,7 +207,17 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">Event</span><span class="o">.</span><span class="n">UnPause</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span></div>
 
 <div class="viewcode-block" id="Level.add_rule"><a class="viewcode-back" href="../linmaze.html#Level.Level.add_rule">[docs]</a>    <span class="k">def</span> <span class="nf">add_rule</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rule_type</span><span class="p">,</span> <span class="n">event_name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; Adds a rule that triggers events based on animal behaviour &#39;&#39;&#39;</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Adds a rule that triggers events based on animal behaviour.</span>
+
+<span class="sd">        :param rule_type: The type of this rule, can be &#39;zone&#39;, &#39;velocity&#39; or &#39;speed&#39;.</span>
+<span class="sd">        :type rule_type: string</span>
+
+<span class="sd">        :param event_name: The name of the Event this Rule can trigger.</span>
+<span class="sd">        :type event_name: string</span>
+
+<span class="sd">        :param *args: The arguments for the Rule of the given type.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">if</span> <span class="n">rule_type</span> <span class="o">==</span> <span class="s2">&quot;zone&quot;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">rules</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Rule</span><span class="o">.</span><span class="n">ZoneRule</span><span class="p">(</span>
                 <span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="p">[</span><span class="n">event_name</span><span class="p">],</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
@@ -224,8 +263,14 @@
             <span class="n">summary_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="Level.play"><a class="viewcode-back" href="../linmaze.html#Level.Level.play">[docs]</a>    <span class="k">def</span> <span class="nf">play</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; Plays the level &#39;&#39;&#39;</span>
-        <span class="n">play_session</span> <span class="o">=</span> <span class="n">LinMaze</span><span class="o">.</span><span class="n">Session</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Plays the Level by making a Session for it.</span>
+
+<span class="sd">        :param *args: Arguments of the Session created.</span>
+<span class="sd">        :param *kwargs: Keyword arguments of the Session created.</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">LinMaze</span><span class="o">.</span><span class="n">Session</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
         <span class="c1"># play_session.start()</span>
 </pre></div>
 

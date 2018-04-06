@@ -175,6 +175,22 @@ event if the <code class="docutils literal notranslate"><span class="pre">ESC</s
 <em class="property">class </em><code class="descclassname">Level.</code><code class="descname">Level</code><span class="sig-paren">(</span><em>name</em>, <em>screen_res</em>, <em>zone_offset</em>, <em>transition_width=100</em>, <em>rgb=(1</em>, <em>1</em>, <em>1)</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Level.html#Level"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Level.Level" title="Permalink to this definition">¶</a></dt>
 <dd><p>An object that can be played for conditioning.
 You can add frames, events and rules to it to tune your conditioning.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> (<em>str</em>) – The name this Level will be refered to by (eg. in the default filename when saving)</li>
+<li><strong>screen_res</strong> (<em>tuple of ints</em>) – The resolution of the simulation window. Set it to the resolution of the monitor 
+if you are going to make the simulation full screen. eg.: (800,600)</li>
+<li><strong>zone_offset</strong> (<em>int</em>) – Zone offset in pixels, ie. what is the position of the mouse on the screen from the left.</li>
+<li><strong>transition_width</strong> (<em>int</em>) – How long should the transition (gradual fade) shold be between zones in pixels.</li>
+<li><strong>rgb</strong> (<em>tuple of floats</em>) – Red, Green and Blue levels of the frames as floats between 0 and 1.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 <dl class="method">
 <dt id="Level.Level.add_block">
 <code class="descname">add_block</code><span class="sig-paren">(</span><em>frame_type</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Level.html#Level.add_block"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Level.Level.add_block" title="Permalink to this definition">¶</a></dt>
@@ -184,37 +200,80 @@ You can add frames, events and rules to it to tune your conditioning.</p>
 <dl class="method">
 <dt id="Level.Level.add_event">
 <code class="descname">add_event</code><span class="sig-paren">(</span><em>name</em>, <em>event_type</em>, <em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Level.html#Level.add_event"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Level.Level.add_event" title="Permalink to this definition">¶</a></dt>
-<dd><p>Adds an Event to the level which can be triggered by Rules</p>
+<dd><p>Adds an Event to the level which can be triggered by Rules.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> (<em>string</em>) – The name this Event can be referenced by</li>
+<li><strong>event_type</strong> (<em>string</em>) – type of the event can be ‘teleport’, ‘random_teleport’, 
+‘start_burst’, ‘stop_burst’, ‘port_on’, ‘port_off’, ‘pause’, ‘unpause’</li>
+<li><strong>*args</strong> – <p>The arguments for the Event of the given type.</p>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="Level.Level.add_rule">
 <code class="descname">add_rule</code><span class="sig-paren">(</span><em>rule_type</em>, <em>event_name</em>, <em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Level.html#Level.add_rule"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Level.Level.add_rule" title="Permalink to this definition">¶</a></dt>
-<dd><p>Adds a rule that triggers events based on animal behaviour</p>
+<dd><p>Adds a rule that triggers events based on animal behaviour.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>rule_type</strong> (<em>string</em>) – The type of this rule, can be ‘zone’, ‘velocity’ or ‘speed’.</li>
+<li><strong>event_name</strong> (<em>string</em>) – The name of the Event this Rule can trigger.</li>
+<li><strong>*args</strong> – <p>The arguments for the Rule of the given type.</p>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="Level.Level.combined_frame">
 <code class="descname">combined_frame</code><a class="headerlink" href="#Level.Level.combined_frame" title="Permalink to this definition">¶</a></dt>
-<dd><p>All the frames combined left to right</p>
+<dd><p>All the frames combined left to right.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="Level.Level.dummy_frame">
 <code class="descname">dummy_frame</code><a class="headerlink" href="#Level.Level.dummy_frame" title="Permalink to this definition">¶</a></dt>
-<dd><p>A frame that looks like the begining of the level</p>
+<dd><p>A frame that looks like the begining of the level.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="Level.Level.image">
 <code class="descname">image</code><a class="headerlink" href="#Level.Level.image" title="Permalink to this definition">¶</a></dt>
-<dd><p>An image of the Level’s combined frames</p>
+<dd><p>An image of the Level’s combined frames.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="Level.Level.play">
 <code class="descname">play</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Level.html#Level.play"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Level.Level.play" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plays the level</p>
+<dd><p>Plays the Level by making a Session for it.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>*args</strong> – <p>Arguments of the Session created.</p>
+</li>
+<li><strong>*kwargs</strong> – <p>Keyword arguments of the Session created.</p>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">

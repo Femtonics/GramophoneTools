@@ -145,7 +145,7 @@ class Level(object):
             'start_burst', 'stop_burst', 'port_on', 'port_off', 'pause', 'unpause'
         :type event_type: string
 
-        :param *args: The arguments for the Event of the given type.
+        :param args: The arguments for the Event of the given type.
         '''
 
         if event_type == "teleport":
@@ -183,7 +183,7 @@ class Level(object):
         :param event_name: The name of the Event this Rule can trigger.
         :type event_name: string
 
-        :param *args: The arguments for the Rule of the given type.
+        :param args: The arguments for the Rule of the given type.
         '''
         if rule_type == "zone":
             self.rules.append(Rule.ZoneRule(
@@ -233,8 +233,8 @@ class Level(object):
         '''
         Plays the Level by making a Session for it.
 
-        :param *args: Arguments of the Session created.
-        :param *kwargs: Keyword arguments of the Session created.
+        :param args: Arguments of the Session created.
+        :param kwargs: Keyword arguments of the Session created.
 
         '''
         LinMaze.Session(self, *args, **kwargs)
