@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='GramophoneTools',
-    version='0.1.2',
+    version='0.1.3',
     description='Tools for Gramophone systems by Femtonics Ltd.',
     url='http://femtonics.eu/',
     author='Femtonics Ltd.',
@@ -32,5 +32,9 @@ setup(
         'pyqtgraph',
         'matplotlib', 
         'opencv-python'],
-    python_requires='>=3'
+    python_requires='>=3',
+    package_data={
+        'GramophoneTools.LinMaze': ['res/icon.png'],
+        'GramophoneTools.Recorder': ['*.ui','*.pyw'],
+        }
 )

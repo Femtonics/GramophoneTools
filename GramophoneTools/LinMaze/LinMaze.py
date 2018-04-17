@@ -36,7 +36,7 @@ class VRWindow(pyglet.window.Window):
         self.set_caption('pyVR - Monitor #' + str(screen_number + 1))
 
         dir = os.path.dirname(__file__)
-        icon = pyglet.image.load(dir+'\\res\\LinMaze_Icon.png')
+        icon = pyglet.image.load(dir+'\\res\\icon.png')
         self.set_icon(icon)
 
         # OpenGL init
