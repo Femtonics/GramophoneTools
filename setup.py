@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='GramophoneTools',
-    version='0.1',
+    version='0.1.2',
     description='Tools for Gramophone systems by Femtonics Ltd.',
     url='http://femtonics.eu/',
     author='Femtonics Ltd.',
