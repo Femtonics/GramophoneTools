@@ -20,7 +20,7 @@ setup(
     project_urls={
         'Documentation': '',
         'User Guide': ''},
-    packages=['GramohponeTools.IO', 'GramohponeTools.LinMaze', 'GramohponeTools.LinMaze.Tools', 'GramohponeTools.Recorder'],
+    packages=['GramophoneTools.IO', 'GramophoneTools.LinMaze', 'GramophoneTools.LinMaze.Tools', 'GramophoneTools.Recorder'],
     install_requires=[
         'h5py', 
         'PyQt5', 
