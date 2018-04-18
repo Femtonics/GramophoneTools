@@ -14,10 +14,11 @@
 #
 import os
 import sys
+sys.path.insert(0, os.path.abspath('../../GramophoneTools'))
 sys.path.insert(0, os.path.abspath('../../GramophoneTools/Recorder'))
 sys.path.insert(0, os.path.abspath('../../GramophoneTools/LinMaze'))
 sys.path.insert(0, os.path.abspath('../../GramophoneTools/IO'))
-
+from ver import __version__ as g_ver
 
 # -- Project information -----------------------------------------------------
 
@@ -26,9 +27,9 @@ copyright = '2018, Femtonics Ltd.'
 author = 'Femtonics Ltd.'
 
 # The short X.Y version
-version = '0.1.4'
+version = g_ver
 # The full version, including alpha/beta/rc tags
-release = '0.1.4-beta'
+release = g_ver+'-beta'
 
 
 # -- General configuration ---------------------------------------------------
@@ -91,7 +92,7 @@ html_theme_options = {
     'canonical_url': '',
     'analytics_id': '',
     'logo_only': False,
-    'display_version': False,
+    'display_version': True,
     'prev_next_buttons_location': None,
     'style_external_links': True,
     'vcs_pageview_mode': '',
