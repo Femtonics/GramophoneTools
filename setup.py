@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='GramophoneTools',
-    version='0.1.3',
+    version='0.1.4',
     description='Tools for Gramophone systems by Femtonics Ltd.',
     url='http://femtonics.eu/',
     author='Femtonics Ltd.',
@@ -20,21 +20,25 @@ setup(
     project_urls={
         'Documentation': '',
         'User Guide': ''},
-    packages=['GramophoneTools.IO', 'GramophoneTools.LinMaze', 'GramophoneTools.LinMaze.Tools', 'GramophoneTools.Recorder'],
+    packages=['GramophoneTools.IO', 'GramophoneTools.LinMaze',
+              'GramophoneTools.LinMaze.Tools', 'GramophoneTools.Recorder'],
     install_requires=[
-        'h5py', 
-        'PyQt5', 
-        'numpy', 
-        'dill', 
-        'pillow', 
+        'h5py',
+        'PyQt5',
+        'numpy',
+        'dill',
+        'pillow',
         'pyglet',
         'pyserial',
         'pyqtgraph',
-        'matplotlib', 
+        'matplotlib',
         'opencv-python'],
     python_requires='>=3',
     package_data={
         'GramophoneTools.LinMaze': ['res/icon.png'],
-        'GramophoneTools.Recorder': ['*.ui','*.pyw'],
-        }
+        'GramophoneTools.Recorder': ['*.ui', '*.pyw'],
+    },
+    entry_points={
+        'gui_scripts': ['gramrec = GramophoneTools.Recorder.Main:main']
+    }
 )

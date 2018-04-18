@@ -26,9 +26,9 @@ copyright = '2018, Femtonics Ltd.'
 author = 'Femtonics Ltd.'
 
 # The short X.Y version
-version = '0.1'
+version = '0.1.4'
 # The full version, including alpha/beta/rc tags
-release = '0.1-beta'
+release = '0.1.4-beta'
 
 
 # -- General configuration ---------------------------------------------------
