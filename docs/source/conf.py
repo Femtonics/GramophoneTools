@@ -14,9 +14,9 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../../Recorder'))
-sys.path.insert(0, os.path.abspath('../../LinMaze'))
-sys.path.insert(0, os.path.abspath('../../IO'))
+sys.path.insert(0, os.path.abspath('../../GramophoneTools/Recorder'))
+sys.path.insert(0, os.path.abspath('../../GramophoneTools/LinMaze'))
+sys.path.insert(0, os.path.abspath('../../GramophoneTools/IO'))
 
 
 # -- Project information -----------------------------------------------------
