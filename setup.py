@@ -1,9 +1,10 @@
 # Always prefer setuptools over distutils
 from setuptools import setup, find_packages
+from GramophoneTools.ver import __version__ as g_ver
 
 setup(
     name='GramophoneTools',
-    version='0.1.7',
+    version=g_ver,
     description='Tools for Gramophone systems by Femtonics Ltd.',
     url='http://femtonics.eu/',
     author='Femtonics Ltd.',
