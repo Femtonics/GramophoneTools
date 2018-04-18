@@ -22,6 +22,7 @@ from GramophoneTools.IO.QGramophone import QGramophone
 
 # GLOBALS
 DIR = os.path.dirname(__file__)
+sys.path.append(DIR)
 ABOUT_WIN_BASE, ABOUT_WIN_UI = loadUiType(DIR+'\\about.ui')
 LICENSE_WIN_BASE, LICENSE_WIN_UI = loadUiType(DIR+'\\license.ui')
 MAIN_WIN_BASE, MAIN_WIN_UI = loadUiType(DIR+'\\main.ui')
