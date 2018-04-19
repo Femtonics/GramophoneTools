@@ -16,7 +16,23 @@ from GramophoneTools.LinMaze.Tools.filehandler import select_file
 
 
 class VRWindow(pyglet.window.Window):
-    ''' A pyglet window that can display VR on a given screen '''
+    '''
+    A pyglet window that can display VR on a given screen.
+    
+    :param session: The session that is played in this window.
+    :type session: Session
+
+    :param screen_number: Which monitor the window should display on.
+    :type screen_number: int
+
+    :param mirrored: True if the contents of this window should be 
+        mirrored horizontally. False by default.
+    :type mirrored: bool
+
+    :param fullscreen: True if the window should be fullscreen. True by default.
+    :type fullscreen: bool
+    
+    '''
 
     def __init__(self, session, screen_number,
                  mirrored=False, fullscreen=True):
@@ -283,7 +299,42 @@ class VRLog(object):
 
 
 class Session(object):
-    ''' A play/simulation session for a VR Level '''
+    '''
+    A play/simulation session for a LinMaze Level.
+    
+    :param level: The LinMaze Level that will be played in this Session.
+    :type level: Level
+    
+    :param vel_ratio: The velocity read from the Gramophone is multiplied 
+        with this. 1 by default.
+    :type vel_ratio: float
+    
+    :param runtime_limit: How long should the simulation run in minutes. 
+        Set to None to run infinately. None by default
+    :type runtime_limit: float or None
+    
+    :param left_monitor: The number of the monitor to the right of the animal. Set to 
+        None to disable this monitor. 1 by default.
+    :type left_monitor: int or None
+    
+    :param right_monitor: The number of the monitor to the right of the animal. Set to 
+        None to disable this monitor. None by default.
+    :type right_monitor: int or None
+    
+    :param gramophone_port: The port the Gramophone used for the simulation is connected to.
+        Set to None to find a Gramophone automatically. None by default.
+    :type gramophone_port: str or None
+    
+    :param fullscreen: Should the simulation run in fullscreen mode? True by default.
+    :type fullscreen: bool
+    
+    :param offset_arrow: Should the zone_offset of the Level be shown as a red arrow on screen? 
+        False by default.
+    :type offset_arrow: bool
+    
+    :param skip_save: Should the saving of a log be skipped for this Session? False by default.
+    :type skip_save: bool
+    '''
 
     def __init__(self, level, vel_ratio=1, runtime_limit=None,
                  left_monitor=1, right_monitor=None, gramophone_port=None,
@@ -323,7 +374,12 @@ class Session(object):
                 self, self.right_monitor, mirrored=True, fullscreen=fullscreen)
 
         def main_loop(dt):
-            ''' Commands executed at each frame refresh '''
+            '''
+            Commands executed at each frame refresh.
+            
+            :param dt: Time since last reftesh is seconds. Passed by the pyglet clock.
+            :type dt: float
+            '''
             # print('FPS:', 1/dt)s
             # velocity = round(-self.vel_ratio * self.gramophone.bcg_v)
             velocity = round(-self.vel_ratio * self.gramophone.get_mean_vel())
@@ -442,7 +498,12 @@ class Session(object):
             self.log.close()
 
     def movement(self, vel):
-        ''' Move on the map with given velocity '''
+        '''
+        Move on the map with given velocity.
+        
+        :param vel: Distance to move in pixels.
+        :type vel: int
+        '''
 
         # Base movement (used to calculate others, loops around)
         self.position += vel
@@ -465,8 +526,13 @@ class Session(object):
             self.virtual_position = -self.position + self.level.zone_offset
 
     def pause(self, position=None):
-        ''' Pauses the level at the given position or
-            at the current one if pos=None '''
+        '''
+        Pauses the level at the given position.
+        
+        :param position: Where should the simulation pause on the Level in pixels.
+            Set to None to pause at current position. None by default.
+        :type position: int or None
+        '''
 
         if not self.paused:
             if position is not None:
@@ -474,8 +540,13 @@ class Session(object):
             self.paused = True
 
     def unpause(self, position=None):
-        ''' Continues the level at the given position
-            or at the current one if pos=None '''
+        '''
+        Unpauses the level at the given position.
+        
+        :param position: Where should the simulation unpause on the Level in pixels.
+            Set to None to unpause at current position. None by default.
+        :type position: int or None
+        '''
         if self.paused:
             if position is not None:
                 self.teleport(position)
@@ -484,13 +555,23 @@ class Session(object):
             self.paused = False
 
     def teleport(self, target_pos):
-        ''' Teleports to the given position and logs the teleportation '''
+        '''
+        Teleports to the given position.
+
+        :param target_pos: Where should the teleportation land in pixels.
+        :type position: int
+        
+        '''
         self.position = -(target_pos - self.level.zone_offset)
         self.teleported = True
 
     def random_teleport(self, target_zone_types):
-        ''' Teleports to the middle of a random zone
-        with one of the given zone types (excluding current) '''
+        '''
+        Teleports to the middle of a random zone with one of the given zone types.
+        
+        :param target_zone_types: list of possible landing zone types.
+        :type target_zone_types: [str]
+        '''
         zone_selection = [
             zone for zone in self.level.zones
             if zone.zone_type in target_zone_types]
@@ -502,12 +583,17 @@ class Session(object):
         self.teleport(middle_of_target)
 
     def check_zone(self):
-        ''' Updates the current zone '''
+        ''' Updates the current zone. '''
         self.current_zone = [zone for zone in self.level.zones
                              if zone.check(self.virtual_position)][0]
 
     def check_rules(self, vel):
-        ''' Checks all the rules of the level '''
+        '''
+        Checks all the rules of the Level.
+        
+        :param vel: The current velocity (for velocity based rules).
+        :type vel: int
+        '''
 
         for rule in self.level.rules:
             # Check zone rules
