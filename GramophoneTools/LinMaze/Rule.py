@@ -31,13 +31,19 @@ class Rule(object):
             # print(self.event)
 
     def check(self):
-        ''' Used to check whether the rules's event should be triggered '''
+        ''' Check whether the rules's event should be triggered '''
         pass
 
 
 class ZoneRule(Rule):
     ''' 
-    A Rule that triggers if the animal is in a given type of zone 
+    A Rule that triggers if the animal is in a given type of zone.
+        
+    :param level: The Level this Rule is active on.
+    :type level: Level
+
+    :param event: The event the rule triggers.
+    :type event: Event
     
     :param zone_type: The type of Zone this Rule is active in.
     :type zone_type: str
@@ -57,6 +63,12 @@ class ZoneRule(Rule):
         return "In " + str(self.zone_type) + " zone for " + str(self.delay) + " sec"
 
     def check(self, current_zone_type):
+        """ 
+        Check whether the Zone rule should be triggered.
+        
+        :param current_zone_type: Type of the curren zone.
+        :type current_zone_type: str
+        """
         # print('Checking ',self)
         # print('CZ',current_zone_type)
         if current_zone_type == self.zone_type:
@@ -82,12 +94,12 @@ class ZoneRule(Rule):
 class VelocityRule(Rule):
     '''
     A Rule that triggers if the velocity is above or below a certain threshold.
-
-    :param zone_type: The type of Zone this Rule is active in.
-    :type zone_type: str
     
-    :param delay: How many seconds should be spent in the Zone before triggering.
-    :type delay: float
+    :param level: The Level this Rule is active on.
+    :type level: Level
+
+    :param event: The event the rule triggers.
+    :type event: Event
 
     :param vel_rule_type: Type of comparison. Can be 'above' or 'below'.
     :type vel_rule_type: str
@@ -112,6 +124,12 @@ class VelocityRule(Rule):
             " for " + str(self.delay) + " sec"
 
     def check(self, vel):
+        """ 
+        Check whether the Velocity rule should be triggered.
+        
+        :param vel: The current velocity.
+        :type vel: int
+        """
         if self.vel_rule_type == "above":
             if abs(vel) > self.threshold:
                 self.active = True
@@ -135,12 +153,12 @@ class VelocityRule(Rule):
 class SmoothVelocityRule(Rule):
     '''
     A Rule that triggers if the moveing average of velocity is above or below a certain threshold.
+        
+    :param level: The Level this Rule is active on.
+    :type level: Level
 
-    :param zone_type: The type of Zone this Rule is active in.
-    :type zone_type: str
-    
-    :param delay: How many seconds should be spent in the Zone before triggering.
-    :type delay: float
+    :param event: The event the rule triggers.
+    :type event: Event
 
     :param bin_size: How many velocities should be used for calculating the moving average.
     :type bin_size: int
@@ -171,6 +189,12 @@ class SmoothVelocityRule(Rule):
             + " for " + str(self.delay) + " sec"
 
     def check(self, vel):
+        """ 
+        Check whether the Smooth velocity rule should be triggered.
+        
+        :param vel: The current velocity.
+        :type vel: int
+        """
         self.vels.append(vel)
         smooth_vel = mean(self.vels)
 
@@ -198,13 +222,13 @@ class SmoothVelocityRule(Rule):
 class SpeedRule(Rule):
     '''
     A Rule that triggers if the absolute integral of the velocity on a given range is above or below a given threshold
+        
+    :param level: The Level this Rule is active on.
+    :type level: Level
 
-    :param zone_type: The type of Zone this Rule is active in.
-    :type zone_type: str
-    
-    :param delay: How many seconds should be spent in the Zone before triggering.
-    :type delay: float
-    
+    :param event: The event the rule triggers.
+    :type event: Event
+
     :param speed_rule_type: Type of comparison. Can be 'above' or 'below'.
     :type speed_rule_type: str
 
@@ -227,6 +251,12 @@ class SpeedRule(Rule):
             str(self.speed_rule_type) + " " + str(self.threshold)
 
     def check(self, vel):
+        """ 
+        Check whether the Speed rule should be triggered.
+        
+        :param vel: The current velocity.
+        :type vel: int
+        """
         self.record[:-1] = self.record[1:]
         self.record[-1] = abs(vel)
         norm = sum(self.record)
