@@ -31,7 +31,7 @@ class Zone(object):
         '''
         Returns True if the given position is in the zone.
         
-        :param pos: The current position in pixels.
+        :param pos: The position in pixels.
         :type pos: int
 
         :rtype: bool
