@@ -20,7 +20,7 @@ class Level(object):
 
     :param screen_res: The resolution of the simulation window. Set it to the resolution of the monitor 
         if you are going to make the simulation full screen. eg.: (800,600)
-    :type screen_res: tuple of ints
+    :type screen_res: int, int
 
     :param zone_offset: Zone offset in pixels, ie. what is the position of the mouse on the screen from the left.
     :type zone_offset: int
@@ -29,7 +29,7 @@ class Level(object):
     :type transition_width: int
 
     :param rgb: Red, Green and Blue levels of the frames as floats between 0 and 1.
-    :type rgb: tuple of floats
+    :type rgb: float, float, float
     '''
 
     def __init__(self, name, screen_res, zone_offset,
