@@ -19,6 +19,12 @@ Velocity Rule
    :members:
    :show-inheritance:
 
+Smooth Velocity Rule
+-------------
+.. autoclass:: Rule.SmoothVelocityRule
+   :members:
+   :show-inheritance:
+
 
 Speed Rule
 ----------
