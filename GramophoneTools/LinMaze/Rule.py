@@ -7,7 +7,15 @@ import Event
 
 
 class Rule(object):
-    ''' Generic Rule all specific Rules intherit from '''
+    '''
+    Generic Rule all specific Rules intherit from 
+        
+    :param level: The Level this Rule is active on.
+    :type level: Level
+
+    :param event: The event the rule triggers.
+    :type event: Event
+    '''
 
     def __init__(self, level, event):
         self.level = level
@@ -28,7 +36,15 @@ class Rule(object):
 
 
 class ZoneRule(Rule):
-    ''' A Rule that triggers if the animal is in a given type of zone '''
+    ''' 
+    A Rule that triggers if the animal is in a given type of zone 
+    
+    :param zone_type: The type of Zone this Rule is active in.
+    :type zone_type: str
+    
+    :param delay: How many seconds should be spent in the Zone before triggering.
+    :type delay: float
+    '''
 
     def __init__(self, level, event, zone_type, delay):
         super().__init__(level, event)
@@ -64,7 +80,24 @@ class ZoneRule(Rule):
 
 
 class VelocityRule(Rule):
-    ''' A Rule that triggers if the velocity is above or below a certain threshold '''
+    '''
+    A Rule that triggers if the velocity is above or below a certain threshold.
+
+    :param zone_type: The type of Zone this Rule is active in.
+    :type zone_type: str
+    
+    :param delay: How many seconds should be spent in the Zone before triggering.
+    :type delay: float
+
+    :param vel_rule_type: Type of comparison. Can be 'above' or 'below'.
+    :type vel_rule_type: str
+
+    :param threshold: Absolute velocity should be above or below this value.
+    :type threshold: float
+
+    :param delay: How long should the absolute velocity be above or below the threshold.
+    :type delay: float    
+    '''
 
     def __init__(self, level, event, vel_rule_type, threshold, delay):
         super().__init__(level, event)
@@ -100,8 +133,27 @@ class VelocityRule(Rule):
             # self.delay_timer.reset()
 
 class SmoothVelocityRule(Rule):
-    ''' A Rule that triggers if the moveing average of velocity
-        is above or below a certain threshold '''
+    '''
+    A Rule that triggers if the moveing average of velocity is above or below a certain threshold.
+
+    :param zone_type: The type of Zone this Rule is active in.
+    :type zone_type: str
+    
+    :param delay: How many seconds should be spent in the Zone before triggering.
+    :type delay: float
+
+    :param bin_size: How many velocities should be used for calculating the moving average.
+    :type bin_size: int
+
+    :param vel_rule_type: Type of comparison. Can be 'above' or 'below'.
+    :type vel_rule_type: str
+
+    :param threshold: Smoothed absolute velocity should be above or below this value.
+    :type threshold: float
+
+    :param delay: How long should the smoothed absolute velocity be above or below the threshold.
+    :type delay: float
+    '''
 
     def __init__(self, level, event, bin_size, vel_rule_type, threshold, delay):
         super().__init__(level, event)
@@ -144,8 +196,24 @@ class SmoothVelocityRule(Rule):
 
 
 class SpeedRule(Rule):
-    ''' A Rule that triggers if the absolute integral of the velocity on a
-     given range is above or below a given threshold '''
+    '''
+    A Rule that triggers if the absolute integral of the velocity on a given range is above or below a given threshold
+
+    :param zone_type: The type of Zone this Rule is active in.
+    :type zone_type: str
+    
+    :param delay: How many seconds should be spent in the Zone before triggering.
+    :type delay: float
+    
+    :param speed_rule_type: Type of comparison. Can be 'above' or 'below'.
+    :type speed_rule_type: str
+
+    :param threshold: The calculated integral should be above or below this value.
+    :type threshold: float
+     
+    :param bin_size: How many velocities should be used for the integral.
+    :type bin_size: int
+     '''
 
     def __init__(self, level, event, speed_rule_type, threshold, bin_size):
         super().__init__(level, event)
