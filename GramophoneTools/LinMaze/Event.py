@@ -1,7 +1,8 @@
 ''' Events define something that can happen while the level is being played. Triggered by rules. '''
+from abc import ABC, abstractproperty
 
 
-class Event(object):
+class Event(ABC):
     ''' 
     Generic Event object all specific Events inherit from.
 
@@ -20,10 +21,10 @@ class Event(object):
         print(self, "["+str(self.trigger_count)+"]", '\n')
 
 
-    @property
+    @abstractproperty
     def triggerable(self):
         ''' Tell whether it makes sense to trigger this event at the moment. '''
-        return True
+        pass
 
     def set_session(self, session):
         ''' 
