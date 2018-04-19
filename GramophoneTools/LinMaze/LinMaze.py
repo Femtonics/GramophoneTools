@@ -493,8 +493,8 @@ class Session(object):
         with one of the given zone types (excluding current) '''
         zone_selection = [
             zone for zone in self.level.zones
-            if zone.zone_type in target_zone_types and
-            zone.zone_type != self.current_zone.zone_type]
+            if zone.zone_type in target_zone_types]
+        #and zone.zone_type != self.current_zone.zone_type
 
         target_zone = random.choice(zone_selection)
         middle_of_target = (target_zone.begin + target_zone.end) // 2

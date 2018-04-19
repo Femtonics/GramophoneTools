@@ -3,6 +3,7 @@ import numpy as np
 from GramophoneTools.LinMaze.Tools.Timer import Timer
 from collections import deque
 from statistics import mean
+import Event
 
 
 class Rule(object):
@@ -53,6 +54,9 @@ class ZoneRule(Rule):
             if self.active and not self.delay_timer.is_running() and not self.done:
                 # Timer ran out, trigger event
                 self.trigger()
+                if type(self.event) == Event.RandomTeleport:
+                    self.done = False
+                    self.active = False
         else:
             # print('current',current_zone_type,'not in',self.zone_type)
             self.done = False
