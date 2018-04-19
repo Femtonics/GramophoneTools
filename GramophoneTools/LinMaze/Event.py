@@ -6,7 +6,7 @@ class Event(ABC):
     ''' 
     Generic Event object all specific Events inherit from.
 
-    :param level: The Level this Event will be used on
+    :param level: The Level this Event will be used on.
     :type level: Level
     '''
 
@@ -30,7 +30,7 @@ class Event(ABC):
         ''' 
         Sets the Session the event will be triggered in. 
 
-        :param session: The session this Event will be triggered in
+        :param session: The session this Event will be triggered in.
         :type session: Session
         '''
         self.session = session
@@ -39,7 +39,10 @@ class Event(ABC):
 class Teleport(Event):
     '''
     Teleports to a set location 
-    
+
+    :param level: The Level this Event will be used on.
+    :type level: Level
+
     :param target_position: The target of the teleportation.
     :type target_position: int
     '''
@@ -63,7 +66,10 @@ class Teleport(Event):
 class RandomTeleport(Event):
     ''' 
     Teleports to a type of zone that is on the given list randomly. 
-    
+
+    :param level: The Level this Event will be used on.
+    :type level: Level
+
     :param list_of_target_zones: The possible Zones this teleport can land is.
     :type list_of_target_zones: [Zone]
     '''
@@ -87,6 +93,9 @@ class RandomTeleport(Event):
 class PortOn(Event):
     '''
     Turns on a port on the Level's Gramophone.
+
+    :param level: The Level this Event will be used on.
+    :type level: Level
 
     :param port: Which output to use on the device.
     :type port: str -- 'A', 'B' or 'C'
@@ -112,7 +121,10 @@ class PortOff(Event):
     '''
     Turns off a port on the Level's Gramophone.
 
-    :param port: Which output to use on the device.
+    :param level: The Level this Event will be used on.
+    :type level: Level
+
+    :param port: Which output should be turned off.
     :type port: str -- 'A', 'B' or 'C'
     '''
 
@@ -133,7 +145,22 @@ class PortOff(Event):
 
 
 class StartBurst(Event):
-    ''' Starts bursting a port on the Level's gramophone '''
+    '''
+    Starts bursting a port on the Level's gramophone.
+    
+    
+    :param level: The Level this Event will be used on.
+    :type level: Level
+    
+    :param port: Which output to use on the device.
+    :type port: str -- 'A', 'B' or 'C'
+
+    :param on_time: How long should the port by set to high befor pause.
+    :type on_time: float
+
+    :param pause_time: How long should pause be.
+    :type pause_time: float
+    '''
 
     def __init__(self, level, port, on_time, pause_time):
         super().__init__(level)
@@ -156,7 +183,15 @@ class StartBurst(Event):
 
 
 class StopBurst(Event):
-    ''' Stops bursting a port on the Level's gramophone '''
+    '''
+    Stops bursting a port on the Level's gramophone.
+    
+    :param level: The Level this Event will be used on.
+    :type level: Level
+
+    :param port: Which output should stop bursting.
+    :type port: str -- 'A', 'B' or 'C'
+    '''
 
     def __init__(self, level, port):
         super().__init__(level)
@@ -176,7 +211,15 @@ class StopBurst(Event):
 
 
 class Pause(Event):
-    ''' Pauses the Level where it is or at a given position '''
+    '''
+    Pauses the Level where it is or at a given position.
+
+    :param level: The Level this Event will be used on.
+    :type level: Level
+    
+    :param pause_position: Set to None to pause at current position. None by default.
+    :type pause_position: int or None
+    '''
 
     def __init__(self, level, pause_position=None):
         super().__init__(level)
@@ -196,7 +239,15 @@ class Pause(Event):
 
 
 class UnPause(Event):
-    ''' Unpauses the Level where it is or at a given position '''
+    '''
+    Unpauses the Level where it is or at a given position.
+    
+    :param level: The Level this Event will be used on.
+    :type level: Level
+    
+    :param unpause_position: Set to None to pause at current position. None by default.
+    :type unpause_position: int or None
+    '''
 
     def __init__(self, level, unpause_position=None):
         super().__init__(level)
