@@ -20,7 +20,7 @@ Velocity Rule
    :show-inheritance:
 
 Smooth Velocity Rule
--------------
+--------------------
 .. autoclass:: Rule.SmoothVelocityRule
    :members:
    :show-inheritance:
