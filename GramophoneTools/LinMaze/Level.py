@@ -6,7 +6,7 @@ from PIL import Image
 
 from GramophoneTools.LinMaze import LinMaze, Frame, Event, Rule
 from GramophoneTools.LinMaze.Zone import Zone
-from GramophoneTools.LinMaze.Tools import Stopwatch
+from GramophoneTools.LinMaze.Tools import Stopwatch, progressbar
 from GramophoneTools.LinMaze.Tools.filehandler import select_file
 
 
@@ -208,9 +208,21 @@ class Level(object):
     def render(self):
         ''' Renders all the frames of the level, making it ready to be played. '''
         if not self.rendered:
-            print("\nRendering", self.name + ':')
+            print('\n'+self.name,  '>>\n')
             self.frames = Frame.multi_make(self.frames)
-            Frame.transition(self.frames, self.transition_width)
+            self.frames = Frame.transition(self.frames, self.transition_width)
+
+            loadtime = Stopwatch()
+            for count, frame in enumerate(self.frames):
+                frame.make_texture()
+                progressbar.printProgressBar(count, len(self.frames),
+                                             prefix=' Loading  ',
+                                             suffix='  (' + str(loadtime) + ')')
+            progressbar.printProgressBar(len(self.frames), len(self.frames),
+                                         prefix=' Loading  ',
+                                         suffix='  (' + str(loadtime) + ')')
+            print('\n')
+
             self.rendered = True
 
     def show_image(self):

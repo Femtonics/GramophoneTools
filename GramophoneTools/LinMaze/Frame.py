@@ -31,10 +31,10 @@ def multi_make(list_of_frames):
 
     while results._index < len(list_of_frames):
         progressbar.printProgressBar(results._index, len(
-            list_of_frames), prefix=' Progress', suffix='  (' + str(runtime) + ')')
+            list_of_frames), prefix=' Rendering', suffix='  (' + str(runtime) + ')')
         sleep(0.1)
     progressbar.printProgressBar(results._index, len(
-        list_of_frames), prefix=' Progress', suffix='  (' + str(runtime) + ')')
+        list_of_frames), prefix=' Rendering', suffix='  (' + str(runtime) + ')')
     pool.join()
     print()
     return list(results)
@@ -79,6 +79,9 @@ def transition(list_of_frames, transition_width):
         frames[0].frame = frames[0].frame[:, tw2:]
         frames[0].frame[:, :tw2] = transitions[-1][:, -tw2:]
 
+    # Remake textures
+    for frame in frames:
+        frame.make_texture()
     return frames
 
 
