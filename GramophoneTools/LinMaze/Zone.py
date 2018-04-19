@@ -2,7 +2,18 @@
 
 
 class Zone(object):
-    ''' Correlates with beginning and end of Frames to add functionality '''
+    '''
+    Correlates with beginning and end of Frames to add functionality.
+    
+    :param begin: The beginning of the Zone in pixels.
+    :type begin: int
+
+    :param end: The end of the Zone in pixels.
+    :type end: int
+
+    :param zone_type: The type of the Zone for Rules. 'generic' by default.
+    :type zone_type: str
+    '''
     zone_id = 0
 
     def __init__(self, begin, end, zone_type='generic'):
@@ -17,5 +28,12 @@ class Zone(object):
         return "Zone  #" + str(self.zone_id).ljust(2) + " - Range: [" + str(self.begin) + "," + str(self.end) + "] - Type: " + str(self.zone_type)
 
     def check(self, pos):
-        ''' Returns True if the given position is in the zone '''
+        '''
+        Returns True if the given position is in the zone.
+        
+        :param pos: The current position in pixels.
+        :type pos: int
+
+        :rtype: bool
+        '''
         return self.begin <= pos <= self.end
