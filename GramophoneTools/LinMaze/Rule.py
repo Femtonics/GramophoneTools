@@ -1,12 +1,14 @@
 ''' Triggers an event on a given criteria '''
-import numpy as np
-from GramophoneTools.LinMaze.Tools.Timer import Timer
-from collections import deque
 from statistics import mean
-import Event
+from collections import deque
+from abc import ABC, abstractmethod
 
+import numpy as np
 
-class Rule(object):
+from GramophoneTools.LinMaze import Event
+from GramophoneTools.LinMaze.Tools.Timer import Timer
+
+class Rule(ABC):
     '''
     Generic Rule all specific Rules intherit from.
         
@@ -29,7 +31,8 @@ class Rule(object):
             self.event.trigger()
             self.done = True
             # print(self.event)
-
+    
+    @abstractmethod
     def check(self):
         ''' Check whether the rules's event should be triggered. '''
         pass
