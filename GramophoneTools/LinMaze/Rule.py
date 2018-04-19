@@ -1,6 +1,8 @@
 ''' Triggers an event on a given criteria '''
 import numpy as np
 from GramophoneTools.LinMaze.Tools.Timer import Timer
+from collections import deque
+from statistics import mean
 
 
 class Rule(object):
@@ -85,6 +87,49 @@ class VelocityRule(Rule):
             if abs(vel) < self.threshold:
                 self.active = True
             if abs(vel) > self.threshold:
+                self.active = False
+                self.done = False
+                self.delay_timer.reset()
+
+        if self.active and not self.done and not self.delay_timer.is_running():
+            self.trigger()
+            # self.delay_timer.reset()
+
+class SmoothVelocityRule(Rule):
+    ''' A Rule that triggers if the moveing average of velocity
+        is above or below a certain threshold '''
+
+    def __init__(self, level, event, bin_size, vel_rule_type, threshold, delay):
+        super().__init__(level, event)
+        self.vel_rule_type = vel_rule_type
+        self.bin_size = bin_size
+        self.vels = deque([], maxlen=bin_size)
+        self.threshold = threshold
+        self.delay = delay
+        self.delay_timer = Timer(delay)
+        self.active = False
+
+    def __str__(self):
+        return "Smooth velocity (avg. of "+str(self.bin_size)+") " \
+            + str(self.vel_rule_type) + " " + str(self.threshold) \
+            + " for " + str(self.delay) + " sec"
+
+    def check(self, vel):
+        self.vels.append(vel)
+        smooth_vel = mean(self.vels)
+
+        if self.vel_rule_type == "above":
+            if abs(smooth_vel) > self.threshold:
+                self.active = True
+            if abs(smooth_vel) < self.threshold:
+                self.active = False
+                self.done = False
+                self.delay_timer.reset()
+
+        if self.vel_rule_type == "below":
+            if abs(smooth_vel) < self.threshold:
+                self.active = True
+            if abs(smooth_vel) > self.threshold:
                 self.active = False
                 self.done = False
                 self.delay_timer.reset()

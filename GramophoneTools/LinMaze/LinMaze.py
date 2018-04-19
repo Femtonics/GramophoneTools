@@ -509,12 +509,10 @@ class Session(object):
     def check_rules(self, vel):
         ''' Checks all the rules of the level '''
 
-        # Check zone rules
         for rule in self.level.rules:
+            # Check zone rules
             if type(rule) is Rule.ZoneRule:
                 rule.check(self.current_zone.zone_type)
-
-        # Check speed and velocity rules
-        for rule in self.level.rules:
-            if type(rule) in [Rule.SpeedRule, Rule.VelocityRule]:
+            # Check speed and velocity rules
+            if type(rule) in [Rule.SpeedRule, Rule.VelocityRule, Rule.SmoothVelocityRule]:
                 rule.check(vel)

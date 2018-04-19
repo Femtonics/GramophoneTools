@@ -188,14 +188,22 @@ class Level(object):
         if rule_type == "zone":
             self.rules.append(Rule.ZoneRule(
                 self, self.events[event_name], args[0], args[1]))
+            # zone_type, delay
 
         if rule_type == "velocity":
             self.rules.append(Rule.VelocityRule(
                 self, self.events[event_name], args[0], args[1], args[2]))
+            # vel_rule_type, threshold, delay
+
+        if rule_type == "smooth_velocity":
+            self.rules.append(Rule.SmoothVelocityRule(
+                self, self.events[event_name], args[0], args[1], args[2], args[3]))
+            # bin_size, vel_rule_type, threshold, delay
 
         if rule_type == "speed":
             self.rules.append(Rule.SpeedRule(
                 self, self.events[event_name], args[0], args[1], args[2]))
+            # speed_rule_type, threshold, bin_size
 
     def render(self):
         ''' Renders all the frames of the level, making it ready to be played. '''
