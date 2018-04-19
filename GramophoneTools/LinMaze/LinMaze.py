@@ -158,6 +158,12 @@ class VRWindow(pyglet.window.Window):
 
 
 class VRLog(object):
+    """
+    A logger for LinMaze Sessions.
+    
+    :param session: The session that should be logged.
+    :type session: Session
+    """
     def __init__(self, session):
         self.session = session
 
@@ -226,7 +232,18 @@ class VRLog(object):
         self.zone_type_records = {zt: [] for zt in self.zone_types}
 
     def make_entry(self, vel, g_time, g_analog):
-        ''' Makes an entry in all the session logs '''
+        '''
+        Makes an entry in all the session logs.
+
+        :param vel: The velocity that sould be logged for this entry.
+        :type vel: int
+
+        :param g_time: The internal clock value of the Gramophone.
+        :type g_time: int
+
+        :param g_analog: The analogue input state of the Gramophone.
+        :type g_analog: float
+        '''
         self.time_record.append(self.session.runtime.value())
         self.g_time_record.append(g_time)
         self.vel_record.append(-vel)
@@ -257,7 +274,7 @@ class VRLog(object):
             self.flush_all()
 
     def flush_all(self):
-        ''' Writes all temporary data to file '''
+        ''' Writes all temporary data to file. '''
 
         self.flush(self.time_record, 'time')
         self.flush(self.g_time_record, 'g_time')
@@ -278,7 +295,16 @@ class VRLog(object):
         self.flush(self.zone_id_records, 'zone')
 
     def flush(self, record, fieldname):
-        ''' Writes the record list into the given field and clears it '''
+        '''
+        Writes the record list into the given field and clears it.
+
+        :param record: The record that should be written to file.
+        :type record: list or np.ndarray
+
+        :param fieldname: The name of the field in the HDF5 file this record should 
+            be written into.
+        :type fieldname: str
+        '''
         if type(record) is np.ndarray:
             new_count = record.shape[0] - self.vrl[fieldname].shape[0]
             self.vrl[fieldname].resize(record.shape[0], axis=0)
@@ -290,7 +316,7 @@ class VRLog(object):
             del record[:]
 
     def close(self):
-        ''' Record the time and close the log '''
+        ''' Record the time and close the log. '''
         end_time = time.time()
         self.vrl.attrs['end_time'] = end_time
         self.vrl.attrs['end_time_hr'] = time.strftime(
