@@ -8,7 +8,7 @@ import Event
 
 class Rule(object):
     '''
-    Generic Rule all specific Rules intherit from 
+    Generic Rule all specific Rules intherit from.
         
     :param level: The Level this Rule is active on.
     :type level: Level
@@ -23,7 +23,7 @@ class Rule(object):
         self.done = False
 
     def trigger(self):
-        ''' Triggers the associated event and prints out a message about it '''
+        ''' Triggers the associated event and prints out a message about it. '''
         if self.event.triggerable:
             print(self, "rule triggered")
             self.event.trigger()
@@ -31,7 +31,7 @@ class Rule(object):
             # print(self.event)
 
     def check(self):
-        ''' Check whether the rules's event should be triggered '''
+        ''' Check whether the rules's event should be triggered. '''
         pass
 
 
@@ -221,7 +221,7 @@ class SmoothVelocityRule(Rule):
 
 class SpeedRule(Rule):
     '''
-    A Rule that triggers if the absolute integral of the velocity on a given range is above or below a given threshold
+    A Rule that triggers if the absolute integral of the velocity on a given range is above or below a given threshold.
         
     :param level: The Level this Rule is active on.
     :type level: Level
