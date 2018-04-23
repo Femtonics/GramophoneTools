@@ -9,10 +9,10 @@ GramophoneTools' documentation
 .. toctree::
    :maxdepth: 5
 
+   user_guide
    gramrec
    linmaze
    io
-   user_guide
 
 .. Indices and tables
 .. ==================
