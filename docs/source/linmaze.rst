@@ -1,5 +1,6 @@
 LinMaze module
 ==============
+The module used for making training protocolls in a 2D virtual linear maze. The user can define Levels that contain Frames (patterns the animal can see), Events (things that can happen to the animal in the simulation) and Rules (conditions for Events).
 
 Main module
 -----------
