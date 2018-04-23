@@ -6,6 +6,15 @@ To install run the following command in the terminal:
 
 ``` pip install GramophoneTools ```
 
+# Updating
+To find out if there is a newer version available run:
+
+``` pip list -o ```
+
+If GramohoneTools shows up in the list you can update it by running:
+
+``` pip install -U GramophoneTools ```
+
 # Usage
 The user guide for Gramophone systems can be found here: [ADD LINK]
 
