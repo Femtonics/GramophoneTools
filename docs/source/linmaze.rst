@@ -43,3 +43,10 @@ Zone
    :maxdepth: 2
 
    zone
+
+Output
+------
+.. toctree::
+   :maxdepth: 2
+
+   linmaze_out
