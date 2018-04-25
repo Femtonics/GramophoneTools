@@ -153,7 +153,7 @@ class VelocityRule(Rule):
             self.trigger()
             # self.delay_timer.reset()
 
-class SmoothVelocityRule(Rule):
+class SmoothVelocityRule(VelocityRule):
     '''
     A Rule that triggers if the moveing average of velocity is above or below a certain threshold.
         
@@ -177,14 +177,9 @@ class SmoothVelocityRule(Rule):
     '''
 
     def __init__(self, level, event, bin_size, vel_rule_type, threshold, delay):
-        super().__init__(level, event)
-        self.vel_rule_type = vel_rule_type
+        super().__init__(level, event, vel_rule_type, threshold, delay)
         self.bin_size = bin_size
-        self.vels = deque([], maxlen=bin_size)
-        self.threshold = threshold
-        self.delay = delay
-        self.delay_timer = Timer(delay)
-        self.active = False
+        self.vels = deque([], bin_size)
 
     def __str__(self):
         return "Smooth velocity (avg. of "+str(self.bin_size)+") " \
@@ -200,26 +195,7 @@ class SmoothVelocityRule(Rule):
         """
         self.vels.append(vel)
         smooth_vel = mean(self.vels)
-
-        if self.vel_rule_type == "above":
-            if abs(smooth_vel) > self.threshold:
-                self.active = True
-            if abs(smooth_vel) < self.threshold:
-                self.active = False
-                self.done = False
-                self.delay_timer.reset()
-
-        if self.vel_rule_type == "below":
-            if abs(smooth_vel) < self.threshold:
-                self.active = True
-            if abs(smooth_vel) > self.threshold:
-                self.active = False
-                self.done = False
-                self.delay_timer.reset()
-
-        if self.active and not self.done and not self.delay_timer.is_running():
-            self.trigger()
-            # self.delay_timer.reset()
+        super().check(smooth_vel)
 
 
 class SpeedRule(Rule):
