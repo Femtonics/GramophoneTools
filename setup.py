@@ -37,10 +37,9 @@ setup(
         'opencv-python'],
     extras_require={
         'tests': [
-            'nose',
-            'pycodestyle >= 2.1.0'],
+            'pytest'],
         'docs': [
-            'sphinx >= 1.4',
+            'sphinx',
             'sphinx_rtd_theme']}
     python_requires='>=3',
     package_data={
