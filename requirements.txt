@@ -1,3 +1,4 @@
+# For users
 h5py
 PyQt5
 numpy
@@ -8,4 +9,11 @@ pyserial
 pyqtgraph
 matplotlib
 opencv-python
+# For docs
+sphinx
 sphinx_rtd_theme
+# For testing
+pytest
+# For packing
+wheel
+twine
