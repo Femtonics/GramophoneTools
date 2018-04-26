@@ -1,0 +1,10 @@
+h5py
+PyQt5
+numpy
+dill
+pillow
+pyglet
+pyserial
+pyqtgraph
+matplotlib
+opencv-python
