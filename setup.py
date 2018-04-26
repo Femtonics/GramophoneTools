@@ -40,7 +40,7 @@ setup(
             'pytest'],
         'docs': [
             'sphinx',
-            'sphinx_rtd_theme']}
+            'sphinx_rtd_theme']},
     python_requires='>=3',
     package_data={
         'GramophoneTools.LinMaze': ['res/icon.png'],
