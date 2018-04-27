@@ -17,5 +17,5 @@ SerGramophone
 
 Uses pyserial for communication. Does not use signals, values can be read manually or in the background on a separate thread.
 
-.. automodule:: QGramophone
+.. automodule:: SerGramophone
    :members:
