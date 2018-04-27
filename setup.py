@@ -19,8 +19,8 @@ setup(
     license='GNU GPLv3',
     keywords='femtonics gramophone',
     project_urls={
-        'Documentation': '',
-        'User Guide': ''},
+        'Documentation': 'http://gramophonetools.readthedocs.io',
+        'User Guide': 'http://gramophonetools.readthedocs.io/en/latest/_downloads/Gramophone%20User%20Guide.pdf'},
     packages=['GramophoneTools.IO', 'GramophoneTools.LinMaze',
               'GramophoneTools.LinMaze.Tools', 'GramophoneTools.Recorder'],
     py_modules=["GramophoneTools.ver"],
