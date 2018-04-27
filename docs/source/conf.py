@@ -89,21 +89,21 @@ html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 # further.  For a list of options available for each theme, see the
 # documentation.
 # https://sphinx-rtd-theme.readthedocs.io/en/latest/configuring.html
-html_theme_options = {
-    'canonical_url': '',
-    'analytics_id': '',
-    'logo_only': False,
-    'display_version': True,
-    'prev_next_buttons_location': None,
-    'style_external_links': True,
-    'vcs_pageview_mode': '',
-    # Toc options
-    'collapse_navigation': False,
-    'sticky_navigation': True,
-    'navigation_depth': 4,
-    'includehidden': True,
-    'titles_only': False
-}
+# html_theme_options = {
+#     'canonical_url': '',
+#     'analytics_id': '',
+#     'logo_only': False,
+#     'display_version': True,
+#     'prev_next_buttons_location': None,
+#     'style_external_links': True,
+#     'vcs_pageview_mode': '',
+#     # Toc options
+#     'collapse_navigation': False,
+#     'sticky_navigation': True,
+#     'navigation_depth': 4,
+#     'includehidden': True,
+#     'titles_only': False
+# }
 
 html_logo = "_static/femtonics_white.png"
 html_favicon = "_static/favicon.ico"
