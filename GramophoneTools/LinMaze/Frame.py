@@ -16,7 +16,7 @@ from GramophoneTools.LinMaze.Tools import Stopwatch, progressbar
 def multi_make(list_of_frames):
     ''' 
     Renders a list of frames with multiprocessing.
-    
+
     :param list_of_frames: A list of Frame objects that sould be rendered.
     :type list_of_frames: [Frame]
 
@@ -43,13 +43,13 @@ def multi_make(list_of_frames):
 def transition(list_of_frames, transition_width):
     ''' 
     Makes a list of frames with smooth transitions between them.
-    
+
     :param list_of_frames: A list of Frame objects without transitions.
     :type list_of_frames: [Frame]
 
     :param transition_width: The width of the smooth transition between the given Frames in pixels.
     :type transition_width: int
-        
+
     :returns: A list of Frames with transitions.
     '''
     frames = list_of_frames
@@ -88,7 +88,7 @@ def transition(list_of_frames, transition_width):
 def combine(list_of_frames):
     '''
     Makes a Frame that is a combination of a list of Frames.
-    
+
     :param list_of_frames: A list of Frame objects without transitions.
     :type list_of_frames: [Frame]
 
@@ -108,10 +108,10 @@ def combine(list_of_frames):
 class Frame(object):
     '''
     The visual component of the blocks that the mouse navigates in.
-    
+
     :param width: The width of the Frame in pixels.
     :type width: int
-    
+
     :param height: The height of the Frame in pixels.
     :type height: int
 
@@ -205,7 +205,7 @@ class Frame(object):
     def save_img(self, filename):
         '''
         Saves the bitmap image of the Frame with the given filename.
-        
+
         :param filename: The filename the image should be saved as.
         :type filename: str
         '''
@@ -268,7 +268,7 @@ class GreyNoise(RandomFrame):
 class Checkerboard(Frame):
     '''
     A Frame with a checkerboard pattern.
-    
+
     :param side_length: The lenght of sides of the squares that make up 
         the checkerboard pattern in pixels.
     :type side_length: int
@@ -340,8 +340,8 @@ class Wood(RandomFrame):
 class WaveFrame(Frame):
     '''
     Generic grating Frame, for more specific ones to inherit form.
-    
-    :param wavelength: The wavelength of the grating in pixels, 
+
+    :param wavelength: The wavelength of the grating in pixels,
         ie. the distance between the middles of the white portions.
     :type wavelength: int
 
@@ -354,28 +354,14 @@ class WaveFrame(Frame):
         super().__init__(width, height)
         self.wavelength = wavelength
         self.angle = np.deg2rad(angle)
+        self.wave_temp = np.linspace(0, 2 * np.pi, wavelength)
 
     @staticmethod
-    def sine_template(wavelength):
-        ''' Generates an array that serves as a template for a sine wave '''
-        def wave_func(val):
-            ''' The trigonometric function for the wave '''
-            return math.ceil(127.5 + 127.5 * -1 * math.cos(val))
+    def wave_func(val):
+        ''' Trigonometric function for a sinusoidal wave. '''
+        return math.ceil(127.5 + 127.5 * -1 * math.cos(val))
 
-        wave_temp = np.linspace(0, 2 * np.pi, wavelength)
-        for index, val in np.ndenumerate(wave_temp):
-            wave_temp[index] = wave_func(val)
-        return wave_temp
-
-    @staticmethod
-    def square_template(wavelength):
-        ''' Generates an array that serves as a template for a square wave '''
-        template = WaveFrame.sine_template(wavelength)
-        template[template < 127.5] = 0
-        template[template > 127.5] = 255
-        return template
-
-    def make(self, wave_temp):
+    def make(self):
         self.frame = np.zeros((self.height, self.width))
 
         def norm(x, y):
@@ -393,9 +379,9 @@ class WaveFrame(Frame):
                 if above == self.wavelength:
                     above = 0
                 val = (1 - (val % 1)) * \
-                    wave_temp[below] + (val % 1) * wave_temp[above]
+                    self.wave_temp[below] + (val % 1) * self.wave_temp[above]
             else:
-                val = wave_temp[int(val)]
+                val = self.wave_temp[int(val)]
             self.frame[y, x] = val
 
         super().make()
@@ -405,26 +391,28 @@ class SineWave(WaveFrame):
     ''' Sine wave modulated grating pattern Frame. '''
     display_name = "Sine wave"
 
+    def __init__(self, width, height, wavelength, angle):
+        super().__init__(width, height, wavelength, angle)
+        for index, val in np.ndenumerate(self.wave_temp):
+            self.wave_temp[index] = WaveFrame.wave_func(val)
+
     def __str__(self):
         return super().__str__() + " - Type: Sine wave - Wavelength: " + \
             str(self.wavelength) + " - Angle: " + str(self.angle)
-
-    def make(self):
-        template = super().sine_template(self.wavelength)
-        super().make(template)
 
 
 class SquareWave(WaveFrame):
     ''' Square wave modulated grating pattern Frame. '''
     display_name = "Square wave"
 
+    def __init__(self, width, height, wavelength, angle):
+        super().__init__(width, height, wavelength, angle)
+        for index, val in np.ndenumerate(self.wave_temp):
+            self.wave_temp[index] = int(WaveFrame.wave_func(val) > 127.5) * 255
+
     def __str__(self):
         return super().__str__() + " - Type: Square wave - Wavelength: " + \
             str(self.wavelength) + " - Angle: " + str(self.angle)
-
-    def make(self):
-        template = super().square_template(self.wavelength)
-        super().make(template)
 
 
 class ImageFile(Frame):
