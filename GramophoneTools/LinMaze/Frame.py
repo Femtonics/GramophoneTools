@@ -391,28 +391,27 @@ class SineWave(WaveFrame):
     ''' Sine wave modulated grating pattern Frame. '''
     display_name = "Sine wave"
 
-    def __init__(self, width, height, wavelength, angle):
-        super().__init__(width, height, wavelength, angle)
-        for index, val in np.ndenumerate(self.wave_temp):
-            self.wave_temp[index] = WaveFrame.wave_func(val)
-
     def __str__(self):
         return super().__str__() + " - Type: Sine wave - Wavelength: " + \
             str(self.wavelength) + " - Angle: " + str(self.angle)
 
+    def make(self):
+        for index, val in np.ndenumerate(self.wave_temp):
+            self.wave_temp[index] = WaveFrame.wave_func(val)
+        super().make()
 
 class SquareWave(WaveFrame):
     ''' Square wave modulated grating pattern Frame. '''
     display_name = "Square wave"
 
-    def __init__(self, width, height, wavelength, angle):
-        super().__init__(width, height, wavelength, angle)
-        for index, val in np.ndenumerate(self.wave_temp):
-            self.wave_temp[index] = int(WaveFrame.wave_func(val) > 127.5) * 255
-
     def __str__(self):
         return super().__str__() + " - Type: Square wave - Wavelength: " + \
             str(self.wavelength) + " - Angle: " + str(self.angle)
+
+    def make(self):
+        for index, val in np.ndenumerate(self.wave_temp):
+            self.wave_temp[index] = int(WaveFrame.wave_func(val) > 127.5) * 255
+        super().make()
 
 
 class ImageFile(Frame):
