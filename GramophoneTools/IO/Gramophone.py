@@ -44,25 +44,25 @@ class Gramophone(hid.HidDevice):
         print('Ping!', data)
 
     def check_app(self):
-        self.send(0x05,[])
+        self.send(0x05, [])
 
     def get_firmware_version(self):
-        self.send(0x04,[])
+        self.send(0x04, [])
 
     def get_product_info(self):
-        self.send(0x08,[])
+        self.send(0x08, [])
 
     def set_LED(self, state):
         self.send(0x12, [state])
 
     def reset(self):
-        self.send(0xF0,[])
+        self.send(0xF0, [])
 
     def read_param(self, param):
-        self.send(0x0B,[param])
+        self.send(0x0B, [param])
 
     def write_param(self, param):
-        self.send(0x0C,[param])
+        self.send(0x0C, [param])
 
     def send(self, cmd, payload):
         plen = len(payload)
@@ -92,7 +92,7 @@ class Gramophone(hid.HidDevice):
         if cmd == 0x00:
             delay = time()-self.ping_time
             print('Pong!', payload)
-            print('Delay:',delay,'sec\n')
+            print('Delay:', delay, 'sec\n')
 
         if cmd == 0x01:
             print('OK')
@@ -100,12 +100,12 @@ class Gramophone(hid.HidDevice):
         if cmd == 0x02:
             err = payload[0]
             print('Failed command', self.error_codes[err])
-        
+
         if cmd == 0x04:
             release = payload[0]
             sub = payload[1]
-            build = int.from_bytes(payload[2:4],'little',signed=False)
-            year = int.from_bytes(payload[4:6],'little',signed=False)
+            build = int.from_bytes(payload[2:4], 'little', signed=False)
+            year = int.from_bytes(payload[4:6], 'little', signed=False)
             month = payload[6]
             day = payload[7]
             hour = payload[8]
@@ -113,10 +113,10 @@ class Gramophone(hid.HidDevice):
             second = payload[10]
 
             print('Firmware version')
-            print('Relase:',str(release)+'.'+str(sub))
-            print('Build:',build)
+            print('Relase:', str(release)+'.'+str(sub))
+            print('Build:', build)
             print('Date:', str(year)+'-'+str(month)+'-'+str(day))
-            print('Time',str(hour)+':'+str(minute)+':'+str(second))
+            print('Time', str(hour)+':'+str(minute)+':'+str(second))
             print()
 
         if cmd == 0x05:
@@ -132,15 +132,16 @@ class Gramophone(hid.HidDevice):
             revision = [chr(byte) for byte in payload[18:24]]
             revision_str = ''.join(revision)
 
-            serial = hex(int.from_bytes(payload[24:28],'little',signed=False))
-            year = int.from_bytes(payload[28:30],'little',signed=False)
-            month = int.from_bytes(payload[30:31],'little',signed=False)
-            day = int.from_bytes(payload[31:32],'little',signed=False)
+            serial = hex(int.from_bytes(
+                payload[24:28], 'little', signed=False))
+            year = int.from_bytes(payload[28:30], 'little', signed=False)
+            month = int.from_bytes(payload[30:31], 'little', signed=False)
+            day = int.from_bytes(payload[31:32], 'little', signed=False)
 
             print('Product Info')
-            print('Name:',name_str)
-            print('Revision:',revision_str)
-            print('Serial',serial)
+            print('Name:', name_str)
+            print('Revision:', revision_str)
+            print('Serial', serial)
             print('Production:', str(year)+'-'+str(month)+'-'+str(day))
             print()
 
@@ -149,11 +150,10 @@ class Gramophone(hid.HidDevice):
             print(payload)
 
         if cmd not in [0x00, 0x01, 0x02, 0x04, 0x05, 0x08, 0x0B]:
-            print('CMD',hex(cmd))
-            print('plen',plen)
-            print('payload',payload)
+            print('CMD', hex(cmd))
+            print('plen', plen)
+            print('payload', payload)
 
-    
         # print('Received:',[hex(d) for d in data])
 
 
@@ -164,7 +164,7 @@ if __name__ == '__main__':
     sleep(1)
     gram.ping()
     # print()
-    
+
     gram.get_product_info()
     gram.get_firmware_version()
     gram.check_app()
@@ -176,14 +176,11 @@ if __name__ == '__main__':
     while 1:
         gram.read_param(0xD0)
 
-
-
     # while 1:
     #     gram.set_LED(1)
     #     sleep(0.3)
     #     gram.set_LED(0)
     #     sleep(0.3)
-
 
     sleep(1)
     gram.close()
