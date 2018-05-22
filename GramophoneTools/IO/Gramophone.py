@@ -24,15 +24,23 @@ class Gramophone(hid.HidDevice):
 
         self.target = [0x0, 0x2]
         self.source = [0x72, 0xfd]
-        self.msn = randint(0, 255)
 
         self.ping_time = None
+        self.app_state = 'Unknown'
+        self.msn = 0
 
     def open(self):
         super().open()
         reports = self.find_output_reports()
         self.report = reports[0]
-        self.set_LED(1)
+        self.check_app()
+        sleep(0.1)  
+        if self.app_state == 'IAP':
+            print('Device in IAP state. Resetting...')
+            self.reset()
+            sleep(0.1)
+        else:
+            self.set_LED(1)
 
     def close(self):
         self.set_LED(0)
@@ -63,8 +71,8 @@ class Gramophone(hid.HidDevice):
     def read_param(self, param):
         self.send(0x0B, [param])
 
-    def write_param(self, param):
-        self.send(0x0C, [param])
+    def write_param(self, param, payload):
+        self.send(0x0C, [param]+payload)
 
     def send(self, cmd, payload):
         plen = len(payload)
@@ -73,6 +81,8 @@ class Gramophone(hid.HidDevice):
             [self.msn, cmd, plen] + payload + filler
         self.report.set_raw_data(full)
         self.report.send()
+        self.msn += 1
+        self.msn %= 256
         # print('Sent:',[hex(byte) for byte in full])
 
         # print('Sent')
@@ -87,6 +97,7 @@ class Gramophone(hid.HidDevice):
     def data_handler(self, data):
         target = data[1:3]
         source = data[3:5]
+        msn = data[5]
         cmd = data[6]
         plen = data[7]
         payload = data[8:8+plen]
@@ -124,8 +135,10 @@ class Gramophone(hid.HidDevice):
         if cmd == 0x05:
             if payload[0] == 0x00:
                 print('CheckApp: IAP \n')
+                self.app_state = 'IAP'
             if payload[0] == 0x01:
                 print('CheckApp: Application \n')
+                self.app_state = 'App'
 
         if cmd == 0x08:
             name = [chr(byte) for byte in payload[0:18] if byte != 0x00]
@@ -149,7 +162,7 @@ class Gramophone(hid.HidDevice):
 
         if cmd == 0x0B:
             print('Parameter read')
-            print(payload)
+            print('Value', int.from_bytes(payload, 'little', signed=False))
 
         if cmd not in [0x00, 0x01, 0x02, 0x04, 0x05, 0x08, 0x0B]:
             print('CMD', hex(cmd))
@@ -169,17 +182,23 @@ if __name__ == '__main__':
 
     gram.get_product_info()
     gram.get_firmware_version()
-    gram.check_app()
+    print('App state:',gram.app_state)
+    # gram.check_app()
     # gram.reset()
     # print()
 
-    gram.read_param(0xD0)
+    # gram.write_param(0xD0, [1,2,3,4])
+    # gram.read_param(0xD0)
 
-    # while 1:
-    #     gram.set_LED(1)
-    #     sleep(0.3)
-    #     gram.set_LED(0)
-    #     sleep(0.3)
+    for T in range(100):
+        gram.read_param(0x10)
+        sleep(0.5)
+
+    # for I in range(10):
+    #     gram.write_param(0x30, [1])
+    #     sleep(0.1)
+    #     gram.write_param(0x30, [0])
+    #     sleep(0.1)
 
     sleep(1)
     gram.close()
