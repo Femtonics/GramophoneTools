@@ -32,8 +32,10 @@ class Gramophone(hid.HidDevice):
         super().open()
         reports = self.find_output_reports()
         self.report = reports[0]
+        self.set_LED(1)
 
     def close(self):
+        self.set_LED(0)
         self.report = None
         super().close()
 
@@ -171,10 +173,7 @@ if __name__ == '__main__':
     # gram.reset()
     # print()
 
-    print()
-
-    while 1:
-        gram.read_param(0xD0)
+    gram.read_param(0xD0)
 
     # while 1:
     #     gram.set_LED(1)
