@@ -190,15 +190,15 @@ if __name__ == '__main__':
     # gram.write_param(0xD0, [1,2,3,4])
     # gram.read_param(0xD0)
 
-    for T in range(100):
-        gram.read_param(0x10)
-        sleep(0.5)
+    # for T in range(100):
+    #     gram.read_param(0x10)
+    #     sleep(0.5)
 
-    # for I in range(10):
-    #     gram.write_param(0x30, [1])
-    #     sleep(0.1)
-    #     gram.write_param(0x30, [0])
-    #     sleep(0.1)
+    for I in range(10):
+        gram.write_param(0x30, [1])
+        sleep(0.1)
+        gram.write_param(0x30, [0])
+        sleep(0.1)
 
     sleep(1)
     gram.close()
