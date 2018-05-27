@@ -34,7 +34,7 @@ class Gramophone(hid.HidDevice):
         reports = self.find_output_reports()
         self.report = reports[0]
         self.check_app()
-        sleep(0.1)  
+        sleep(0.1)
         if self.app_state == 'IAP':
             print('Device in IAP state. Resetting...')
             self.reset()
@@ -182,7 +182,7 @@ if __name__ == '__main__':
 
     gram.get_product_info()
     gram.get_firmware_version()
-    print('App state:',gram.app_state)
+    print('App state:', gram.app_state)
     # gram.check_app()
     # gram.reset()
     # print()
