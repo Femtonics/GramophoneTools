@@ -1,6 +1,16 @@
 from pywinusb import hid
 from time import sleep, time
 from random import randint, sample
+import struct
+
+from PyQt5.QtCore import QObject, pyqtSignal
+
+
+class Transmitter(QObject):
+    velocity_signal = pyqtSignal(float)
+
+    def emit_velocity(self, vel):
+        self.velocity_signal.emit(vel)
 
 
 class Gramophone(hid.HidDevice):
@@ -12,12 +22,14 @@ class Gramophone(hid.HidDevice):
                    0x07: 'PACKET_FAIL_VALIDFAIL',
                    0x08: 'PACKET_FAIL_ACCESSVIOLATION'}
 
-    def __init__(self):
+    def __init__(self, verbose=False):
         dev_filter = hid.HidDeviceFilter(vendor_id=0x0483, product_id=0x5750)
         devices = dev_filter.get_devices()
         if devices:
             dev = devices[0]
         super().__init__(dev.device_path, dev.parent_instance_id, dev.instance_id)
+
+        self.verbose = verbose
 
         self.report = None
         self.set_raw_data_handler(self.data_handler)
@@ -29,6 +41,23 @@ class Gramophone(hid.HidDevice):
         self.app_state = 'Unknown'
         self.msn = 0
 
+        self.firmware_release = None
+        self.firmware_sub = None
+        self.firmware_build = None
+        self.firmware_year = None
+        self.firmware_month = None
+        self.firmware_day = None
+        self.firmware_hour = None
+        self.firmware_minute = None
+        self.firmware_second = None
+
+        self.product_name = None
+        self.product_revision = None
+        self.product_serial = None
+        self.product_year = None
+        self.product_month = None
+        self.product_day = None
+
     def open(self):
         super().open()
         reports = self.find_output_reports()
@@ -39,50 +68,183 @@ class Gramophone(hid.HidDevice):
             print('Device in IAP state. Resetting...')
             self.reset()
             sleep(0.1)
-        else:
-            self.set_LED(1)
 
     def close(self):
-        self.set_LED(0)
         self.report = None
         super().close()
+
+    @staticmethod
+    def decode_param(param_id, payload):
+        result = {'type': None,
+                  'description': None,
+                  'value': None}
+
+        if payload is not None:
+            payload = bytes(payload)
+        else:
+            payload = bytes([0, 0, 0, 0])
+
+        if param_id == 0x01:
+            result['type'] = 'VSEN3V3'
+            result['description'] = 'Voltage on 3.3V rail.'
+            result['value'] = struct.unpack('f', payload)[0]
+        if param_id == 0x02:
+            result['type'] = 'VSEN5V'
+            result['description'] = 'Voltage on 5V rail.'
+            result['value'] = struct.unpack('f', payload)[0]
+        if param_id == 0x03:
+            result['type'] = 'TSENMCU'
+            result['description'] = 'Internal teperature of the MCU.'
+            result['value'] = struct.unpack('f', payload)[0]
+        if param_id == 0x04:
+            result['type'] = 'TSENEXT'
+            result['description'] = 'External temperature sensor on the board.'
+            result['value'] = struct.unpack('f', payload)[0]
+
+        if param_id == 0x10:
+            result['type'] = 'ENCPOS'
+            result['description'] = 'Encoder position.'
+            result['value'] = int.from_bytes(payload, 'little', signed=True)
+        if param_id == 0x11:
+            result['type'] = 'ENCVEL'
+            result['description'] = 'Encoder velocity.'
+            result['value'] = struct.unpack('f', payload[0:4])[
+                0]*float(payload[4])
+        if param_id == 0x12:
+            result['type'] = 'ENCVELWIN'
+            result['description'] = 'Encoder velocity window size.'
+            result['value'] = int.from_bytes(payload, 'little', signed=False)
+        if param_id == 0x13:
+            result['type'] = 'ENCHOME'
+            result['description'] = 'Encoder homing.'
+            result['value'] = int.from_bytes(payload, 'little', signed=False)
+        if param_id == 0x14:
+            result['type'] = 'ENCHOMEPOS'
+            result['description'] = 'Encoder home position.'
+            result['value'] = int.from_bytes(payload, 'little', signed=False)
+
+        if param_id == 0x20:
+            result['type'] = 'DI-1'
+            result['description'] = 'Digital input 1.'
+            result['value'] = int.from_bytes(payload, 'little', signed=False)
+        if param_id == 0x21:
+            result['type'] = 'DI-2'
+            result['description'] = 'Digital input 2.'
+            result['value'] = int.from_bytes(payload, 'little', signed=False)
+        if param_id == 0x25:
+            result['type'] = 'DI'
+            result['description'] = 'Digital inputs.'
+            result['value'] = list(payload)
+
+        if param_id == 0x30:
+            result['type'] = 'DO-1'
+            result['description'] = 'Digital output 1.'
+            result['value'] = int.from_bytes(payload, 'little', signed=False)
+        if param_id == 0x31:
+            result['type'] = 'DO-2'
+            result['description'] = 'Digital output 2.'
+            result['value'] = int.from_bytes(payload, 'little', signed=False)
+        if param_id == 0x32:
+            result['type'] = 'DO-3'
+            result['description'] = 'Digital output 3.'
+            result['value'] = int.from_bytes(payload, 'little', signed=False)
+        if param_id == 0x33:
+            result['type'] = 'DO-4'
+            result['description'] = 'Digital output 4.'
+            result['value'] = int.from_bytes(payload, 'little', signed=False)
+        if param_id == 0x35:
+            result['type'] = 'DO'
+            result['description'] = 'Digital outputs.'
+            result['value'] = list(payload)
+
+        if param_id == 0x40:
+            result['type'] = 'AO'
+            result['description'] = 'Analogue output.'
+            result['value'] = struct.unpack('f', payload)[0]
+
+        if param_id == 0xFF:
+            result['type'] = 'LED'
+            result['description'] = 'LED state changed.'
+            result['value'] = int.from_bytes(payload, 'little', signed=False)
+
+        return result
+
+    def read_input(self, input_id):
+        self.read_param(0x20+input_id-1)
+
+    def read_inputs(self):
+        self.read_params(0x25, [0x20, 0x21])
+
+    def read_output(self, output_id):
+        self.read_param(0x30+output_id-1)
+
+    def read_outputs(self):
+        self.read_params(0x35, [0x30, 0x31, 0x32, 0x33])
+
+    def read_analog_out(self):
+        gram.read_param(0x40)
+
+    def read_voltages(self):
+        gram.read_param(0x01)
+        gram.read_param(0x02)
+
+    def read_temperatures(self):
+        gram.read_param(0x03)
+        gram.read_param(0x04)
+
+    def read_position(self):
+        gram.read_param(0x10)
+
+    def read_velocity(self):
+        gram.read_param(0x11)
+
+    def read_window_size(self):
+        gram.read_param(0x12)
+
+    def read_homing_state(self):
+        gram.read_param(0x13)
+        gram.read_param(0x14)
+
+    def read_firmware_info(self):
+        self.send(0x00, 0x04, [])
+
+    def read_product_info(self):
+        self.send(0x00, 0x08, [])
 
     def ping(self):
         data = sample(range(0, 255), 5)
         self.ping_time = time()
-        self.send(0, data)
+        self.send(0x00, 0x00, data)
         print('Ping!', data)
 
     def check_app(self):
-        self.send(0x05, [])
-
-    def get_firmware_version(self):
-        self.send(0x04, [])
-
-    def get_product_info(self):
-        self.send(0x08, [])
+        self.send(0x00, 0x05, [])
 
     def set_LED(self, state):
-        self.send(0x12, [state])
+        self.send(0xFF, 0x12, [state])
 
     def reset(self):
-        self.send(0xF0, [])
+        self.send(0x00, 0xF0, [])
 
     def read_param(self, param):
-        self.send(0x0B, [param])
+        self.send(param, 0x0B, [param])
+
+    def read_params(self, msn, params):
+        self.send(msn, 0x0B, params)
 
     def write_param(self, param, payload):
-        self.send(0x0C, [param]+payload)
+        if param == 0x40:
+            payload = list(struct.pack('f', payload[0]))
+        self.send(param, 0x0C, [param]+payload)
 
-    def send(self, cmd, payload):
+    def send(self, msn, cmd, payload):
         plen = len(payload)
         filler = [0] * (65-plen-8)
         full = [0x0] + self.target + self.source + \
-            [self.msn, cmd, plen] + payload + filler
+            [msn, cmd, plen] + payload + filler
         self.report.set_raw_data(full)
         self.report.send()
-        self.msn += 1
-        self.msn %= 256
+
         # print('Sent:',[hex(byte) for byte in full])
 
         # print('Sent')
@@ -108,80 +270,92 @@ class Gramophone(hid.HidDevice):
             print('Delay:', delay, 'sec\n')
 
         if cmd == 0x01:
-            print('OK')
+            if self.verbose:
+                param_type = Gramophone.decode_param(msn, None)['type']
+                print(param_type, 'OK!')
 
         if cmd == 0x02:
+            param_type = Gramophone.decode_param(msn, None)['type']
             err = payload[0]
-            print('Failed command', self.error_codes[err])
+            print(param_type, 'failed', self.error_codes[err])
 
         if cmd == 0x04:
-            release = payload[0]
-            sub = payload[1]
-            build = int.from_bytes(payload[2:4], 'little', signed=False)
-            year = int.from_bytes(payload[4:6], 'little', signed=False)
-            month = payload[6]
-            day = payload[7]
-            hour = payload[8]
-            minute = payload[9]
-            second = payload[10]
+            self.firmware_release = payload[0]
+            self.firmware_sub = payload[1]
+            self.firmware_build = int.from_bytes(
+                payload[2:4], 'little', signed=False)
+            self.firmware_year = int.from_bytes(
+                payload[4:6], 'little', signed=False)
+            self.firmware_month = payload[6]
+            self.firmware_day = payload[7]
+            self.firmware_hour = payload[8]
+            self.firmware_minute = payload[9]
+            self.firmware_second = payload[10]
 
-            print('Firmware version')
-            print('Relase:', str(release)+'.'+str(sub))
-            print('Build:', build)
-            print('Date:', str(year)+'-'+str(month)+'-'+str(day))
-            print('Time', str(hour)+':'+str(minute)+':'+str(second))
-            print()
+            if self.verbose:
+                print('Firmware version')
+                print('Relase:', str(self.firmware_release) +
+                      '.'+str(self.firmware_sub))
+                print('Build:', self.firmware_build)
+                print('Date:', str(self.firmware_year)+'-' +
+                      str(self.firmware_month)+'-'+str(self.firmware_day))
+                print('Time', str(self.firmware_hour)+':' +
+                      str(self.firmware_minute)+':'+str(self.firmware_second))
+                print()
 
         if cmd == 0x05:
             if payload[0] == 0x00:
-                print('CheckApp: IAP \n')
+                if self.verbose:
+                    print('CheckApp: IAP \n')
                 self.app_state = 'IAP'
             if payload[0] == 0x01:
-                print('CheckApp: Application \n')
+                if self.verbose:
+                    print('CheckApp: Application \n')
                 self.app_state = 'App'
 
         if cmd == 0x08:
-            name = [chr(byte) for byte in payload[0:18] if byte != 0x00]
-            name_str = ''.join(name)
-
-            revision = [chr(byte) for byte in payload[18:24]]
-            revision_str = ''.join(revision)
-
-            serial = hex(int.from_bytes(
+            self.product_name = ''.join(
+                [chr(byte) for byte in payload[0:18] if byte != 0x00])
+            self.product_revision = ''.join(
+                [chr(byte) for byte in payload[18:24]])
+            self.product_serial = hex(int.from_bytes(
                 payload[24:28], 'little', signed=False))
-            year = int.from_bytes(payload[28:30], 'little', signed=False)
-            month = int.from_bytes(payload[30:31], 'little', signed=False)
-            day = int.from_bytes(payload[31:32], 'little', signed=False)
+            self.product_year = int.from_bytes(
+                payload[28:30], 'little', signed=False)
+            self.product_month = int.from_bytes(
+                payload[30:31], 'little', signed=False)
+            self.product_day = int.from_bytes(
+                payload[31:32], 'little', signed=False)
 
-            print('Product Info')
-            print('Name:', name_str)
-            print('Revision:', revision_str)
-            print('Serial', serial)
-            print('Production:', str(year)+'-'+str(month)+'-'+str(day))
-            print()
+            if self.verbose:
+                print('Product Info')
+                print('Name:', self.product_name)
+                print('Revision:', self.product_revision)
+                print('Serial', self.product_serial)
+                print('Production:', str(self.product_year)+'-' +
+                      str(self.product_month)+'-'+str(self.product_day))
+                print()
 
         if cmd == 0x0B:
-            print('Parameter read')
-            print('Value', int.from_bytes(payload, 'little', signed=False))
+            if self.verbose:
+                print('Parameter read', Gramophone.decode_param(msn, payload))
 
         if cmd not in [0x00, 0x01, 0x02, 0x04, 0x05, 0x08, 0x0B]:
             print('CMD', hex(cmd))
             print('plen', plen)
             print('payload', payload)
 
-        # print('Received:',[hex(d) for d in data])
-
 
 if __name__ == '__main__':
-    gram = Gramophone()
+    gram = Gramophone(verbose=True)
     gram.open()
 
     sleep(1)
     gram.ping()
     # print()
 
-    gram.get_product_info()
-    gram.get_firmware_version()
+    gram.read_product_info()
+    gram.read_firmware_info()
     print('App state:', gram.app_state)
     # gram.check_app()
     # gram.reset()
@@ -191,14 +365,31 @@ if __name__ == '__main__':
     # gram.read_param(0xD0)
 
     # for T in range(100):
-    #     gram.read_param(0x10)
+    #     gram.read_param(0x11)
     #     sleep(0.5)
 
-    for I in range(10):
-        gram.write_param(0x30, [1])
-        sleep(0.1)
-        gram.write_param(0x30, [0])
-        sleep(0.1)
+    # for I in range(10):
+    #     gram.write_param(0x30, [1])
+    #     # sleep(0.01)
+    #     gram.write_param(0x30, [0])
+    #     # sleep(0.01)
+
+    # gram.read_input(1)
+    # gram.read_inputs()
+    # gram.read_output(2)
+    # gram.read_outputs()
+
+    # import numpy as np
+
+    # wave = np.linspace(0, 2*np.pi, 1000)
+    # wave = np.sin(wave)
+
+    # for w in wave:
+    #     gram.write_param(0x40, [w])
+
+    until = time()+60
+    while time() < until:
+        gram.read_position()
 
     sleep(1)
     gram.close()
