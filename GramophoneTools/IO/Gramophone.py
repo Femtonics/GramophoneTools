@@ -23,7 +23,7 @@ class Gramophone(hid.HidDevice):
                    0x08: 'PACKET_FAIL_ACCESSVIOLATION'}
 
     @staticmethod
-    def find_devices:
+    def find_devices():
         dev_filter = hid.HidDeviceFilter(vendor_id=0x0483, product_id=0x5750)
         return dev_filter.get_devices()
 
