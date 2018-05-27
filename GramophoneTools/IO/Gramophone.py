@@ -1,9 +1,10 @@
-from pywinusb import hid
-from time import sleep, time
-from random import randint, sample
 import struct
+from random import randint, sample
+from time import sleep, time
 
 from PyQt5.QtCore import QObject, pyqtSignal
+
+from pywinusb import hid
 
 
 class Transmitter(QObject):
