@@ -22,12 +22,16 @@ class Gramophone(hid.HidDevice):
                    0x07: 'PACKET_FAIL_VALIDFAIL',
                    0x08: 'PACKET_FAIL_ACCESSVIOLATION'}
 
-    def __init__(self, verbose=False):
+    @staticmethod
+    def find_devices:
         dev_filter = hid.HidDeviceFilter(vendor_id=0x0483, product_id=0x5750)
-        devices = dev_filter.get_devices()
-        if devices:
-            dev = devices[0]
-        super().__init__(dev.device_path, dev.parent_instance_id, dev.instance_id)
+        return dev_filter.get_devices()
+
+    def __init__(self, device, verbose=False):
+        self.device = device
+        super().__init__(self.device.device_path,
+                         self.device.parent_instance_id,
+                         self.device.instance_id)
 
         self.verbose = verbose
 
@@ -349,7 +353,8 @@ class Gramophone(hid.HidDevice):
 
 
 if __name__ == '__main__':
-    gram = Gramophone(verbose=True)
+    devs = Gramophone.find_devices()
+    gram = Gramophone(devs[0], verbose=True)
     gram.open()
 
     sleep(1)
