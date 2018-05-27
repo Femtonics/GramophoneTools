@@ -59,6 +59,7 @@ class Gramophone(hid.HidDevice):
         self.product_day = None
 
     def open(self):
+        """ Connect to this device. """
         super().open()
         reports = self.find_output_reports()
         self.report = reports[0]
@@ -70,6 +71,7 @@ class Gramophone(hid.HidDevice):
             sleep(0.1)
 
     def close(self):
+        """ Disconnect from this device. """
         self.report = None
         super().close()
 
