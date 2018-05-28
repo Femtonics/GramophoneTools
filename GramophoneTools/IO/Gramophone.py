@@ -1,4 +1,5 @@
 import struct
+from threading import Thread
 from random import randint, sample
 from time import sleep, time
 
@@ -356,3 +357,12 @@ class Gramophone(hid.HidDevice):
             print('CMD', hex(cmd))
             print('plen', plen)
             print('payload', payload)
+
+    def read_vel_loop(self):
+        until = time()+60
+        while time() < until:
+            self.read_velocity()
+
+    def bcg_read(self):
+        self.bcg_thread = Thread(target=self.read_vel_loop)
+        self.bcg_thread.start()

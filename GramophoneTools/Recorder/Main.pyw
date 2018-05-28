@@ -73,7 +73,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         # self.graph.showLabel(axis='bottom', show=False)
         self.graph.showGrid(x=False, y=True, alpha=1)
         self.graph.disableAutoRange(axis='y')
-        self.graph.setYRange(-55, 55, padding=0, update=False)
+        self.graph.setYRange(-70000, 70000, padding=0, update=False)
         self.reset_graph()
 
         # Make initial file
@@ -105,6 +105,8 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         # Gramophone
         devs = Gramophone.find_devices()
         self.gram = Gramophone(devs[0], verbose=True)
+        self.gram.open()
+        self.gram.bcg_read()
         # self.gram.error_msg.connect(self.gramophone_error)
         # self.gram.transmitter.time_sig.connect(self.update_timer)
         self.gram.transmitter.velocity_signal.connect(self.update_graph)
@@ -273,8 +275,9 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
     @pyqtSlot()
     def refresh_gram_list(self):
         """ Refreshes the list of available Gramophones. """
-        self.gram_list = QGramophone.find_grams()
-        port_names = [gram.portName() for gram in self.gram_list]
+        self.gram_list = Gramophone.find_devices()
+        # port_names = [gram.portName() for gram in self.gram_list]
+        port_names = [str(device) for device in self.gram_list]
         if self.gram_list:
             self.connect_btn.setProperty("enabled", True)
             self.gram_dropdown.clear()
@@ -339,7 +342,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
 
             self.timer_timer = 0
 
-    @pyqtSlot(int)
+    @pyqtSlot(float)
     def update_graph(self, velocity):
         ''' Slot for the vel_signal of the Gramophone. Shifts the
             graph to the right and appends with the value received. '''
