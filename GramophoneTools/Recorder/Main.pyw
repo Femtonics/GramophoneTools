@@ -18,7 +18,7 @@ from PyQt5.QtWidgets import QApplication, QMessageBox, QHeaderView, QFileDialog
 from PyQt5.QtSerialPort import QSerialPort
 
 from GramophoneTools.Recorder import GramLogging
-from GramophoneTools.IO.QGramophone import QGramophone
+from GramophoneTools.IO.Gramophone import Gramophone
 
 # GLOBALS
 DIR = os.path.dirname(__file__)
@@ -103,12 +103,13 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         self.graph_timer = 0
 
         # Gramophone
-        self.gram = QGramophone()
+        devs = Gramophone.find_devices()
+        self.gram = Gramophone(devs[0], verbose=True)
         # self.gram.error_msg.connect(self.gramophone_error)
-        self.gram.time_sig.connect(self.update_timer)
-        self.gram.vel_sig.connect(self.update_graph)
-        self.gram.rec_sig.connect(self.update_rec_state)
-        self.gram.errorOccurred.connect(self.gramophone_error)
+        # self.gram.transmitter.time_sig.connect(self.update_timer)
+        self.gram.transmitter.velocity_signal.connect(self.update_graph)
+        # self.gram.transmitter.rec_sig.connect(self.update_rec_state)
+        # self.gram.transmitter.errorOccurred.connect(self.gramophone_error)
 
         # Initialize GUI
         self.refresh_gram_list()
@@ -667,4 +668,4 @@ def main():
     sys.exit(APP.exec_())
 
 if __name__ == '__main__':
-    main()    
+    main()
