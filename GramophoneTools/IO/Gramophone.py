@@ -356,4 +356,3 @@ class Gramophone(hid.HidDevice):
             print('CMD', hex(cmd))
             print('plen', plen)
             print('payload', payload)
-
