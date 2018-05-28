@@ -71,6 +71,23 @@
         </widget>
        </item>
        <item>
+        <widget class="QToolButton" name="settings_btn">
+         <property name="minimumSize">
+          <size>
+           <width>26</width>
+           <height>26</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>...</string>
+         </property>
+         <property name="icon">
+          <iconset resource="res/resources.qrc">
+           <normaloff>:/icons/appbar.settings.png</normaloff>:/icons/appbar.settings.png</iconset>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QPushButton" name="connect_btn">
          <property name="minimumSize">
           <size>
@@ -253,6 +270,7 @@
     <addaction name="separator"/>
     <addaction name="actionSave"/>
     <addaction name="actionSave_As"/>
+    <addaction name="actionExport_to_xls"/>
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
@@ -372,6 +390,15 @@
   <action name="actionLicense">
    <property name="text">
     <string>License</string>
+   </property>
+  </action>
+  <action name="actionExport_to_xls">
+   <property name="icon">
+    <iconset resource="res/resources.qrc">
+     <normaloff>:/icons/appbar.office.excel.png</normaloff>:/icons/appbar.office.excel.png</iconset>
+   </property>
+   <property name="text">
+    <string>Export to .xls</string>
    </property>
   </action>
  </widget>
