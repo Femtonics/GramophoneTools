@@ -34,6 +34,8 @@ class Gramophone(hid.HidDevice):
         self.report = None
         self.set_raw_data_handler(self.data_handler)
 
+        self.transmitter = Transmitter()
+
         self.target = [0x0, 0x2]
         self.source = [0x72, 0xfd]
 
@@ -339,8 +341,11 @@ class Gramophone(hid.HidDevice):
                 print()
 
         if cmd == 0x0B:
+            parameter = Gramophone.decode_param(msn, payload)
             if self.verbose:
-                print('Parameter read', Gramophone.decode_param(msn, payload))
+                print('Parameter read', parameter)
+            if parameter['type'] == 'ENCVEL':
+                self.transmitter.emit_velocity(parameter['value'])
 
         if cmd not in [0x00, 0x01, 0x02, 0x04, 0x05, 0x08, 0x0B]:
             print('CMD', hex(cmd))
