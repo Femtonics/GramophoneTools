@@ -184,28 +184,28 @@ class Gramophone(hid.HidDevice):
         self.read_params(0x35, [0x30, 0x31, 0x32, 0x33])
 
     def read_analog_out(self):
-        gram.read_param(0x40)
+        self.read_param(0x40)
 
     def read_voltages(self):
-        gram.read_param(0x01)
-        gram.read_param(0x02)
+        self.read_param(0x01)
+        self.read_param(0x02)
 
     def read_temperatures(self):
-        gram.read_param(0x03)
-        gram.read_param(0x04)
+        self.read_param(0x03)
+        self.read_param(0x04)
 
     def read_position(self):
-        gram.read_param(0x10)
+        self.read_param(0x10)
 
     def read_velocity(self):
-        gram.read_param(0x11)
+        self.read_param(0x11)
 
     def read_window_size(self):
-        gram.read_param(0x12)
+        self.read_param(0x12)
 
     def read_homing_state(self):
-        gram.read_param(0x13)
-        gram.read_param(0x14)
+        self.read_param(0x13)
+        self.read_param(0x14)
 
     def read_firmware_info(self):
         self.send(0x00, 0x04, [])
