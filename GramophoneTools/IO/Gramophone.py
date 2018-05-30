@@ -1,5 +1,6 @@
 import struct
 from threading import Thread
+from collections import namedtuple
 from random import randint, sample
 from time import sleep, time
 
@@ -38,6 +39,7 @@ class Reader(QObject):
 
 
 class Gramophone(hid.HidDevice):
+
     error_codes = {0x00: 'PACKET_FAIL_UNKNOWNCMD',
                    0x01: 'PACKET_FAIL_INVALIDCMDSYNTAX',
                    0x04: 'PACKET_FAIL_INVALIDPARAMSYNTAX',
@@ -45,6 +47,27 @@ class Gramophone(hid.HidDevice):
                    0x06: 'PACKET_FAIL_PARAMNOTFOUND',
                    0x07: 'PACKET_FAIL_VALIDFAIL',
                    0x08: 'PACKET_FAIL_ACCESSVIOLATION'}
+
+    Parameter = namedtuple('Parameter', ['name', 'info', 'type'])
+    parameters = {0x01: Parameter('VSEN3V3', 'Voltage on 3.3V rail.', 'float'),
+                  0x02: Parameter('VSEN5V', 'Voltage on 5V rail.', 'float'),
+                  0x03: Parameter('TSENMCU', 'Internal teperature of the MCU.', 'float'),
+                  0x04: Parameter('TSENEXT', 'External temperature sensor on the board.', 'float'),
+                  0x10: Parameter('ENCPOS', 'Encoder position.', 'int32'),
+                  0x11: Parameter('ENCVEL', 'Encoder velocity.', 'vel_struct'),
+                  0x12: Parameter('ENCVELWIN', 'Encoder velocity window size.', 'uint16'),
+                  0x13: Parameter('ENCHOME', 'Encoder homing.', 'uint8'),
+                  0x14: Parameter('ENCHOMEPOS', 'Encoder home position.', 'int32'),
+                  0x20: Parameter('DI-1', 'Digital input 1.', 'uint8'),
+                  0x21: Parameter('DI-2', 'Digital input 2.', 'uint8'),
+                  0x25: Parameter('DI', 'Digital inputs.', 'list'),
+                  0x30: Parameter('DO-1', 'Digital output 1.', 'uint8'),
+                  0x31: Parameter('DO-2', 'Digital output 2.', 'uint8'),
+                  0x32: Parameter('DO-3', 'Digital output 3.', 'uint8'),
+                  0x33: Parameter('DO-4', 'Digital output 4.', 'uint8'),
+                  0x35: Parameter('DO', 'Digital outputs.', 'list'),
+                  0x40: Parameter('AO', 'Analogue output.', 'float'),
+                  0xFF: Parameter('LED', 'LED state changed', 'uint8')}
 
     @staticmethod
     def find_devices():
@@ -107,100 +130,20 @@ class Gramophone(hid.HidDevice):
         super().close()
 
     @staticmethod
-    def decode_param(param_id, payload):
-        result = {'type': None,
-                  'description': None,
-                  'value': None}
+    def decode_payload(val_type, payload):
+        if val_type == 'float':
+            return struct.unpack('f', payload)[0]
+        if val_type == 'int32':
+            return int.from_bytes(payload, 'little', signed=True)
+        if val_type in ['uint8', 'uint16']:
+            return int.from_bytes(payload, 'little', signed=False)
+        if val_type == 'vel_struct':
+            return struct.unpack('f', payload[0:4])[0]*float(payload[4])
+        if val_type == 'list':
+            return list(payload)
 
-        if payload is not None:
-            payload = bytes(payload)
-        else:
-            payload = bytes([0, 0, 0, 0])
+        return None
 
-        if param_id == 0x01:
-            result['type'] = 'VSEN3V3'
-            result['description'] = 'Voltage on 3.3V rail.'
-            result['value'] = struct.unpack('f', payload)[0]
-        if param_id == 0x02:
-            result['type'] = 'VSEN5V'
-            result['description'] = 'Voltage on 5V rail.'
-            result['value'] = struct.unpack('f', payload)[0]
-        if param_id == 0x03:
-            result['type'] = 'TSENMCU'
-            result['description'] = 'Internal teperature of the MCU.'
-            result['value'] = struct.unpack('f', payload)[0]
-        if param_id == 0x04:
-            result['type'] = 'TSENEXT'
-            result['description'] = 'External temperature sensor on the board.'
-            result['value'] = struct.unpack('f', payload)[0]
-
-        if param_id == 0x10:
-            result['type'] = 'ENCPOS'
-            result['description'] = 'Encoder position.'
-            result['value'] = int.from_bytes(payload, 'little', signed=True)
-        if param_id == 0x11:
-            result['type'] = 'ENCVEL'
-            result['description'] = 'Encoder velocity.'
-            result['value'] = struct.unpack('f', payload[0:4])[
-                0]*float(payload[4])
-        if param_id == 0x12:
-            result['type'] = 'ENCVELWIN'
-            result['description'] = 'Encoder velocity window size.'
-            result['value'] = int.from_bytes(payload, 'little', signed=False)
-        if param_id == 0x13:
-            result['type'] = 'ENCHOME'
-            result['description'] = 'Encoder homing.'
-            result['value'] = int.from_bytes(payload, 'little', signed=False)
-        if param_id == 0x14:
-            result['type'] = 'ENCHOMEPOS'
-            result['description'] = 'Encoder home position.'
-            result['value'] = int.from_bytes(payload, 'little', signed=False)
-
-        if param_id == 0x20:
-            result['type'] = 'DI-1'
-            result['description'] = 'Digital input 1.'
-            result['value'] = int.from_bytes(payload, 'little', signed=False)
-        if param_id == 0x21:
-            result['type'] = 'DI-2'
-            result['description'] = 'Digital input 2.'
-            result['value'] = int.from_bytes(payload, 'little', signed=False)
-        if param_id == 0x25:
-            result['type'] = 'DI'
-            result['description'] = 'Digital inputs.'
-            result['value'] = list(payload)
-
-        if param_id == 0x30:
-            result['type'] = 'DO-1'
-            result['description'] = 'Digital output 1.'
-            result['value'] = int.from_bytes(payload, 'little', signed=False)
-        if param_id == 0x31:
-            result['type'] = 'DO-2'
-            result['description'] = 'Digital output 2.'
-            result['value'] = int.from_bytes(payload, 'little', signed=False)
-        if param_id == 0x32:
-            result['type'] = 'DO-3'
-            result['description'] = 'Digital output 3.'
-            result['value'] = int.from_bytes(payload, 'little', signed=False)
-        if param_id == 0x33:
-            result['type'] = 'DO-4'
-            result['description'] = 'Digital output 4.'
-            result['value'] = int.from_bytes(payload, 'little', signed=False)
-        if param_id == 0x35:
-            result['type'] = 'DO'
-            result['description'] = 'Digital outputs.'
-            result['value'] = list(payload)
-
-        if param_id == 0x40:
-            result['type'] = 'AO'
-            result['description'] = 'Analogue output.'
-            result['value'] = struct.unpack('f', payload)[0]
-
-        if param_id == 0xFF:
-            result['type'] = 'LED'
-            result['description'] = 'LED state changed.'
-            result['value'] = int.from_bytes(payload, 'little', signed=False)
-
-        return result
 
     def read_input(self, input_id):
         self.read_param(0x20+input_id-1)
@@ -304,13 +247,11 @@ class Gramophone(hid.HidDevice):
 
         if cmd == 0x01:
             if self.verbose:
-                param_type = Gramophone.decode_param(msn, None)['type']
-                print(param_type, 'OK!')
+                print(Gramophone.parameters[msn].name, 'OK!')
 
         if cmd == 0x02:
-            param_type = Gramophone.decode_param(msn, None)['type']
-            err = payload[0]
-            print(param_type, 'failed', self.error_codes[err])
+            print(Gramophone.parameters[msn].name, 'failed.',
+                  self.error_codes[payload[0]])
 
         if cmd == 0x04:
             self.firmware_release = payload[0]
@@ -370,11 +311,18 @@ class Gramophone(hid.HidDevice):
                 print()
 
         if cmd == 0x0B:
-            parameter = Gramophone.decode_param(msn, payload)
+            val = None
+            if payload is not None:
+                val = Gramophone.decode_payload(
+                    Gramophone.parameters[msn].type, bytes(payload))
             if self.verbose:
-                print('Parameter read', parameter)
-            if parameter['type'] == 'ENCVEL':
-                self.transmitter.emit_velocity(parameter['value'])
+                print('Read:', Gramophone.parameters[msn].info,
+                      'Value:', val)
+
+            if Gramophone.parameters[msn].name == 'ENCVEL':
+                self.transmitter.emit_velocity(val)
+            if Gramophone.parameters[msn].name == 'ENCPOS':
+                self.transmitter.emit_position(val)
 
         if cmd not in [0x00, 0x01, 0x02, 0x04, 0x05, 0x08, 0x0B]:
             print('CMD', hex(cmd))
