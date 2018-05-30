@@ -34,7 +34,8 @@ setup(
         'pyserial',
         'pyqtgraph',
         'matplotlib',
-        'opencv-python'],
+        'opencv-python',
+        'pywinusb'],
     extras_require={
         'tests': [
             'pytest'],

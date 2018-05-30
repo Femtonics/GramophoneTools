@@ -9,6 +9,7 @@ pyserial
 pyqtgraph
 matplotlib
 opencv-python
+pywinusb
 # For docs
 sphinx
 sphinx_rtd_theme
