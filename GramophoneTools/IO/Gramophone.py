@@ -18,6 +18,7 @@ class Transmitter(QObject):
     def emit_position(self, pos):
         self.position_signal.emit(pos)
 
+
 class Reader(QObject):
     def __init__(self, read_func, frequency):
         super().__init__()
@@ -34,6 +35,7 @@ class Reader(QObject):
 
     def abort(self):
         self.reading = False
+
 
 class Gramophone(hid.HidDevice):
     error_codes = {0x00: 'PACKET_FAIL_UNKNOWNCMD',
@@ -390,10 +392,9 @@ class Gramophone(hid.HidDevice):
 
         thread.started.connect(reader.read)
         thread.start()
-        
+
     def stop_position_reading(self):
         for thread, reader in self.readers:
             reader.abort()
             thread.quit()
             thread.wait()
-        
