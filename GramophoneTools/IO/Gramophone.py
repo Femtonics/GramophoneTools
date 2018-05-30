@@ -20,6 +20,7 @@ class Transmitter(QObject):
 
 class Reader(QObject):
     def __init__(self, read_func, frequency):
+        super().__init__()
         self.read_func = read_func
         self.reading = None
         self.frequency = frequency
