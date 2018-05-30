@@ -3,17 +3,36 @@ from threading import Thread
 from random import randint, sample
 from time import sleep, time
 
-from PyQt5.QtCore import QObject, pyqtSignal
+from PyQt5.QtCore import QObject, pyqtSignal, pyqtSlot, QThread
 
 from pywinusb import hid
 
 
 class Transmitter(QObject):
     velocity_signal = pyqtSignal(float)
+    position_signal = pyqtSignal(int)
 
     def emit_velocity(self, vel):
         self.velocity_signal.emit(vel)
 
+    def emit_position(self, pos):
+        self.position_signal.emit(pos)
+
+class Reader(QObject):
+    def __init__(self, read_func, frequency):
+        self.read_func = read_func
+        self.reading = None
+        self.frequency = frequency
+
+    @pyqtSlot()
+    def read(self):
+        self.reading = True
+        while self.reading:
+            self.read_func()
+            sleep(1/self.frequency)
+
+    def abort(self):
+        self.reading = False
 
 class Gramophone(hid.HidDevice):
     error_codes = {0x00: 'PACKET_FAIL_UNKNOWNCMD',
@@ -41,6 +60,7 @@ class Gramophone(hid.HidDevice):
         self.set_raw_data_handler(self.data_handler)
 
         self.transmitter = Transmitter()
+        self.readers = []
 
         self.target = [0x0, 0x2]
         self.source = [0x72, 0xfd]
@@ -358,11 +378,21 @@ class Gramophone(hid.HidDevice):
             print('plen', plen)
             print('payload', payload)
 
-    def read_vel_loop(self):
-        until = time()+60
-        while time() < until:
-            self.read_velocity()
+    def start_position_reading(self):
+        reader = Reader(self.read_position, 1)
+        thread = QThread()
+        # thread.setObjectName('thread_' + str(idx))
+        self.readers.append((thread, reader))
+        reader.moveToThread(thread)
 
-    def bcg_read(self):
-        self.bcg_thread = Thread(target=self.read_vel_loop)
-        self.bcg_thread.start()
+        self.transmitter.position_signal.connect(print)
+
+        thread.started.connect(reader.read)
+        thread.start()
+        
+    def stop_position_reading(self):
+        for thread, reader in self.readers:
+            reader.abort()
+            thread.quit()
+            thread.wait()
+        
