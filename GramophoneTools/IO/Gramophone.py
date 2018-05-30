@@ -21,8 +21,9 @@ class Transmitter(QObject):
 
 
 class Reader(QObject):
-    def __init__(self, read_func, frequency):
+    def __init__(self, name, read_func, frequency):
         super().__init__()
+        self.name = name
         self.read_func = read_func
         self.reading = None
         self.frequency = frequency
@@ -143,7 +144,6 @@ class Gramophone(hid.HidDevice):
             return list(payload)
 
         return None
-
 
     def read_input(self, input_id):
         self.read_param(0x20+input_id-1)
@@ -329,20 +329,22 @@ class Gramophone(hid.HidDevice):
             print('plen', plen)
             print('payload', payload)
 
-    def start_position_reading(self):
-        reader = Reader(self.read_position, 1)
+    def start_reader(self, name, param, freq):
+        command = {'position': self.read_position,
+                   'velocity': self.read_velocity,
+                   }[param]
+        reader = Reader(name, command, freq)
         thread = QThread()
         # thread.setObjectName('thread_' + str(idx))
         self.readers.append((thread, reader))
         reader.moveToThread(thread)
 
-        self.transmitter.position_signal.connect(print)
-
         thread.started.connect(reader.read)
         thread.start()
 
-    def stop_position_reading(self):
+    def stop_reader(self, name):
         for thread, reader in self.readers:
-            reader.abort()
-            thread.quit()
-            thread.wait()
+            if reader.name == name:
+                reader.abort()
+                thread.quit()
+                thread.wait()
