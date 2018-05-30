@@ -14,10 +14,10 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../../GramophoneTools'))
-sys.path.insert(0, os.path.abspath('../../GramophoneTools/Recorder'))
-sys.path.insert(0, os.path.abspath('../../GramophoneTools/LinMaze'))
-sys.path.insert(0, os.path.abspath('../../GramophoneTools/IO'))
+sys.path.append(os.path.abspath('../../GramophoneTools'))
+sys.path.append(os.path.abspath('../../GramophoneTools/Recorder'))
+sys.path.append(os.path.abspath('../../GramophoneTools/LinMaze'))
+sys.path.append(os.path.abspath('../../GramophoneTools/IO'))
 from ver import __version__ as g_ver
 import sphinx_rtd_theme
 
