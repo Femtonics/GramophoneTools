@@ -1,11 +1,10 @@
 import struct
-from threading import Thread
 from collections import namedtuple
 from random import randint, sample
+from threading import Thread
 from time import sleep, time
 
-from PyQt5.QtCore import QObject, pyqtSignal, pyqtSlot, QThread
-
+from PyQt5.QtCore import QObject, QThread, pyqtSignal, pyqtSlot
 from pywinusb import hid
 
 
