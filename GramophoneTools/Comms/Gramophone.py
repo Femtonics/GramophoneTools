@@ -89,12 +89,11 @@ class Gramophone(hid.HidDevice):
         self.transmitter = Transmitter()
         self.readers = []
 
-        self.target = [0x0, 0x2]
-        self.source = [0x72, 0xfd]
+        self.target = [randint(0x00,0xFF), randint(0x00,0xFF)]
+        self.source = [randint(0x00,0xFF), randint(0x00,0xFF)]
 
         self.ping_time = None
         self.app_state = 'Unknown'
-        self.msn = 0
 
         self.firmware_release = None
         self.firmware_sub = None
@@ -235,99 +234,100 @@ class Gramophone(hid.HidDevice):
     def data_handler(self, data):
         target = data[1:3]
         source = data[3:5]
-        msn = data[5]
-        cmd = data[6]
-        plen = data[7]
-        payload = data[8:8+plen]
+        if target == self.source and source == self.target:
+            msn = data[5]
+            cmd = data[6]
+            plen = data[7]
+            payload = data[8:8+plen]
 
-        if cmd == 0x00:
-            delay = time()-self.ping_time
-            print('Pong!', payload)
-            print('Delay:', delay, 'sec\n')
+            if cmd == 0x00:
+                delay = time()-self.ping_time
+                print('Pong!', payload)
+                print('Delay:', delay, 'sec\n')
 
-        if cmd == 0x01:
-            if self.verbose:
-                print(Gramophone.parameters[msn].name, 'OK!')
-
-        if cmd == 0x02:
-            print(Gramophone.parameters[msn].name, 'failed.',
-                  self.error_codes[payload[0]])
-
-        if cmd == 0x04:
-            self.firmware_release = payload[0]
-            self.firmware_sub = payload[1]
-            self.firmware_build = int.from_bytes(
-                payload[2:4], 'little', signed=False)
-            self.firmware_year = int.from_bytes(
-                payload[4:6], 'little', signed=False)
-            self.firmware_month = payload[6]
-            self.firmware_day = payload[7]
-            self.firmware_hour = payload[8]
-            self.firmware_minute = payload[9]
-            self.firmware_second = payload[10]
-
-            if self.verbose:
-                print('Firmware version')
-                print('Relase:', str(self.firmware_release) +
-                      '.'+str(self.firmware_sub))
-                print('Build:', self.firmware_build)
-                print('Date:', str(self.firmware_year)+'-' +
-                      str(self.firmware_month)+'-'+str(self.firmware_day))
-                print('Time', str(self.firmware_hour)+':' +
-                      str(self.firmware_minute)+':'+str(self.firmware_second))
-                print()
-
-        if cmd == 0x05:
-            if payload[0] == 0x00:
+            if cmd == 0x01:
                 if self.verbose:
-                    print('CheckApp: IAP \n')
-                self.app_state = 'IAP'
-            if payload[0] == 0x01:
+                    print(Gramophone.parameters[msn].name, 'OK!')
+
+            if cmd == 0x02:
+                print(Gramophone.parameters[msn].name, 'failed.',
+                    self.error_codes[payload[0]])
+
+            if cmd == 0x04:
+                self.firmware_release = payload[0]
+                self.firmware_sub = payload[1]
+                self.firmware_build = int.from_bytes(
+                    payload[2:4], 'little', signed=False)
+                self.firmware_year = int.from_bytes(
+                    payload[4:6], 'little', signed=False)
+                self.firmware_month = payload[6]
+                self.firmware_day = payload[7]
+                self.firmware_hour = payload[8]
+                self.firmware_minute = payload[9]
+                self.firmware_second = payload[10]
+
                 if self.verbose:
-                    print('CheckApp: Application \n')
-                self.app_state = 'App'
+                    print('Firmware version')
+                    print('Relase:', str(self.firmware_release) +
+                        '.'+str(self.firmware_sub))
+                    print('Build:', self.firmware_build)
+                    print('Date:', str(self.firmware_year)+'-' +
+                        str(self.firmware_month)+'-'+str(self.firmware_day))
+                    print('Time', str(self.firmware_hour)+':' +
+                        str(self.firmware_minute)+':'+str(self.firmware_second))
+                    print()
 
-        if cmd == 0x08:
-            self.product_name = ''.join(
-                [chr(byte) for byte in payload[0:18] if byte != 0x00])
-            self.product_revision = ''.join(
-                [chr(byte) for byte in payload[18:24]])
-            self.product_serial = hex(int.from_bytes(
-                payload[24:28], 'little', signed=False))
-            self.product_year = int.from_bytes(
-                payload[28:30], 'little', signed=False)
-            self.product_month = int.from_bytes(
-                payload[30:31], 'little', signed=False)
-            self.product_day = int.from_bytes(
-                payload[31:32], 'little', signed=False)
+            if cmd == 0x05:
+                if payload[0] == 0x00:
+                    if self.verbose:
+                        print('CheckApp: IAP \n')
+                    self.app_state = 'IAP'
+                if payload[0] == 0x01:
+                    if self.verbose:
+                        print('CheckApp: Application \n')
+                    self.app_state = 'App'
 
-            if self.verbose:
-                print('Product Info')
-                print('Name:', self.product_name)
-                print('Revision:', self.product_revision)
-                print('Serial', self.product_serial)
-                print('Production:', str(self.product_year)+'-' +
-                      str(self.product_month)+'-'+str(self.product_day))
-                print()
+            if cmd == 0x08:
+                self.product_name = ''.join(
+                    [chr(byte) for byte in payload[0:18] if byte != 0x00])
+                self.product_revision = ''.join(
+                    [chr(byte) for byte in payload[18:24]])
+                self.product_serial = hex(int.from_bytes(
+                    payload[24:28], 'little', signed=False))
+                self.product_year = int.from_bytes(
+                    payload[28:30], 'little', signed=False)
+                self.product_month = int.from_bytes(
+                    payload[30:31], 'little', signed=False)
+                self.product_day = int.from_bytes(
+                    payload[31:32], 'little', signed=False)
 
-        if cmd == 0x0B:
-            val = None
-            if payload is not None:
-                val = Gramophone.decode_payload(
-                    Gramophone.parameters[msn].type, bytes(payload))
-            if self.verbose:
-                print('Read:', Gramophone.parameters[msn].info,
-                      'Value:', val)
+                if self.verbose:
+                    print('Product Info')
+                    print('Name:', self.product_name)
+                    print('Revision:', self.product_revision)
+                    print('Serial', self.product_serial)
+                    print('Production:', str(self.product_year)+'-' +
+                        str(self.product_month)+'-'+str(self.product_day))
+                    print()
 
-            if Gramophone.parameters[msn].name == 'ENCVEL':
-                self.transmitter.emit_velocity(val)
-            if Gramophone.parameters[msn].name == 'ENCPOS':
-                self.transmitter.emit_position(val)
+            if cmd == 0x0B:
+                val = None
+                if payload is not None:
+                    val = Gramophone.decode_payload(
+                        Gramophone.parameters[msn].type, bytes(payload))
+                if self.verbose:
+                    print('Read:', Gramophone.parameters[msn].info,
+                        'Value:', val)
 
-        if cmd not in [0x00, 0x01, 0x02, 0x04, 0x05, 0x08, 0x0B]:
-            print('CMD', hex(cmd))
-            print('plen', plen)
-            print('payload', payload)
+                if Gramophone.parameters[msn].name == 'ENCVEL':
+                    self.transmitter.emit_velocity(val)
+                if Gramophone.parameters[msn].name == 'ENCPOS':
+                    self.transmitter.emit_position(val)
+
+            if cmd not in [0x00, 0x01, 0x02, 0x04, 0x05, 0x08, 0x0B]:
+                print('CMD', hex(cmd))
+                print('plen', plen)
+                print('payload', payload)
 
     def start_reader(self, name, param, freq):
         command = {'position': self.read_position,
