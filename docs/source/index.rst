@@ -12,7 +12,7 @@ GramophoneTools' documentation
    user_guide
    gramrec
    linmaze
-   io
+   comms
 
 .. Indices and tables
 .. ==================
