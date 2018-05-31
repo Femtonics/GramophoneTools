@@ -89,8 +89,8 @@ class Gramophone(hid.HidDevice):
         self.transmitter = Transmitter()
         self.readers = []
 
-        self.target = [randint(0x00,0xFF), randint(0x00,0xFF)]
-        self.source = [randint(0x00,0xFF), randint(0x00,0xFF)]
+        self.target = [randint(0x00, 0xFF), randint(0x00, 0xFF)]
+        self.source = [randint(0x00, 0xFF), randint(0x00, 0xFF)]
 
         self.ping_time = None
         self.app_state = 'Unknown'
@@ -251,7 +251,7 @@ class Gramophone(hid.HidDevice):
 
             if cmd == 0x02:
                 print(Gramophone.parameters[msn].name, 'failed.',
-                    self.error_codes[payload[0]])
+                      self.error_codes[payload[0]])
 
             if cmd == 0x04:
                 self.firmware_release = payload[0]
@@ -269,12 +269,12 @@ class Gramophone(hid.HidDevice):
                 if self.verbose:
                     print('Firmware version')
                     print('Relase:', str(self.firmware_release) +
-                        '.'+str(self.firmware_sub))
+                          '.'+str(self.firmware_sub))
                     print('Build:', self.firmware_build)
                     print('Date:', str(self.firmware_year)+'-' +
-                        str(self.firmware_month)+'-'+str(self.firmware_day))
+                          str(self.firmware_month)+'-'+str(self.firmware_day))
                     print('Time', str(self.firmware_hour)+':' +
-                        str(self.firmware_minute)+':'+str(self.firmware_second))
+                          str(self.firmware_minute)+':'+str(self.firmware_second))
                     print()
 
             if cmd == 0x05:
@@ -307,7 +307,7 @@ class Gramophone(hid.HidDevice):
                     print('Revision:', self.product_revision)
                     print('Serial', self.product_serial)
                     print('Production:', str(self.product_year)+'-' +
-                        str(self.product_month)+'-'+str(self.product_day))
+                          str(self.product_month)+'-'+str(self.product_day))
                     print()
 
             if cmd == 0x0B:
@@ -317,7 +317,7 @@ class Gramophone(hid.HidDevice):
                         Gramophone.parameters[msn].type, bytes(payload))
                 if self.verbose:
                     print('Read:', Gramophone.parameters[msn].info,
-                        'Value:', val)
+                          'Value:', val)
 
                 if Gramophone.parameters[msn].name == 'ENCVEL':
                     self.transmitter.emit_velocity(val)
