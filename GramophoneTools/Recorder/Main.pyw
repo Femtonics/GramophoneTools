@@ -18,7 +18,7 @@ from PyQt5.QtWidgets import QApplication, QMessageBox, QHeaderView, QFileDialog
 from PyQt5.QtSerialPort import QSerialPort
 
 from GramophoneTools.Recorder import GramLogging
-from GramophoneTools.IO.Gramophone import Gramophone
+from GramophoneTools.Comms.Gramophone import Gramophone
 
 # GLOBALS
 DIR = os.path.dirname(__file__)

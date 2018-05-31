@@ -1,7 +1,15 @@
-Gramophone IO module
-====================
+Gramophone Comms module
+=======================
 
 This is the module that handles all the communication with the Gramophone device. Two different serial communication modules are available. QGramophone inherits QSerialPort from pyqt5, while SerGramophone uses the pyserial package for communication.
+
+.. automodule:: Gramophone
+   :members:
+
+Old modules
+===========
+The old modules that were used with the prototype device.
+
 
 QGramophone
 -----------

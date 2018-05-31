@@ -17,7 +17,7 @@ import sys
 sys.path.append(os.path.abspath('../../GramophoneTools'))
 sys.path.append(os.path.abspath('../../GramophoneTools/Recorder'))
 sys.path.append(os.path.abspath('../../GramophoneTools/LinMaze'))
-sys.path.append(os.path.abspath('../../GramophoneTools/IO'))
+sys.path.append(os.path.abspath('../../GramophoneTools/Comms'))
 from ver import __version__ as g_ver
 import sphinx_rtd_theme
 

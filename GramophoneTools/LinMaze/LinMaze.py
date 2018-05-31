@@ -9,7 +9,7 @@ import pyglet
 from pyglet.gl import *
 
 from GramophoneTools.LinMaze import Rule
-from GramophoneTools.IO.SerGramophone import Gramophone
+from GramophoneTools.Comms.SerGramophone import Gramophone
 from GramophoneTools.LinMaze.Tools.Stopwatch import Stopwatch
 from GramophoneTools.LinMaze.Tools.filehandler import select_file
 
