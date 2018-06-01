@@ -106,6 +106,9 @@ The following parameters can be read or written with the 0x0B and 0x0C commands:
 0x04 - TSENEXT (float)
     External temperature sensor on the board.
 
+0x05 - TIME (uint64)
+    The time of the internal clock of the device in 0.1 ms steps.
+
 0x10 - ENCPOS (int32)
     Encoder position.
 

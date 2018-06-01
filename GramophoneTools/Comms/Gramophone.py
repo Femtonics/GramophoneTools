@@ -53,6 +53,7 @@ class Gramophone(hid.HidDevice):
                   0x02: Parameter('VSEN5V', 'Voltage on 5V rail.', 'float'),
                   0x03: Parameter('TSENMCU', 'Internal teperature of the MCU.', 'float'),
                   0x04: Parameter('TSENEXT', 'External temperature sensor on the board.', 'float'),
+                  0x05: Parameter('TIME', 'The time of the internal clock of the device.', 'uint64'),
                   0x10: Parameter('ENCPOS', 'Encoder position.', 'int32'),
                   0x11: Parameter('ENCVEL', 'Encoder velocity.', 'vel_struct'),
                   0x12: Parameter('ENCVELWIN', 'Encoder velocity window size.', 'uint16'),
@@ -148,7 +149,7 @@ class Gramophone(hid.HidDevice):
             return struct.unpack('f', payload)[0]
         if val_type == 'int32':
             return int.from_bytes(payload, 'little', signed=True)
-        if val_type in ['uint8', 'uint16']:
+        if val_type in ['uint8', 'uint16', 'uint64']:
             return int.from_bytes(payload, 'little', signed=False)
         if val_type == 'vel_struct':
             return struct.unpack('f', payload[0:4])[0]*float(payload[4])
@@ -179,6 +180,9 @@ class Gramophone(hid.HidDevice):
     def read_temperatures(self):
         self.read_param(0x03)
         self.read_param(0x04)
+
+    def read_time(self):
+        self.read_param(0x05)
 
     def read_position(self):
         self.read_param(0x10)
@@ -345,6 +349,7 @@ class Gramophone(hid.HidDevice):
     def start_reader(self, name, param, freq):
         command = {'position': self.read_position,
                    'velocity': self.read_velocity,
+                   'time': self.read_time
                    }[param]
         reader = Reader(name, command, freq)
         thread = QThread()
