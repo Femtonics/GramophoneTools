@@ -104,6 +104,7 @@ class Gramophone(hid.HidDevice):
 
         self.ping_time = None
         self.app_state = 'Unknown'
+        self.is_open = False
 
         self.firmware_release = None
         self.firmware_sub = None
@@ -133,11 +134,13 @@ class Gramophone(hid.HidDevice):
             print('Device in IAP state. Resetting...')
             self.reset()
             sleep(0.1)
+        self.is_open = True
 
     def close(self):
         """ Disconnect from this device. """
         self.report = None
         super().close()
+        self.is_open = False
 
     @staticmethod
     def decode_payload(val_type, payload):
