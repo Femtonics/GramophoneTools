@@ -3,6 +3,7 @@
     microscoppes by Femtonics Inc. """
 
 import os
+import shelve
 import sys
 import time
 from collections import deque
@@ -10,15 +11,13 @@ from statistics import mean
 
 import h5py
 import matplotlib.pyplot as plt
-
-from PyQt5 import QtCore
-from PyQt5.uic import loadUiType
-from PyQt5.QtCore import QAbstractTableModel, QModelIndex, pyqtSlot
-from PyQt5.QtWidgets import QApplication, QMessageBox, QHeaderView, QFileDialog
-from PyQt5.QtSerialPort import QSerialPort
-
-from GramophoneTools.Recorder import GramLogging
 from GramophoneTools.Comms.Gramophone import Gramophone
+from GramophoneTools.Recorder import GramLogging
+from PyQt5 import QtCore
+from PyQt5.QtCore import QAbstractTableModel, QModelIndex, pyqtSlot
+from PyQt5.QtSerialPort import QSerialPort
+from PyQt5.QtWidgets import QApplication, QFileDialog, QHeaderView, QMessageBox
+from PyQt5.uic import loadUiType
 
 # GLOBALS
 DIR = os.path.dirname(__file__)
@@ -26,6 +25,7 @@ sys.path.append(DIR)
 ABOUT_WIN_BASE, ABOUT_WIN_UI = loadUiType(DIR+'\\about.ui')
 LICENSE_WIN_BASE, LICENSE_WIN_UI = loadUiType(DIR+'\\license.ui')
 MAIN_WIN_BASE, MAIN_WIN_UI = loadUiType(DIR+'\\main.ui')
+APPDATA = os.getenv('ALLUSERSPROFILE')
 
 
 class aboutWindow(ABOUT_WIN_BASE, ABOUT_WIN_UI):
@@ -60,6 +60,10 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         self.about_win = aboutWindow()
         self.license_win = licenseWindow()
         self.extra_windows = []
+        self.settings = {}
+
+        # Load settings file
+        self.load_settings()
 
         # Properties
         self.recording = False
@@ -73,7 +77,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         # self.graph.showLabel(axis='bottom', show=False)
         self.graph.showGrid(x=False, y=True, alpha=1)
         self.graph.disableAutoRange(axis='y')
-        self.graph.setYRange(-70000, 70000, padding=0, update=False)
+        self.graph.setYRange(-14400, 14400, padding=0, update=False)
         self.reset_graph()
 
         # Make initial file
@@ -102,24 +106,35 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         self.timer_timer = 0
         self.graph_timer = 0
 
-        # Gramophone
-        devs = Gramophone.find_devices()
-        self.gram = Gramophone(devs[0], verbose=True)
-        self.gram.open()
-        self.gram.bcg_read()
-        # self.gram.error_msg.connect(self.gramophone_error)
-        # self.gram.transmitter.time_sig.connect(self.update_timer)
-        self.gram.transmitter.velocity_signal.connect(self.update_graph)
-        # self.gram.transmitter.rec_sig.connect(self.update_rec_state)
-        # self.gram.transmitter.errorOccurred.connect(self.gramophone_error)
-
         # Initialize GUI
         self.refresh_gram_list()
+
+        # Gramophone
+        self.gram = None
 
         # Developer options
         self.menuDEV.menuAction().setVisible(False)
         self.DEV_reset_gram_timer.triggered.connect(self.reset_gram_timer)
         self.DEV_make_dummy.triggered.connect(self.make_dummy)
+
+    def load_settings(self):
+        if os.path.isfile(APPDATA+'/RecorderSettings'):
+            db = shelve.open(APPDATA+'/RecorderSettings', 'r')
+        else:
+            db = shelve.open(APPDATA+'/RecorderSettings', 'c')
+
+        self.settings['gramo_names'] = db.get('gramo_names', {})
+        self.settings['sampling_freq'] = db.get('sampling_freq', 50)
+        self.settings['trigger_channel'] = db.get('trigger_channel', 1)
+
+        db.close()
+
+    def save_settings(self):
+        with shelve.open(APPDATA+'/RecorderSettings', 'r+') as db:    
+            db['gramo_names'] = self.settings['gramo_names']
+            db['sampling_freq'] = self.settings['sampling_freq']
+            db['trigger_channel'] = self.settings['trigger_channel']
+
 
     @pyqtSlot()
     def log_changed(self):
@@ -242,26 +257,30 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         self.vel_window = deque([], maxlen=10)
         self.curve = self.graph.plot(
             self.graph_time, self.graph_vel, pen='k', antialias=True)
-        #, downsample=1, downsampleMethod='mean'
+        # , downsample=1, downsampleMethod='mean'
         ax_y = self.graph.getAxis('left')
-        ax_y.setTickSpacing(major=10, minor=10)
+        ax_y.setTickSpacing(major=5000, minor=1000)
 
     @pyqtSlot()
     def connect_btn_cb(self):
         """ Callback for the connect button. """
-        if self.gram.isOpen():
-            self.disconnect()
-        else:
+        if self.gram is None:
             self.connect()
+        else:
+            if self.gram.is_open:
+                self.disconnect()
+            else:
+                self.connect()
 
     def connect(self):
         """ Connects to the currently selected Gramophone. """
         # Connect to currently selected Gramophone
-        self.gram.port_name = self.gram_dropdown.currentData(0)
-        port = [gram
-                for gram in self.gram_list
-                if gram.portName() == self.gram.port_name][0]
-        self.gram.open(port)
+        target_serial = self.gram_dropdown.currentData(0)
+        self.gram = [gram
+                     for gram in self.gram_list
+                     if hex(gram.product_serial) == target_serial][0]
+
+        self.gram.open()
         self.update_conn_state()
 
     def disconnect(self):
@@ -276,12 +295,12 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
     def refresh_gram_list(self):
         """ Refreshes the list of available Gramophones. """
         self.gram_list = Gramophone.find_devices()
-        # port_names = [gram.portName() for gram in self.gram_list]
-        port_names = [str(device) for device in self.gram_list]
+        product_serials = [hex(device.product_serial)
+                           for device in self.gram_list]
         if self.gram_list:
             self.connect_btn.setProperty("enabled", True)
             self.gram_dropdown.clear()
-            self.gram_dropdown.addItems(port_names)
+            self.gram_dropdown.addItems(product_serials)
         else:
             self.gram_dropdown.clear()
             self.connect_btn.setProperty("enabled", False)
@@ -311,22 +330,22 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
     def update_conn_state(self):
         """ Updates the GUI depending on wheter the software is
             currently connected to a Gramophone. """
-        if self.gram.isOpen():
+        if self.gram.is_open:
             # Change GUI for connected state
             self.gram_dropdown.setEnabled(False)
             self.refresh_btn.setEnabled(False)
             self.connect_btn.setProperty("text", "Disconnect")
 
-            self.statusbar.showMessage('Connected to Gramophone on port: '
-                                       + str(self.gram.port_name), 3000)
+            self.statusbar.showMessage('Connected to Gramophone '
+                                       + hex(self.gram.product_serial), 3000)
         else:
             # Change GUI for disconnected state
             self.gram_dropdown.setEnabled(True)
             self.refresh_btn.setEnabled(True)
             self.connect_btn.setProperty("text", "Connect")
             self.refresh_gram_list()
-            self.statusbar.showMessage('Disconnected from Gramophone on port: '
-                                       + str(self.gram.port_name), 3000)
+            self.statusbar.showMessage('Disconnected from Gramophone '
+                                       + hex(self.gram.product_serial), 3000)
 
     @pyqtSlot(int)
     def update_timer(self, millis):
@@ -664,11 +683,14 @@ class VelLogModel(QAbstractTableModel):
 
 
 def main():
+    if not os.path.exists(APPDATA + '/GramophoneTools'):
+        os.makedirs(APPDATA + '/GramophoneTools')
     APP = QApplication(sys.argv)
     WIN = pyGramWindow()
     # WIN.show_elements()
     WIN.show()
     sys.exit(APP.exec_())
+
 
 if __name__ == '__main__':
     main()
