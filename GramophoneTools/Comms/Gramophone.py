@@ -69,10 +69,21 @@ class Gramophone(hid.HidDevice):
                   0x40: Parameter('AO', 'Analogue output.', 'float'),
                   0xFF: Parameter('LED', 'LED state changed', 'uint8')}
 
-    @staticmethod
-    def find_devices():
+    @classmethod
+    def find_devices(cls):
         dev_filter = hid.HidDeviceFilter(vendor_id=0x0483, product_id=0x5750)
-        return dev_filter.get_devices()
+        devices = []
+        for dev in dev_filter.get_devices():
+            gram = cls(dev, verbose=True)
+            gram.open()
+            for _ in range(5):
+                gram.read_product_info()
+                sleep(0.1)
+                if gram.product_name == 'GRAMO-01':
+                    devices.append(gram)
+                    break
+            gram.close()
+        return devices
 
     def __init__(self, device, verbose=False):
         self.device = device
@@ -291,8 +302,8 @@ class Gramophone(hid.HidDevice):
                     [chr(byte) for byte in payload[0:18] if byte != 0x00])
                 self.product_revision = ''.join(
                     [chr(byte) for byte in payload[18:24]])
-                self.product_serial = hex(int.from_bytes(
-                    payload[24:28], 'little', signed=False))
+                self.product_serial = int.from_bytes(
+                    payload[24:28], 'little', signed=False)
                 self.product_year = int.from_bytes(
                     payload[28:30], 'little', signed=False)
                 self.product_month = int.from_bytes(
@@ -304,7 +315,7 @@ class Gramophone(hid.HidDevice):
                     print('Product Info')
                     print('Name:', self.product_name)
                     print('Revision:', self.product_revision)
-                    print('Serial', self.product_serial)
+                    print('Serial', hex(self.product_serial))
                     print('Production:', str(self.product_year)+'-' +
                           str(self.product_month)+'-'+str(self.product_day))
                     print()
