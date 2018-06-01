@@ -167,7 +167,7 @@ class Frame(object):
     def filename(self):
         ''' The file that contains the cached Frame. '''
         appdata_root = os.getenv('ALLUSERSPROFILE')
-        return appdata_root + '/pyVR/' + "%08X" % hash(self) + '.vrf'
+        return appdata_root + '/GramophoneTools/FrameCache/' + "%08X" % hash(self) + '.vrf'
 
     def make(self):
         ''' Renders the Frame. '''
@@ -176,8 +176,8 @@ class Frame(object):
 
         # Make data folder if necessary
         appdata_root = os.getenv('ALLUSERSPROFILE')
-        if not os.path.exists(appdata_root + '/pyVR'):
-            os.makedirs(appdata_root + '/pyVR')
+        if not os.path.exists(appdata_root + '/GramophoneTools/FrameCache'):
+            os.makedirs(appdata_root + '/GramophoneTools/FrameCache')
 
         # Cache the rendered Frame
         file = open(self.filename, 'bw')
