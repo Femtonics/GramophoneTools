@@ -50,11 +50,13 @@ class licenseWindow(LICENSE_WIN_BASE, LICENSE_WIN_UI):
         self.setupUi(self)
         self.close_btn.clicked.connect(self.close)
 
+
 class settingsWindow(SETTINGS_WIN_BASE, SETTINGS_WIN_UI):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.setupUi(self)
         self.cancel_btn.clicked.connect(self.close)
+
 
 class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
     """ The main window of the Gramophone reader. """
@@ -138,11 +140,10 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         db.close()
 
     def save_settings(self):
-        with shelve.open(APPDATA+'/RecorderSettings', 'r+') as db:    
+        with shelve.open(APPDATA+'/RecorderSettings', 'r+') as db:
             db['gramo_names'] = self.settings['gramo_names']
             db['sampling_freq'] = self.settings['sampling_freq']
             db['trigger_channel'] = self.settings['trigger_channel']
-
 
     @pyqtSlot()
     def log_changed(self):
@@ -290,8 +291,8 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         if self.gram is None or not self.gram.is_open:
             target_serial = self.gram_dropdown.currentData(0)
             self.gram = [gram
-                        for gram in self.gram_list
-                        if hex(gram.product_serial) == target_serial][0]
+                         for gram in self.gram_list
+                         if hex(gram.product_serial) == target_serial][0]
 
             self.gram.open()
             self.gram.start_reader('vel', 'velocity', 50)
@@ -356,7 +357,6 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
             self.statusbar.showMessage('Connected to Gramophone '
                                        + hex(self.gram.product_serial), 3000)
 
-            
         else:
             # Change GUI for disconnected state
             self.gram_dropdown.setEnabled(True)
@@ -365,9 +365,6 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
             self.refresh_gram_list()
             self.statusbar.showMessage('Disconnected from Gramophone '
                                        + hex(self.gram.product_serial), 3000)
-
-            
-            
 
     @pyqtSlot(int)
     def update_timer(self, millis):
@@ -388,7 +385,6 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         ''' Slot for the vel_signal of the Gramophone. Shifts the
             graph to the right and appends with the value received. '''
         self.vel_window.append(velocity)
-
 
         self.graph_time.append(time.time())
         self.graph_vel.append(mean(self.vel_window))
