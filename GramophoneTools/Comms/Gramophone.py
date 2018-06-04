@@ -361,8 +361,9 @@ class Gramophone(hid.HidDevice):
         thread.start()
 
     def stop_reader(self, name):
-        for thread, reader in self.readers:
-            if reader.name == name:
-                reader.abort()
-                thread.quit()
-                thread.wait()
+        if self.readers:
+            for thread, reader in self.readers:
+                if reader.name == name:
+                    reader.abort()
+                    thread.quit()
+                    thread.wait()
