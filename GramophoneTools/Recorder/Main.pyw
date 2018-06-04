@@ -52,30 +52,45 @@ class licenseWindow(LICENSE_WIN_BASE, LICENSE_WIN_UI):
 
 
 class settingsWindow(SETTINGS_WIN_BASE, SETTINGS_WIN_UI):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, main_win, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.setupUi(self)
-        self.cancel_btn.clicked.connect(self.close)
+        self.main_win = main_win
 
-        self.settings = {}
+        self.cancel_btn.clicked.connect(self.close)
+        self.apply_btn.clicked.connect(self.apply)
+
+    def apply(self):
+        self.save_settings()
+        self.close()
 
     def load_settings(self):
         # if os.path.isfile(APPDATA+'/RecorderSettings.db'):
         #     db = shelve.open(APPDATA+'/RecorderSettings', 'r')
         # else:
         db = shelve.open(APPDATA+'/GramophoneTools/settings')
-
-        self.settings['gramo_names'] = db.get('gramo_names', {})
-        self.settings['sampling_freq'] = db.get('sampling_freq', 50)
-        self.settings['trigger_channel'] = db.get('trigger_channel', 1)
-
+        self.main_win.settings['gramo_names'] = db.get('gramo_names', {})
+        self.main_win.settings['sampling_freq'] = db.get('sampling_freq', 50)
+        self.main_win.settings['trigger_channel'] = db.get('trigger_channel', 1)
         db.close()
 
+        self.freq_spinbox.setValue(self.main_win.settings['sampling_freq'])
+        if self.main_win.settings['trigger_channel'] == 1:
+            self.trigger_radio_1.setChecked(True)
+        if self.main_win.settings['trigger_channel'] == 2:
+            self.trigger_radio_2.setChecked(True)
+
     def save_settings(self):
+        self.main_win.settings['sampling_freq'] = self.freq_spinbox.value()
+        if self.trigger_radio_1.isChecked():
+            self.main_win.settings['trigger_channel'] = 1
+        if self.trigger_radio_2.isChecked():
+            self.main_win.settings['trigger_channel'] = 2
+
         with shelve.open(APPDATA+'/GramophoneTools/settings') as db:
-            db['gramo_names'] = self.settings['gramo_names']
-            db['sampling_freq'] = self.settings['sampling_freq']
-            db['trigger_channel'] = self.settings['trigger_channel']
+            db['gramo_names'] = self.main_win.settings['gramo_names']
+            db['sampling_freq'] = self.main_win.settings['sampling_freq']
+            db['trigger_channel'] = self.main_win.settings['trigger_channel']
 
 
 class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
@@ -87,10 +102,11 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
 
         self.about_win = aboutWindow()
         self.license_win = licenseWindow()
-        self.settings_win = settingsWindow()
+        self.settings_win = settingsWindow(self)
         self.extra_windows = []
 
         # Load settings file
+        self.settings = {}
         self.settings_win.load_settings()
 
         # Properties
@@ -268,8 +284,8 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
             state ie. erases the plot if there is already
             something on it. """
         self.graph.clear()
-        self.graph_time = deque([], maxlen=367)
-        self.graph_vel = deque([], maxlen=367)
+        self.graph_time = deque([], maxlen=round(self.settings['sampling_freq'])*10)
+        self.graph_vel = deque([], maxlen=round(self.settings['sampling_freq'])*10)
         self.vel_window = deque([], maxlen=10)
         self.curve = self.graph.plot(
             self.graph_time, self.graph_vel, pen='k', antialias=True)
@@ -297,7 +313,8 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
                          if hex(gram.product_serial) == target_serial][0]
 
             self.gram.open()
-            self.gram.start_reader('vel', 'velocity', 50)
+            self.gram.start_reader('vel', 'velocity', self.settings['sampling_freq'])
+            self.reset_graph()
             self.update_conn_state()
             self.gram.transmitter.velocity_signal.connect(self.update_graph)
 
@@ -354,6 +371,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
             # Change GUI for connected state
             self.gram_dropdown.setEnabled(False)
             self.refresh_btn.setEnabled(False)
+            self.settings_btn.setEnabled(False)
             self.connect_btn.setProperty("text", "Disconnect")
 
             self.statusbar.showMessage('Connected to Gramophone '
@@ -363,6 +381,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
             # Change GUI for disconnected state
             self.gram_dropdown.setEnabled(True)
             self.refresh_btn.setEnabled(True)
+            self.settings_btn.setEnabled(True)
             self.connect_btn.setProperty("text", "Connect")
             self.refresh_gram_list()
             self.statusbar.showMessage('Disconnected from Gramophone '
@@ -386,10 +405,11 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
     def update_graph(self, velocity):
         ''' Slot for the vel_signal of the Gramophone. Shifts the
             graph to the right and appends with the value received. '''
-        self.vel_window.append(velocity)
+        # self.vel_window.append(velocity)
 
         self.graph_time.append(time.time())
-        self.graph_vel.append(mean(self.vel_window))
+        # self.graph_vel.append(mean(self.vel_window))
+        self.graph_vel.append(velocity)
         if self.recording:
             self.curve.setPen(color='r', width=2)
         else:
