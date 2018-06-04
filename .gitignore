@@ -5,3 +5,4 @@ GramophoneTools.egg-info
 build
 dist
 TESTBED.py
+.vscode
