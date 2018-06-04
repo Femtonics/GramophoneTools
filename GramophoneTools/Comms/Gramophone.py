@@ -75,7 +75,7 @@ class Gramophone(hid.HidDevice):
         dev_filter = hid.HidDeviceFilter(vendor_id=0x0483, product_id=0x5750)
         devices = []
         for dev in dev_filter.get_devices():
-            gram = cls(dev, verbose=True)
+            gram = cls(dev, verbose=False)
             gram.open()
             for _ in range(5):
                 gram.read_product_info()
