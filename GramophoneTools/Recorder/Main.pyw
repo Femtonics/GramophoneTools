@@ -127,9 +127,9 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         self.actionSave.triggered.connect(self.save)
         self.actionSave_As.triggered.connect(self.save_as)
         self.actionQuit.triggered.connect(self.close)
-        self.actionAbout.triggered.connect(self.about)
-        self.actionLicense.triggered.connect(self.license)
-        self.actionGramophone_manual.triggered.connect(self.manual)
+        self.actionAbout.triggered.connect(self.show_about)
+        self.actionLicense.triggered.connect(self.show_license)
+        self.actionGramophone_manual.triggered.connect(self.show_manual)
 
         # Timers
         self.timer_timer = 0
@@ -243,20 +243,20 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         else:
             return False
 
-    def about(self):
+    def show_about(self):
         """ Displays the About window. """
-        self.about_win = aboutWindow()
         self.about_win.show()
+        self.about_win.activateWindow()
 
-    def license(self):
+    def show_license(self):
         """ Displays the License window. """
-        self.license_win = licenseWindow()
         self.license_win.show()
+        self.license_win.activateWindow()
 
-    def manual(self):
+    def show_manual(self):
         """ Opens the Gramophone User Guide in the default
             pdf reader. """
-        os.startfile(DIR+"\\doc\\Gramophone User Guide.pdf")
+        os.startfile(os.path.join(DIR,"../../docs/source/Gramophone User Guide.pdf"))
 
     def show_settings(self):
         """ Opens a settings window. """
