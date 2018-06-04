@@ -281,11 +281,13 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
                      if hex(gram.product_serial) == target_serial][0]
 
         self.gram.open()
+        self.gram.start_reader('vel', 'velocity', 50)
         self.update_conn_state()
 
     def disconnect(self):
         """ Disconnects the currently connected Gramophone. """
         # Disconnect form Gramophone
+        self.gram.stop_reader('vel')
         self.gram.close()
         self.reset_graph()
         self.update_timer(0)
@@ -338,6 +340,9 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
 
             self.statusbar.showMessage('Connected to Gramophone '
                                        + hex(self.gram.product_serial), 3000)
+
+            
+            self.gram.transmitter.velocity_signal.connect(self.update_graph)
         else:
             # Change GUI for disconnected state
             self.gram_dropdown.setEnabled(True)
@@ -346,6 +351,9 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
             self.refresh_gram_list()
             self.statusbar.showMessage('Disconnected from Gramophone '
                                        + hex(self.gram.product_serial), 3000)
+
+            
+            self.gram.transmitter.velocity_signal.disconnect(self.update_graph)
 
     @pyqtSlot(int)
     def update_timer(self, millis):
@@ -366,19 +374,19 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         ''' Slot for the vel_signal of the Gramophone. Shifts the
             graph to the right and appends with the value received. '''
         self.vel_window.append(velocity)
-        self.graph_timer += 1
-        if not bool(self.graph_timer % 10):
-            self.graph_time.append(time.time())
-            self.graph_vel.append(mean(self.vel_window))
-            if self.recording:
-                self.curve.setPen(color='r', width=2)
-            else:
-                self.curve.setPen(color='k', width=2)
-                # self.curve.setShadowPen(color=0.5, width=3)
 
-            self.curve.setData(x=list(self.graph_time), y=list(self.graph_vel))
-            self.graph.setXRange(
-                self.graph_time[-1] - 10, self.graph_time[-1])  # last 10 seconds
+
+        self.graph_time.append(time.time())
+        self.graph_vel.append(mean(self.vel_window))
+        if self.recording:
+            self.curve.setPen(color='r', width=2)
+        else:
+            self.curve.setPen(color='k', width=2)
+            # self.curve.setShadowPen(color=0.5, width=3)
+
+        self.curve.setData(x=list(self.graph_time), y=list(self.graph_vel))
+        self.graph.setXRange(
+            self.graph_time[-1] - 10, self.graph_time[-1])  # last 10 seconds
 
     @pyqtSlot(int)
     def update_rec_state(self, rec_state):
@@ -492,6 +500,8 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
                 return 'discard'
             if choice == QMessageBox.Cancel:
                 return 'cancel'
+        else:
+            return 'safe'
 
     def delete_warning(self, count):
         """ Displays a message box to ask for confirmation. Call it
@@ -532,7 +542,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
             if save_response == 'cancel':
                 event.ignore()
             if save_response in ['discard', 'safe']:
-                pass
+                self.quit()
 
     def quit(self):
         """ Close all windows and disconnrect form the Gramohone.
@@ -540,7 +550,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         # sys.exit()
         self.about_win.close()
         self.license_win.close()
-        self.gram.close()
+        self.disconnect()
 
     # Dev functions
     @pyqtSlot()
