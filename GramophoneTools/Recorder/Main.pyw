@@ -300,7 +300,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
     def disconnect(self):
         """ Disconnects the currently connected Gramophone. """
         # Disconnect form Gramophone
-        self.gram.stop_reader('vel')
+        self.gram.stop_reader()
         self.gram.close()
         self.reset_graph()
         self.update_timer(0)
