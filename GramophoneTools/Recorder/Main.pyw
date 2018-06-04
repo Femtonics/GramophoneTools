@@ -24,6 +24,7 @@ DIR = os.path.dirname(__file__)
 sys.path.append(DIR)
 ABOUT_WIN_BASE, ABOUT_WIN_UI = loadUiType(DIR+'\\about.ui')
 LICENSE_WIN_BASE, LICENSE_WIN_UI = loadUiType(DIR+'\\license.ui')
+SETTINGS_WIN_BASE, SETTINGS_WIN_UI = loadUiType(DIR+'\\settings.ui')
 MAIN_WIN_BASE, MAIN_WIN_UI = loadUiType(DIR+'\\main.ui')
 APPDATA = os.getenv('ALLUSERSPROFILE')
 
@@ -49,6 +50,11 @@ class licenseWindow(LICENSE_WIN_BASE, LICENSE_WIN_UI):
         self.setupUi(self)
         self.close_btn.clicked.connect(self.close)
 
+class settingsWindow(SETTINGS_WIN_BASE, SETTINGS_WIN_UI):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.setupUi(self)
+        self.cancel_btn.clicked.connect(self.close)
 
 class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
     """ The main window of the Gramophone reader. """
@@ -59,6 +65,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
 
         self.about_win = aboutWindow()
         self.license_win = licenseWindow()
+        self.settings_win = settingsWindow()
         self.extra_windows = []
         self.settings = {}
 
@@ -90,6 +97,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         self.plot_btn.clicked.connect(self.plot_btn_cb)
         self.select_all_btn.clicked.connect(self.records_table.selectAll)
         self.delete_btn.clicked.connect(self.delete_btn_cb)
+        self.settings_btn.clicked.connect(self.show_settings)
 
         # Menu actions
         self.actionNew_File.triggered.connect(self.new_file)
@@ -246,6 +254,11 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         """ Opens the Gramophone User Guide in the default
             pdf reader. """
         os.startfile(DIR+"\\doc\\Gramophone User Guide.pdf")
+
+    def show_settings(self):
+        """ Opens a settins window. """
+        self.settings_win = settingsWindow()
+        self.settings_win.show()
 
     def reset_graph(self):
         """ Resets the live velocity plot to its starting
