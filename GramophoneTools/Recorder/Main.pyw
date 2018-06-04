@@ -57,6 +57,26 @@ class settingsWindow(SETTINGS_WIN_BASE, SETTINGS_WIN_UI):
         self.setupUi(self)
         self.cancel_btn.clicked.connect(self.close)
 
+        self.settings = {}
+
+    def load_settings(self):
+        # if os.path.isfile(APPDATA+'/RecorderSettings.db'):
+        #     db = shelve.open(APPDATA+'/RecorderSettings', 'r')
+        # else:
+        db = shelve.open(APPDATA+'/GramophoneTools/settings')
+
+        self.settings['gramo_names'] = db.get('gramo_names', {})
+        self.settings['sampling_freq'] = db.get('sampling_freq', 50)
+        self.settings['trigger_channel'] = db.get('trigger_channel', 1)
+
+        db.close()
+
+    def save_settings(self):
+        with shelve.open(APPDATA+'/GramophoneTools/settings') as db:
+            db['gramo_names'] = self.settings['gramo_names']
+            db['sampling_freq'] = self.settings['sampling_freq']
+            db['trigger_channel'] = self.settings['trigger_channel']
+
 
 class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
     """ The main window of the Gramophone reader. """
@@ -69,10 +89,9 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         self.license_win = licenseWindow()
         self.settings_win = settingsWindow()
         self.extra_windows = []
-        self.settings = {}
 
         # Load settings file
-        self.load_settings()
+        self.settings_win.load_settings()
 
         # Properties
         self.recording = False
@@ -127,23 +146,6 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         self.DEV_reset_gram_timer.triggered.connect(self.reset_gram_timer)
         self.DEV_make_dummy.triggered.connect(self.make_dummy)
 
-    def load_settings(self):
-        if os.path.isfile(APPDATA+'/RecorderSettings'):
-            db = shelve.open(APPDATA+'/RecorderSettings', 'r')
-        else:
-            db = shelve.open(APPDATA+'/RecorderSettings', 'c')
-
-        self.settings['gramo_names'] = db.get('gramo_names', {})
-        self.settings['sampling_freq'] = db.get('sampling_freq', 50)
-        self.settings['trigger_channel'] = db.get('trigger_channel', 1)
-
-        db.close()
-
-    def save_settings(self):
-        with shelve.open(APPDATA+'/RecorderSettings', 'r+') as db:
-            db['gramo_names'] = self.settings['gramo_names']
-            db['sampling_freq'] = self.settings['sampling_freq']
-            db['trigger_channel'] = self.settings['trigger_channel']
 
     @pyqtSlot()
     def log_changed(self):
@@ -257,9 +259,9 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         os.startfile(DIR+"\\doc\\Gramophone User Guide.pdf")
 
     def show_settings(self):
-        """ Opens a settins window. """
-        self.settings_win = settingsWindow()
+        """ Opens a settings window. """
         self.settings_win.show()
+        self.settings_win.activateWindow()
 
     def reset_graph(self):
         """ Resets the live velocity plot to its starting
