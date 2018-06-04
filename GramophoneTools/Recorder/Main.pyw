@@ -563,7 +563,9 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         # sys.exit()
         self.about_win.close()
         self.license_win.close()
-        self.disconnect()
+        self.settings_win.close()
+        if self.gram is not None:
+            self.disconnect()
 
     # Dev functions
     @pyqtSlot()
