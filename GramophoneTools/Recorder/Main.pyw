@@ -287,24 +287,26 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
 
     def connect(self):
         """ Connects to the currently selected Gramophone. """
-        # Connect to currently selected Gramophone
-        target_serial = self.gram_dropdown.currentData(0)
-        self.gram = [gram
-                     for gram in self.gram_list
-                     if hex(gram.product_serial) == target_serial][0]
+        if self.gram is None or not self.gram.is_open:
+            target_serial = self.gram_dropdown.currentData(0)
+            self.gram = [gram
+                        for gram in self.gram_list
+                        if hex(gram.product_serial) == target_serial][0]
 
-        self.gram.open()
-        self.gram.start_reader('vel', 'velocity', 50)
-        self.update_conn_state()
+            self.gram.open()
+            self.gram.start_reader('vel', 'velocity', 50)
+            self.update_conn_state()
+            self.gram.transmitter.velocity_signal.connect(self.update_graph)
 
     def disconnect(self):
         """ Disconnects the currently connected Gramophone. """
-        # Disconnect form Gramophone
-        self.gram.stop_reader()
-        self.gram.close()
-        self.reset_graph()
-        self.update_timer(0)
-        self.update_conn_state()
+        if self.gram.is_open:
+            self.gram.stop_reader()
+            self.gram.close()
+            self.reset_graph()
+            self.update_timer(0)
+            self.update_conn_state()
+            self.gram.transmitter.velocity_signal.disconnect(self.update_graph)
 
     @pyqtSlot()
     def refresh_gram_list(self):
@@ -355,7 +357,6 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
                                        + hex(self.gram.product_serial), 3000)
 
             
-            self.gram.transmitter.velocity_signal.connect(self.update_graph)
         else:
             # Change GUI for disconnected state
             self.gram_dropdown.setEnabled(True)
@@ -366,7 +367,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
                                        + hex(self.gram.product_serial), 3000)
 
             
-            self.gram.transmitter.velocity_signal.disconnect(self.update_graph)
+            
 
     @pyqtSlot(int)
     def update_timer(self, millis):
