@@ -60,6 +60,7 @@ class Gramophone(hid.HidDevice):
                   0x02: Parameter('VSEN5V', 'Voltage on 5V rail.', 'float'),
                   0x03: Parameter('TSENMCU', 'Internal teperature of the MCU.', 'float'),
                   0x04: Parameter('TSENEXT', 'External temperature sensor on the board.', 'float'),
+                  0x0A: Parameter('SENSORS', 'The voltages and temperatures in one parameter', 'float_list'),
                   0x05: Parameter('TIME', 'The time of the internal clock of the device.', 'uint64'),
                   0x10: Parameter('ENCPOS', 'Encoder position.', 'int32'),
                   0x11: Parameter('ENCVEL', 'Encoder velocity.', 'vel_struct'),
@@ -85,6 +86,8 @@ class Gramophone(hid.HidDevice):
             gram = cls(dev, verbose=False)
             gram.open()
             for _ in range(5):
+                gram.read_sensors()
+                gram.read_firmware_info()
                 gram.read_product_info()
                 sleep(0.1)
                 if gram.product_name == 'GRAMO-01':
@@ -131,6 +134,11 @@ class Gramophone(hid.HidDevice):
         self.product_month = None
         self.product_day = None
 
+        self.sensor_values = {'VSEN3V3': None,
+                              'VSEN5V': None,
+                              'TSENMCU': None,
+                              'TSENEXT': None}
+
     def open(self):
         """ Connect to this device. """
         super().open()
@@ -154,6 +162,11 @@ class Gramophone(hid.HidDevice):
     def decode_payload(val_type, payload):
         if val_type == 'float':
             return struct.unpack('f', payload)[0]
+        if val_type == 'float_list':
+            float_list = []
+            for I in range(len(payload)//4):
+                float_list.append(struct.unpack('f', payload[I*4:I*4+4])[0])
+            return float_list
         if val_type == 'int32':
             return int.from_bytes(payload, 'little', signed=True)
         if val_type in ['uint8', 'uint16', 'uint64']:
@@ -187,6 +200,9 @@ class Gramophone(hid.HidDevice):
     def read_temperatures(self):
         self.read_param(0x03)
         self.read_param(0x04)
+
+    def read_sensors(self):
+        self.read_params(0x0A, [0x01, 0x02, 0x03, 0x04])
 
     def read_time(self):
         self.read_param(0x05)
@@ -353,6 +369,11 @@ class Gramophone(hid.HidDevice):
                     self.transmitter.emit_velocity(val)
                 if Gramophone.parameters[msn].name == 'ENCPOS':
                     self.transmitter.emit_position(val)
+                if Gramophone.parameters[msn].name == 'SENSORS':
+                    self.sensor_values['VSEN3V3'] = val[0]
+                    self.sensor_values['VSEN5V'] = val[1]
+                    self.sensor_values['TSENMCU'] = val[2]
+                    self.sensor_values['TSENEXT'] = val[3]
 
             if cmd not in [0x00, 0x01, 0x02, 0x04, 0x05, 0x08, 0x0B]:
                 print('CMD', hex(cmd))
