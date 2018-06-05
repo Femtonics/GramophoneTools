@@ -12,6 +12,7 @@ class Transmitter(QObject):
     velocity_signal = pyqtSignal(float)
     position_signal = pyqtSignal(int)
     position_diff_signal = pyqtSignal(int)
+    inputs_signal = pyqtSignal(int, int)
 
     def __init__(self):
         super().__init__()
@@ -24,6 +25,9 @@ class Transmitter(QObject):
         self.position_signal.emit(pos)
         self.position_diff_signal.emit(pos-self.last_pos)
         self.last_pos = pos
+
+    def emit_inputs(self, inputs):
+        self.inputs_signal.emit(inputs[0], inputs[1])
 
 
 class Reader(QObject):
@@ -374,6 +378,8 @@ class Gramophone(hid.HidDevice):
                     self.sensor_values['VSEN5V'] = val[1]
                     self.sensor_values['TSENMCU'] = val[2]
                     self.sensor_values['TSENEXT'] = val[3]
+                if Gramophone.parameters[msn].name == 'DI':
+                    self.transmitter.emit_inputs(val)
 
             if cmd not in [0x00, 0x01, 0x02, 0x04, 0x05, 0x08, 0x0B]:
                 print('CMD', hex(cmd))
@@ -383,7 +389,8 @@ class Gramophone(hid.HidDevice):
     def start_reader(self, name, param, freq):
         command = {'position': self.read_position,
                    'velocity': self.read_velocity,
-                   'time': self.read_time
+                   'time': self.read_time,
+                   'inputs': self.read_inputs
                    }[param]
         reader = Reader(name, command, freq)
         thread = QThread()

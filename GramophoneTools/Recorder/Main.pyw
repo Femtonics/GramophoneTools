@@ -368,9 +368,11 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
             self.gram.open()
             self.gram.start_reader(
                 'vel', 'velocity', self.settings['sampling_freq'])
+            self.gram.start_reader('trig', 'inputs', 100)
             self.reset_graph()
             self.update_conn_state()
             self.gram.transmitter.velocity_signal.connect(self.update_graph)
+            self.gram.transmitter.inputs_signal.connect(self.update_rec_state)
 
     def disconnect(self):
         """ Disconnects the currently connected Gramophone. """
@@ -381,6 +383,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
             self.update_timer(0)
             self.update_conn_state()
             self.gram.transmitter.velocity_signal.disconnect(self.update_graph)
+            self.gram.transmitter.inputs_signal.disconnect(self.update_rec_state)
 
     @pyqtSlot()
     def refresh_gram_list(self):
@@ -474,17 +477,22 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         self.graph.setXRange(
             self.graph_time[-1] - 10, self.graph_time[-1])  # last 10 seconds
 
-    @pyqtSlot(int)
-    def update_rec_state(self, rec_state):
+    @pyqtSlot(int, int)
+    def update_rec_state(self, in_state_1, in_state_2):
         """ Slot for the rec_signal of the Grmaophone. Updates
             the state of recording and the GUI. """
-        if self.recording != bool(rec_state):
-            self.recording = bool(rec_state)
+        if self.settings['trigger_channel'] == 1:
+            target_state = in_state_1
+        if self.settings['trigger_channel'] == 2:
+            target_state = in_state_2
+
+        if self.recording != bool(target_state):
+            self.recording = bool(target_state)
             if self.recording:
                 self.current_record = GramLogging.MemoryRecord(
                     self.counter_box.value())
                 self.current_record.start()
-                self.gram.all_sig.connect(self.current_record.append)
+                # self.gram.all_sig.connect(self.current_record.append)
 
                 # Update GUI
                 self.statusbar.showMessage('Recording started', 3000)
@@ -498,7 +506,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
                 # self.log_model.insertRow(currentRowCount)
                 # self.records_table.resizeColumnsToContents()
                 # self.records_table.horizontalHeader().geometriesChanged().emit()
-                self.gram.all_sig.disconnect(self.current_record.append)
+                # self.gram.all_sig.disconnect(self.current_record.append)
                 self.log_model.add_record(self.current_record)
 
                 # Update GUI
