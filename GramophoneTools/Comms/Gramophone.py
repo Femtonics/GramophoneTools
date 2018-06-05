@@ -192,6 +192,7 @@ class Gramophone(hid.HidDevice):
             recorder_data.append(struct.unpack('f', payload[8:12])[0]*float(payload[12]))
             recorder_data.append(payload[13])
             recorder_data.append(payload[14])
+            return recorder_data
 
         return None
 
