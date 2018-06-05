@@ -247,6 +247,9 @@ class Gramophone(hid.HidDevice):
     def read_recorder_params(self):
         self.read_params(0xAA, [0x05, 0x11, 0x20, 0x21])
 
+    def write_output(self, output, value):
+        self.write_param(0x30+output-1, [int(value)])
+
     def ping(self):
         data = sample(range(0, 255), 5)
         self.ping_time = time()
