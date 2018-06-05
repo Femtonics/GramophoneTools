@@ -121,7 +121,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         # self.graph.showLabel(axis='bottom', show=False)
         self.graph.showGrid(x=False, y=True, alpha=1)
         self.graph.disableAutoRange(axis='y')
-        self.graph.setYRange(-14400, 14400, padding=0, update=False)
+        self.graph.setYRange(-54000, 54000, padding=0, update=False)
         self.reset_graph()
 
         # Make initial file
