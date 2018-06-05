@@ -25,6 +25,7 @@ sys.path.append(DIR)
 ABOUT_WIN_BASE, ABOUT_WIN_UI = loadUiType(DIR+'\\about.ui')
 LICENSE_WIN_BASE, LICENSE_WIN_UI = loadUiType(DIR+'\\license.ui')
 SETTINGS_WIN_BASE, SETTINGS_WIN_UI = loadUiType(DIR+'\\settings.ui')
+DEVINFO_WIN_BASE, DEVINFO_WIN_UI = loadUiType(DIR+'\\device_info.ui')
 MAIN_WIN_BASE, MAIN_WIN_UI = loadUiType(DIR+'\\main.ui')
 APPDATA = os.getenv('ALLUSERSPROFILE')
 
@@ -93,6 +94,50 @@ class settingsWindow(SETTINGS_WIN_BASE, SETTINGS_WIN_UI):
             db['trigger_channel'] = self.main_win.settings['trigger_channel']
 
 
+class deviceInfoWindow(DEVINFO_WIN_BASE, DEVINFO_WIN_UI):
+    def __init__(self, gram, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.setupUi(self)
+        self.gram = gram
+
+        self.close_btn.clicked.connect(self.close)
+
+        prod_name = 'Name: ' + str(self.gram.product_name)
+        revision = 'Revision: ' + str(self.gram.product_revision)
+        serial = 'Serial: ' + hex(self.gram.product_serial)
+        production = 'Production: ' + \
+            str(self.gram.product_year)+'.' + \
+            str(self.gram.product_month).zfill(2) + '.' + \
+            str(self.gram.product_day).zfill(2)+'.'
+
+        self.product_label.setText(
+            prod_name+'\n'+revision+'\n'+serial+'\n'+production)
+
+        release = 'Relase: ' + \
+            str(self.gram.firmware_release) + '.'+str(self.gram.firmware_sub)
+        build = 'Build: ' + str(self.gram.firmware_build)
+        date = 'Date: ' + str(self.gram.firmware_year)+'.' +\
+            str(self.gram.firmware_month).zfill(2)+'.' +\
+            str(self.gram.firmware_day).zfill(2)
+        time = 'Time: ' + str(self.gram.firmware_hour).zfill(2)+':' +\
+            str(self.gram.firmware_minute).zfill(2)+':' +\
+            str(self.gram.firmware_second).zfill(2)
+
+        self.firmware_label.setText(release+'\n'+build+'\n'+date+'\n'+time)
+
+        voltage3v3 = 'Voltage on 3.3V rail: ' +\
+            '{0:.2f}'.format(self.gram.sensor_values['VSEN3V3'])+' V'
+        voltage5v = 'Voltage on 5V rail: ' +\
+            '{0:.2f}'.format(self.gram.sensor_values['VSEN5V'])+' V'
+        mcu_temp = 'MCU temperature: ' +\
+            '{0:.2f}'.format(self.gram.sensor_values['TSENMCU'])+' C'
+        ext_temp = 'External temperature: ' +\
+            '{0:.2f}'.format(self.gram.sensor_values['TSENEXT'])+' C'
+
+        self.sensor_label.setText(
+            voltage3v3+'\n'+voltage5v+'\n'+mcu_temp+'\n'+ext_temp)
+
+
 class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
     """ The main window of the Gramophone reader. """
 
@@ -135,6 +180,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         self.select_all_btn.clicked.connect(self.records_table.selectAll)
         self.delete_btn.clicked.connect(self.delete_btn_cb)
         self.settings_btn.clicked.connect(self.show_settings)
+        self.gram_info_btn.clicked.connect(self.show_device_info)
 
         # Menu actions
         self.actionNew_File.triggered.connect(self.new_file)
@@ -161,7 +207,6 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         self.menuDEV.menuAction().setVisible(False)
         self.DEV_reset_gram_timer.triggered.connect(self.reset_gram_timer)
         self.DEV_make_dummy.triggered.connect(self.make_dummy)
-
 
     @pyqtSlot()
     def log_changed(self):
@@ -272,12 +317,16 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
     def show_manual(self):
         """ Opens the Gramophone User Guide in the default
             pdf reader. """
-        os.startfile(os.path.join(DIR,"../../docs/source/Gramophone User Guide.pdf"))
+        os.startfile(os.path.join(DIR, "../../docs/source/Gramophone User Guide.pdf"))
 
     def show_settings(self):
         """ Opens a settings window. """
         self.settings_win.show()
         self.settings_win.activateWindow()
+
+    def show_device_info(self):
+        self.device_info_win = deviceInfoWindow(self.selected_gramophone)
+        self.device_info_win.show()
 
     def reset_graph(self):
         """ Resets the live velocity plot to its starting
@@ -304,16 +353,21 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
             else:
                 self.connect()
 
+    @property
+    def selected_gramophone(self):
+        target_serial = self.gram_dropdown.currentData(0)
+        gram = [gram
+                for gram in self.gram_list
+                if hex(gram.product_serial) == target_serial][0]
+        return gram
+
     def connect(self):
         """ Connects to the currently selected Gramophone. """
         if self.gram is None or not self.gram.is_open:
-            target_serial = self.gram_dropdown.currentData(0)
-            self.gram = [gram
-                         for gram in self.gram_list
-                         if hex(gram.product_serial) == target_serial][0]
-
+            self.gram = self.selected_gramophone
             self.gram.open()
-            self.gram.start_reader('vel', 'velocity', self.settings['sampling_freq'])
+            self.gram.start_reader(
+                'vel', 'velocity', self.settings['sampling_freq'])
             self.reset_graph()
             self.update_conn_state()
             self.gram.transmitter.velocity_signal.connect(self.update_graph)
