@@ -207,7 +207,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
 
         self.out_3_sc = QShortcut(QKeySequence('Ctrl+3'), self)
         self.out_3_sc.activated.connect(self.out_3_btn.toggle)
-        
+
         self.out_4_sc = QShortcut(QKeySequence('Ctrl+4'), self)
         self.out_4_sc.activated.connect(self.out_4_btn.toggle)
 
@@ -421,11 +421,13 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
                            for device in self.gram_list]
         if self.gram_list:
             self.connect_btn.setProperty("enabled", True)
+            self.gram_info_btn.setProperty("enabled", True)
             self.gram_dropdown.clear()
             self.gram_dropdown.addItems(product_serials)
         else:
             self.gram_dropdown.clear()
             self.connect_btn.setProperty("enabled", False)
+            self.gram_info_btn.setProperty("enabled", False)
 
     @pyqtSlot()
     def plot_btn_cb(self):
