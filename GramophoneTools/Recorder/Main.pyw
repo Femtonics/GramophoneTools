@@ -14,9 +14,10 @@ import matplotlib.pyplot as plt
 from GramophoneTools.Comms.Gramophone import Gramophone
 from GramophoneTools.Recorder import GramLogging
 from PyQt5 import QtCore
-from PyQt5.QtCore import QAbstractTableModel, QModelIndex, pyqtSlot
+from PyQt5.QtCore import QObject, QAbstractTableModel, QModelIndex, pyqtSlot
+from PyQt5.QtGui import QKeySequence
 from PyQt5.QtSerialPort import QSerialPort
-from PyQt5.QtWidgets import QApplication, QFileDialog, QHeaderView, QMessageBox
+from PyQt5.QtWidgets import QApplication, QFileDialog, QHeaderView, QMessageBox, QShortcut
 from PyQt5.uic import loadUiType
 
 # GLOBALS
@@ -181,6 +182,10 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         self.delete_btn.clicked.connect(self.delete_btn_cb)
         self.settings_btn.clicked.connect(self.show_settings)
         self.gram_info_btn.clicked.connect(self.show_device_info)
+        self.out_1_btn.toggled.connect(self.toggle_out_1)
+        self.out_2_btn.toggled.connect(self.toggle_out_2)
+        self.out_3_btn.toggled.connect(self.toggle_out_3)
+        self.out_4_btn.toggled.connect(self.toggle_out_4)
 
         # Menu actions
         self.actionNew_File.triggered.connect(self.new_file)
@@ -192,6 +197,19 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         self.actionAbout.triggered.connect(self.show_about)
         self.actionLicense.triggered.connect(self.show_license)
         self.actionGramophone_manual.triggered.connect(self.show_manual)
+
+        # Keyboard shortcuts
+        self.out_1_sc = QShortcut(QKeySequence('Ctrl+1'), self)
+        self.out_1_sc.activated.connect(self.out_1_btn.toggle)
+
+        self.out_2_sc = QShortcut(QKeySequence('Ctrl+2'), self)
+        self.out_2_sc.activated.connect(self.out_2_btn.toggle)
+
+        self.out_3_sc = QShortcut(QKeySequence('Ctrl+3'), self)
+        self.out_3_sc.activated.connect(self.out_3_btn.toggle)
+        
+        self.out_4_sc = QShortcut(QKeySequence('Ctrl+4'), self)
+        self.out_4_sc.activated.connect(self.out_4_btn.toggle)
 
         # Initialize GUI
         self.refresh_gram_list()
@@ -245,7 +263,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         """ Opens a new instance of the Gramophone recorder.
             New windows can be used for simultanious recording
             of an other Gramophone device. """
-        os.startfile(DIR+"\\pyGram.pyw")
+        os.startfile(DIR+'/Main.pyw')
 
     def open(self):
         """ Opens a velocity log from file and sets it as the
@@ -323,6 +341,22 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
     def show_device_info(self):
         self.device_info_win = deviceInfoWindow(self.selected_gramophone)
         self.device_info_win.show()
+
+    @pyqtSlot(bool)
+    def toggle_out_1(self, value):
+        self.gram.write_output(1, value)
+
+    @pyqtSlot(bool)
+    def toggle_out_2(self, value):
+        self.gram.write_output(2, value)
+
+    @pyqtSlot(bool)
+    def toggle_out_3(self, value):
+        self.gram.write_output(3, value)
+
+    @pyqtSlot(bool)
+    def toggle_out_4(self, value):
+        self.gram.write_output(4, value)
 
     def reset_graph(self):
         """ Resets the live velocity plot to its starting
@@ -423,6 +457,10 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
             self.gram_dropdown.setEnabled(False)
             self.refresh_btn.setEnabled(False)
             self.settings_btn.setEnabled(False)
+            self.out_1_btn.setEnabled(True)
+            self.out_2_btn.setEnabled(True)
+            self.out_3_btn.setEnabled(True)
+            self.out_4_btn.setEnabled(True)
             self.connect_btn.setProperty("text", "Disconnect")
 
             self.statusbar.showMessage('Connected to Gramophone '
@@ -433,6 +471,10 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
             self.gram_dropdown.setEnabled(True)
             self.refresh_btn.setEnabled(True)
             self.settings_btn.setEnabled(True)
+            self.out_1_btn.setEnabled(False)
+            self.out_2_btn.setEnabled(False)
+            self.out_3_btn.setEnabled(False)
+            self.out_4_btn.setEnabled(False)
             self.connect_btn.setProperty("text", "Connect")
             self.refresh_gram_list()
             self.statusbar.showMessage('Disconnected from Gramophone '

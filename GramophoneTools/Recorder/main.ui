@@ -224,6 +224,9 @@
           <layout class="QHBoxLayout" name="horizontalLayout_3">
            <item>
             <widget class="QPushButton" name="out_1_btn">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -241,6 +244,9 @@
                <width>26</width>
                <height>26</height>
               </size>
+             </property>
+             <property name="toolTip">
+              <string>Toggle digital out 1 (Ctrl+1)</string>
              </property>
              <property name="text">
               <string>1</string>
@@ -252,6 +258,9 @@
            </item>
            <item>
             <widget class="QPushButton" name="out_2_btn">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -269,6 +278,9 @@
                <width>26</width>
                <height>26</height>
               </size>
+             </property>
+             <property name="toolTip">
+              <string>Toggle digital out 2 (Ctrl+2)</string>
              </property>
              <property name="text">
               <string>2</string>
@@ -280,6 +292,9 @@
            </item>
            <item>
             <widget class="QPushButton" name="out_3_btn">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -297,6 +312,9 @@
                <width>26</width>
                <height>26</height>
               </size>
+             </property>
+             <property name="toolTip">
+              <string>Toggle digital out 3 (Ctrl+3)</string>
              </property>
              <property name="text">
               <string>3</string>
@@ -308,6 +326,9 @@
            </item>
            <item>
             <widget class="QPushButton" name="out_4_btn">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -325,6 +346,9 @@
                <width>26</width>
                <height>26</height>
               </size>
+             </property>
+             <property name="toolTip">
+              <string>Toggle digital out 4 (Ctrl+4)</string>
              </property>
              <property name="text">
               <string>4</string>
