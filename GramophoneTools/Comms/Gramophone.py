@@ -13,6 +13,7 @@ class Transmitter(QObject):
     position_signal = pyqtSignal(int)
     position_diff_signal = pyqtSignal(int)
     inputs_signal = pyqtSignal(int, int)
+    recorder_signal = pyqtSignal(int, float, int, int)
 
     def __init__(self):
         super().__init__()
@@ -28,6 +29,10 @@ class Transmitter(QObject):
 
     def emit_inputs(self, inputs):
         self.inputs_signal.emit(inputs[0], inputs[1])
+
+    def emit_recorder(self, values):
+        self.recorder_signal.emit(values[0], values[1],
+                                  values[2], values[3])
 
 
 class Reader(QObject):
@@ -80,7 +85,9 @@ class Gramophone(hid.HidDevice):
                   0x33: Parameter('DO-4', 'Digital output 4.', 'uint8'),
                   0x35: Parameter('DO', 'Digital outputs.', 'list'),
                   0x40: Parameter('AO', 'Analogue output.', 'float'),
-                  0xFF: Parameter('LED', 'LED state changed', 'uint8')}
+                  0xFF: Parameter('LED', 'LED state changed', 'uint8'),
+                  0xAA: Parameter('REC', 'Bundle of parameters for the Recorder module.', 'recorder'),
+                  }
 
     @classmethod
     def find_devices(cls):
@@ -179,6 +186,12 @@ class Gramophone(hid.HidDevice):
             return struct.unpack('f', payload[0:4])[0]*float(payload[4])
         if val_type == 'list':
             return list(payload)
+        if val_type == 'recorder':
+            recorder_data = []
+            recorder_data.append(int.from_bytes(payload[0:8], 'little', signed=False))
+            recorder_data.append(struct.unpack('f', payload[8:12])[0]*float(payload[12]))
+            recorder_data.append(payload[13])
+            recorder_data.append(payload[14])
 
         return None
 
@@ -229,6 +242,9 @@ class Gramophone(hid.HidDevice):
 
     def read_product_info(self):
         self.send(0x00, 0x08, [])
+
+    def read_recorder_params(self):
+        self.read_params(0xAA, [0x05, 0x11, 0x20, 0x21])
 
     def ping(self):
         data = sample(range(0, 255), 5)
@@ -380,6 +396,8 @@ class Gramophone(hid.HidDevice):
                     self.sensor_values['TSENEXT'] = val[3]
                 if Gramophone.parameters[msn].name == 'DI':
                     self.transmitter.emit_inputs(val)
+                if Gramophone.parameters[msn].name == 'REC':
+                    self.transmitter.emit_recorder(val)
 
             if cmd not in [0x00, 0x01, 0x02, 0x04, 0x05, 0x08, 0x0B]:
                 print('CMD', hex(cmd))
@@ -390,7 +408,8 @@ class Gramophone(hid.HidDevice):
         command = {'position': self.read_position,
                    'velocity': self.read_velocity,
                    'time': self.read_time,
-                   'inputs': self.read_inputs
+                   'inputs': self.read_inputs,
+                   'recorder': self.read_recorder_params
                    }[param]
         reader = Reader(name, command, freq)
         thread = QThread()

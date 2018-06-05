@@ -193,10 +193,6 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         self.actionLicense.triggered.connect(self.show_license)
         self.actionGramophone_manual.triggered.connect(self.show_manual)
 
-        # Timers
-        self.timer_timer = 0
-        self.graph_timer = 0
-
         # Initialize GUI
         self.refresh_gram_list()
 
@@ -367,12 +363,11 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
             self.gram = self.selected_gramophone
             self.gram.open()
             self.gram.start_reader(
-                'vel', 'velocity', self.settings['sampling_freq'])
-            self.gram.start_reader('trig', 'inputs', 100)
+                'rec', 'recorder', self.settings['sampling_freq'])
             self.reset_graph()
             self.update_conn_state()
-            self.gram.transmitter.velocity_signal.connect(self.update_graph)
-            self.gram.transmitter.inputs_signal.connect(self.update_rec_state)
+            self.gram.transmitter.recorder_signal.connect(self.receiver)
+
 
     def disconnect(self):
         """ Disconnects the currently connected Gramophone. """
@@ -382,8 +377,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
             self.reset_graph()
             self.update_timer(0)
             self.update_conn_state()
-            self.gram.transmitter.velocity_signal.disconnect(self.update_graph)
-            self.gram.transmitter.inputs_signal.disconnect(self.update_rec_state)
+            self.gram.transmitter.recorder_signal.disconnect(self.receiver)
 
     @pyqtSlot()
     def refresh_gram_list(self):
@@ -444,21 +438,23 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
             self.statusbar.showMessage('Disconnected from Gramophone '
                                        + hex(self.gram.product_serial), 3000)
 
-    @pyqtSlot(int)
+    @pyqtSlot(int, float, int, int)
+    def receiver(self, time, velocity, in_1, in_2):
+        self.update_timer(time/10)
+        self.update_graph(velocity)
+        self.update_rec_state(in_1, in_2)
+
     def update_timer(self, millis):
         """ Slot for the time_signal of the Gramophone. Updates the
             timer on the GUI. """
-        self.timer_timer += 1
-        if self.timer_timer > 300:
-            seconds = int((millis / 1000) % 60)
-            minutes = int((millis / (1000 * 60)) % 60)
-            # hours=(millis/(1000*60*60))%24
-            self.time_label.setText(str(minutes).zfill(
-                2) + ':' + str(seconds).zfill(2))
 
-            self.timer_timer = 0
+        seconds = int((millis / 1000) % 60)
+        minutes = int((millis / (1000 * 60)) % 60)
+        # hours=(millis/(1000*60*60))%24
+        self.time_label.setText(str(minutes).zfill(
+            2) + ':' + str(seconds).zfill(2))
 
-    @pyqtSlot(float)
+
     def update_graph(self, velocity):
         ''' Slot for the vel_signal of the Gramophone. Shifts the
             graph to the right and appends with the value received. '''
@@ -477,7 +473,6 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         self.graph.setXRange(
             self.graph_time[-1] - 10, self.graph_time[-1])  # last 10 seconds
 
-    @pyqtSlot(int, int)
     def update_rec_state(self, in_state_1, in_state_2):
         """ Slot for the rec_signal of the Grmaophone. Updates
             the state of recording and the GUI. """
