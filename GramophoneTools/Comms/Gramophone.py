@@ -11,12 +11,19 @@ from pywinusb import hid
 class Transmitter(QObject):
     velocity_signal = pyqtSignal(float)
     position_signal = pyqtSignal(int)
+    position_diff_signal = pyqtSignal(int)
+
+    def __init__(self):
+        super().__init__()
+        self.last_pos = 0
 
     def emit_velocity(self, vel):
         self.velocity_signal.emit(vel)
 
     def emit_position(self, pos):
         self.position_signal.emit(pos)
+        self.position_diff_signal.emit(pos-self.last_pos)
+        self.last_pos = pos
 
 
 class Reader(QObject):
@@ -217,6 +224,12 @@ class Gramophone(hid.HidDevice):
 
     def reset(self):
         self.send(0x00, 0xF0, [])
+
+    def reset_time(self):
+        self.write_param(0x05, [0x00, 0x00, 0x00, 0x00])
+
+    def reset_position(self):
+        self.write_param(0x10, [0x00, 0x00, 0x00, 0x00])
 
     def read_param(self, param):
         self.send(param, 0x0B, [param])
