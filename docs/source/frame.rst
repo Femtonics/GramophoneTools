@@ -12,18 +12,18 @@ Abstract classes for all Frames to inherit from.
 
 Frame
 -----
-.. autoclass:: Frame
+.. autoclass:: Frame.Frame
    :members:
 
 Random Frame
 ------------
-.. autoclass:: RandomFrame
+.. autoclass:: Frame.RandomFrame
    :members:
    :show-inheritance:
 
 Wave Frame
 ----------
-.. autoclass:: WaveFrame
+.. autoclass:: Frame.WaveFrame
    :members:
    :show-inheritance:
 
@@ -33,60 +33,60 @@ All the different types of Frames you can make.
 
 Binary noise
 ------------
-.. autoclass:: BinaryNoise
+.. autoclass:: Frame.BinaryNoise
    :members:
    :show-inheritance:
 
 Greyscale noise
 ---------------
-.. autoclass:: GreyNoise
+.. autoclass:: Frame.GreyNoise
    :members:
    :show-inheritance:
 
 
 Checkerboard pattern
 --------------------
-.. autoclass:: Checkerboard
+.. autoclass:: Frame.Checkerboard
    :members:
    :show-inheritance:
 
 
 Cloud pattern
 -------------
-.. autoclass:: Cloud
+.. autoclass:: Frame.Cloud
    :members:
    :show-inheritance:
 
 
 Marble pattern
 --------------
-.. autoclass:: Marble
+.. autoclass:: Frame.Marble
    :members:
    :show-inheritance:
    
 Wood grain pattern
 ------------------
-.. autoclass:: Wood
+.. autoclass:: Frame.Wood
    :members:
    :show-inheritance:
    
 
 Sine wave modulated grating
 ---------------------------
-.. autoclass:: SineWave
+.. autoclass:: Frame.SineWave
    :members:
    :show-inheritance:
    
 
 Square wave modulated grating
 -----------------------------
-.. autoclass:: SquareWave
+.. autoclass:: Frame.SquareWave
    :members:
    :show-inheritance:
    
 
 Image file as Frame
 -------------------
-.. autoclass:: ImageFile
+.. autoclass:: Frame.ImageFile
    :members:
    :show-inheritance:
