@@ -31,7 +31,6 @@ setup(
         'dill',
         'pillow',
         'pyglet',
-        'pyserial',
         'pyqtgraph',
         'matplotlib',
         'opencv-python',
