@@ -9,6 +9,9 @@ from pywinusb import hid
 
 
 class Transmitter(QObject):
+    """
+    Emits Qt signals to transmit infromation from incoming packets.
+    """
     velocity_signal = pyqtSignal(float)
     position_signal = pyqtSignal(int)
     position_diff_signal = pyqtSignal(int)
@@ -20,22 +23,59 @@ class Transmitter(QObject):
         self.last_pos = 0
 
     def emit_velocity(self, vel):
+        """ 
+        Emit a signal with the given velocity.
+
+        :param vel: The velocity that should be emitted.
+        :type vel: float
+        """
         self.velocity_signal.emit(vel)
 
     def emit_position(self, pos):
+        """ 
+        Emit a signal with the given position.
+
+        :param pos: The position that should be emitted.
+        :type pos: int
+        """
         self.position_signal.emit(pos)
         self.position_diff_signal.emit(pos-self.last_pos)
         self.last_pos = pos
 
     def emit_inputs(self, inputs):
+        """ 
+        Emit a signal with the state of the digital inputs.
+
+        :param inputs: A list containing the states of the two digital inputs.
+        :type inputs: [int, int]
+        """
         self.inputs_signal.emit(inputs[0], inputs[1])
 
     def emit_recorder(self, values):
+        """ 
+        Emit a signal with all the data required by the Recorder module.
+        These are the current time, velocity and input states in order.
+
+        :param values: A list containing the time, velocity and input states.
+        :type values: [int, float, int, int]
+        """
         self.recorder_signal.emit(values[0], values[1],
                                   values[2], values[3])
 
 
 class Reader(QObject):
+    """
+    A worker that can continnously send commands to the Gramophone with a given frequency.
+
+    :param name: The name of this reader. Can be used for identification to stop a specific reader.
+    :type name: str
+
+    :param read_func: The read function that should be called.
+    :type read_func: function
+
+    :param frequency: The frequency at which the function should be called in Hz.
+    :type frequency: float
+    """
     def __init__(self, name, read_func, frequency):
         super().__init__()
         self.name = name
@@ -45,12 +85,14 @@ class Reader(QObject):
 
     @pyqtSlot()
     def read(self):
+        """ Start calling the read function repeatedly. Slot for a QThread. """
         self.reading = True
         while self.reading:
             self.read_func()
             sleep(1/self.frequency)
 
     def abort(self):
+        """ Stop calling the read function. """
         self.reading = False
 
 
@@ -188,8 +230,10 @@ class Gramophone(hid.HidDevice):
             return list(payload)
         if val_type == 'recorder':
             recorder_data = []
-            recorder_data.append(int.from_bytes(payload[0:8], 'little', signed=False))
-            recorder_data.append(struct.unpack('f', payload[8:12])[0]*float(payload[12]))
+            recorder_data.append(int.from_bytes(
+                payload[0:8], 'little', signed=False))
+            recorder_data.append(struct.unpack(
+                'f', payload[8:12])[0]*float(payload[12]))
             recorder_data.append(payload[13])
             recorder_data.append(payload[14])
             return recorder_data
