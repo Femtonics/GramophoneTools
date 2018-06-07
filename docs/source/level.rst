@@ -1,4 +1,4 @@
 The Level class
 ===============
-.. autoclass:: Level.Level
+.. autoclass:: LinMaze.Level.Level
    :members:
