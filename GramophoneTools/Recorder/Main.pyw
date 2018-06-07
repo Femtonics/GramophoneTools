@@ -67,13 +67,11 @@ class settingsWindow(SETTINGS_WIN_BASE, SETTINGS_WIN_UI):
         self.close()
 
     def load_settings(self):
-        # if os.path.isfile(APPDATA+'/RecorderSettings.db'):
-        #     db = shelve.open(APPDATA+'/RecorderSettings', 'r')
-        # else:
         db = shelve.open(APPDATA+'/GramophoneTools/settings')
         self.main_win.settings['gramo_names'] = db.get('gramo_names', {})
         self.main_win.settings['sampling_freq'] = db.get('sampling_freq', 50)
-        self.main_win.settings['trigger_channel'] = db.get('trigger_channel', 1)
+        self.main_win.settings['trigger_channel'] = db.get(
+            'trigger_channel', 1)
         db.close()
 
         self.freq_spinbox.setValue(self.main_win.settings['sampling_freq'])
@@ -331,7 +329,8 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
     def show_manual(self):
         """ Opens the Gramophone User Guide in the default
             pdf reader. """
-        os.startfile(os.path.join(DIR, "../../docs/source/Gramophone User Guide.pdf"))
+        os.startfile(os.path.join(
+            DIR, "../../docs/source/Gramophone User Guide.pdf"))
 
     def show_settings(self):
         """ Opens a settings window. """
@@ -363,8 +362,10 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
             state ie. erases the plot if there is already
             something on it. """
         self.graph.clear()
-        self.graph_time = deque([], maxlen=round(self.settings['sampling_freq'])*10)
-        self.graph_vel = deque([], maxlen=round(self.settings['sampling_freq'])*10)
+        self.graph_time = deque([], maxlen=round(
+            self.settings['sampling_freq'])*10)
+        self.graph_vel = deque([], maxlen=round(
+            self.settings['sampling_freq'])*10)
         self.vel_window = deque([], maxlen=10)
         self.curve = self.graph.plot(
             self.graph_time, self.graph_vel, pen='k', antialias=True)
@@ -401,7 +402,6 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
             self.reset_graph()
             self.update_conn_state()
             self.gram.transmitter.recorder_signal.connect(self.receiver)
-
 
     def disconnect(self):
         """ Disconnects the currently connected Gramophone. """
@@ -498,7 +498,6 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         self.time_label.setText(str(minutes).zfill(
             2) + ':' + str(seconds).zfill(2))
 
-
     def update_graph(self, velocity):
         ''' Slot for the vel_signal of the Gramophone. Shifts the
             graph to the right and appends with the value received. '''
@@ -531,7 +530,6 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
                 self.current_record = GramLogging.MemoryRecord(
                     self.counter_box.value())
                 self.current_record.start()
-                # self.gram.all_sig.connect(self.current_record.append)
 
                 # Update GUI
                 self.statusbar.showMessage('Recording started', 3000)
@@ -540,12 +538,6 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
 
             else:
                 self.current_record.finish()
-                # self.log_model.layoutChanged.emit()
-                # currentRowCount = self.log_model.rowCount(self.log_model.parent)
-                # self.log_model.insertRow(currentRowCount)
-                # self.records_table.resizeColumnsToContents()
-                # self.records_table.horizontalHeader().geometriesChanged().emit()
-                # self.gram.all_sig.disconnect(self.current_record.append)
                 self.log_model.add_record(self.current_record)
 
                 # Update GUI
