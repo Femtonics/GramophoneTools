@@ -6,3 +6,8 @@ build
 dist
 TESTBED.py
 .vscode
+docs/source/user_guide/Gramophone User Guide.synctex.gz
+docs/source/user_guide/Gramophone User Guide.aux
+docs/source/user_guide/Gramophone User Guide.log
+docs/source/user_guide/Gramophone User Guide.out
+docs/source/user_guide/Gramophone User Guide.toc
