@@ -1,5 +1,5 @@
-Gramophone Recorder module
-==========================
+Recorder module
+===============
 
 Main module
 -----------
