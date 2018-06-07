@@ -1,4 +1,4 @@
-__version__ = '0.4.2'
+__version__ = '0.4.3'
 
 def print_version():
     global __version__
