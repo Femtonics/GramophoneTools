@@ -116,8 +116,8 @@ class MemoryRecord(Record):
         """ Called then the recording to this record is finished.
             Saves the current time as the finish time. """
         self.finish_time = time.time()
-        self.times = np.array(self.times, dtype=float)
-        self.velocities = np.array(self.velocities, dtype=np.int8)
+        self.times = np.array(self.times, dtype=np.uint64) - min(self.times)
+        self.velocities = np.array(self.velocities, dtype=float)
 
 
 class FileRecord(Record):

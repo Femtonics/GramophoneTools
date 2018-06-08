@@ -155,6 +155,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
 
         # Properties
         self.recording = False
+        self.timer_zero = 0
 
         # Live plot
         self.graph.setBackground(None)
@@ -483,15 +484,22 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
                                        + hex(self.gram.product_serial), 3000)
 
     @pyqtSlot(int, float, int, int)
-    def receiver(self, time, velocity, in_1, in_2):
-        self.update_timer(time/10)
+    def receiver(self, timer, velocity, in_1, in_2):
+        self.update_timer(timer/10)
         self.update_graph(velocity)
         self.update_rec_state(in_1, in_2)
+        if self.recording:
+            if self.settings['trigger_channel'] == 1:
+                current_state = in_1
+            if self.settings['trigger_channel'] == 2:
+                current_state = in_2
+            self.current_record.append(timer/10, velocity, current_state)
 
     def update_timer(self, millis):
         """ Slot for the time_signal of the Gramophone. Updates the
             timer on the GUI. """
 
+        millis -= self.timer_zero
         seconds = int((millis / 1000) % 60)
         minutes = int((millis / (1000 * 60)) % 60)
         # hours=(millis/(1000*60*60))%24
@@ -526,7 +534,9 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
 
         if self.recording != bool(target_state):
             self.recording = bool(target_state)
+            self.timer_zero = self.gram.last_time/10
             if self.recording:
+                # self.gram.reset_time()
                 self.current_record = GramLogging.MemoryRecord(
                     self.counter_box.value())
                 self.current_record.start()
@@ -810,7 +820,7 @@ class VelLogModel(QAbstractTableModel):
         for rec in selected_records:
             # print(rec.mean_vel)
             # print(rec.rec_id)
-            plt.plot(rec.times[0::10], rec.velocities[0::10],
+            plt.plot(rec.times, rec.velocities,
                      label=str(rec.rec_id)+' '+rec.comment)
             plt.xlabel('Time (ms)')
             plt.ylabel('Velocity (a.u.)')

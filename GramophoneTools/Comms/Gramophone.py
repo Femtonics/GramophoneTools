@@ -245,7 +245,7 @@ class Gramophone(hid.HidDevice):
             recorder_data = [] # time, vel, in_1, in_2
             recorder_data.append(int.from_bytes(
                 payload[0:8], 'little', signed=False))
-            recorder_data.append(struct.unpack(
+            recorder_data.append(-struct.unpack(
                 'f', payload[8:12])[0]*float(payload[12]))
             recorder_data.append(payload[13])
             recorder_data.append(payload[14])
@@ -254,7 +254,7 @@ class Gramophone(hid.HidDevice):
             linmaze_data = [] # time, pos, in_1, in_2, out_1, out_2, out_3, out_4
             linmaze_data.append(int.from_bytes(
                 payload[0:8], 'little', signed=False))
-            linmaze_data.append(int.from_bytes(
+            linmaze_data.append(-int.from_bytes(
                 payload[8:12], 'little', signed=True))
             linmaze_data.append(payload[12])
             linmaze_data.append(payload[13])
