@@ -463,11 +463,11 @@ class Gramophone(hid.HidDevice):
                           'Value:', val)
 
                 if Gramophone.parameters[msn].name == 'ENCVEL':
-                    self.transmitter.emit_velocity(val)
-                    self.last_velocity = val
+                    self.transmitter.emit_velocity(-val)
+                    self.last_velocity = -val
                 if Gramophone.parameters[msn].name == 'ENCPOS':
-                    self.transmitter.emit_position(val)
-                    self.last_position = val
+                    self.transmitter.emit_position(-val)
+                    self.last_position = -val
                 if Gramophone.parameters[msn].name == 'SENSORS':
                     self.sensor_values['VSEN3V3'] = val[0]
                     self.sensor_values['VSEN5V'] = val[1]
@@ -480,13 +480,13 @@ class Gramophone(hid.HidDevice):
                 if Gramophone.parameters[msn].name == 'REC':
                     self.transmitter.emit_recorder(val)
                     self.last_time = val[0]
-                    self.last_velocity = val[1]
+                    self.last_velocity = -val[1]
                     self.last_in_1 = val[2]
                     self.last_in_2 = val[3]
                 if Gramophone.parameters[msn].name == 'LINM':
                     self.transmitter.emit_recorder(val)
                     self.last_time = val[0]
-                    self.last_position = val[1]
+                    self.last_position = -val[1]
                     self.last_in_1 = val[2]
                     self.last_in_2 = val[3]
                     self.last_out_1 = val[4]
