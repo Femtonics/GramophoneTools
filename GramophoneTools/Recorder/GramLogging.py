@@ -1,5 +1,6 @@
 """ Module for logging Velocity data form the Gramophone into HDF5 files. """
 
+import os.path
 import time
 from abc import ABC, abstractmethod
 
@@ -14,15 +15,23 @@ class VelocityLog(object):
     def __init__(self, filename):
         self.filename = filename
         self.records = []
+        self.logfile = None
+
+    def open_logfile(self):
+        if os.path.isfile(self.filename):
+            self.log_file = h5py.File(self.filename, "r+")
+        else:
+            self.log_file = h5py.File(self.filename, "w")
 
     def save(self):
         """ Saves all records from this log to file. """
-        log_file = h5py.File(self.filename, "w")
+        for rec_id, record in enumerate(self.records):
+            if isinstance(record, MemoryRecord):
+                self.records[rec_id] = record.save(self.log_file)
 
-        for record in self.records:
-            record.save(log_file)
-
-        log_file.close()
+    def close_logfile(self):
+        if self.logfile is not None:
+            self.log_file.close()
 
 
 class Record(ABC):
@@ -118,6 +127,30 @@ class MemoryRecord(Record):
         self.finish_time = time.time()
         self.times = np.array(self.times, dtype=np.uint64) - min(self.times)
         self.velocities = np.array(self.velocities, dtype=float)
+
+    def save(self, log_file):
+        '''
+        Saves this record into a file and returns a FileRecord that can replace it.
+
+        :param log_file: An opened HDF5 file
+        :type log_file: h5py.File
+        '''
+
+        log_file.create_group(self.unique_id)
+        log_file[self.unique_id].attrs['id'] = self.rec_id
+        log_file[self.unique_id].attrs['comment'] = self.comment
+        log_file[self.unique_id].attrs['start_time'] = self.start_time
+        log_file[self.unique_id].attrs['start_time_hr'] = self.start_time_hr
+        log_file[self.unique_id].attrs['finish_time'] = self.finish_time
+        log_file[self.unique_id].attrs['finish_time_hr'] = self.finish_time_hr
+        log_file[self.unique_id].attrs['length'] = self.length
+        log_file[self.unique_id].attrs['length_hr'] = self.length_hr
+        log_file[self.unique_id].attrs['mean_velocity'] = self.mean_vel
+
+        log_file[self.unique_id+'/time'] = self.times
+        log_file[self.unique_id+'/velocity'] = self.velocities
+
+        return FileRecord(log_file[self.unique_id])
 
 
 class FileRecord(Record):

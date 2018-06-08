@@ -170,6 +170,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         self.reset_graph()
 
         # Make initial file
+        self.log = None
         self.new_file()
         self.current_record = None
 
@@ -235,6 +236,9 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         if self.log.filename is not None:
             self.setWindowTitle('Gramophone Recorder - ' +
                                 os.path.basename(self.log.filename) + '[*]')
+        else:
+            self.setWindowTitle('Gramophone Recorder - New log [*]')
+            
 
     def new_file(self):
         """ Creates a new blank velocity log file and sets it
@@ -243,6 +247,9 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         if response != 'cancel':
             if response == 'save':
                 self.save()
+
+            if self.log is not None:
+                self.log.close_logfile()
 
             self.counter_box.setValue(1)
 
@@ -256,6 +263,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
             self.update_table_size()
             # self.records_table.horizontalHeader().setResizeMode(QHeaderView.Fixed) #old
             # self.records_table.resizeColumnsToContents()
+            self.update_title()
             self.setWindowModified(False)
 
     def new_window(self):
@@ -287,6 +295,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
             else:
                 return False
         else:
+            self.log.open_logfile()
             self.log.save()
             self.setWindowModified(False)
             self.update_title()
@@ -688,6 +697,8 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         self.settings_win.close()
         if self.gram is not None:
             self.disconnect()
+
+        self.log.close_logfile()
 
     # Dev functions
     @pyqtSlot()
