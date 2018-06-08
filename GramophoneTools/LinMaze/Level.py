@@ -212,7 +212,7 @@ class Level(object):
             self.frames = Frame.multi_make(self.frames)
             self.frames = Frame.transition(self.frames, self.transition_width)
 
-            loadtime = Stopwatch()
+            loadtime = Stopwatch.Stopwatch()
             for count, frame in enumerate(self.frames):
                 frame.make_texture()
                 progressbar.printProgressBar(count, len(self.frames),

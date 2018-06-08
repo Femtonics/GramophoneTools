@@ -9,7 +9,7 @@ import pyglet
 from pyglet.gl import *
 
 from GramophoneTools.LinMaze import Rule
-from GramophoneTools.Comms.SerGramophone import Gramophone
+from GramophoneTools.Comms.Gramophone import Gramophone
 from GramophoneTools.LinMaze.Tools.Stopwatch import Stopwatch
 from GramophoneTools.LinMaze.Tools.filehandler import select_file
 
@@ -184,7 +184,7 @@ class VRLog(object):
         self.vrl.attrs['RGB'] = session.level.rgb
         self.vrl.attrs['left_monitor'] = str(session.left_monitor)
         self.vrl.attrs['right_monitor'] = str(session.right_monitor)
-        self.vrl.attrs['gramophone_port'] = str(session.gramophone_port)
+        self.vrl.attrs['gramophone_serial'] = str(session.gramophone_serial)
         self.vrl.attrs['velocity_ratio'] = session.vel_ratio
 
         self.vrl.create_dataset("time", (0,),
@@ -225,13 +225,18 @@ class VRLog(object):
         self.pos_record = []
         self.teleport_record = []
         self.pause_record = []
-        self.analog_input_record = []
+        self.input_record_1 = []
+        self.input_record_2 = []
 
-        self.port_records = {'A': [], 'B': [], 'C': []}
+        self.output_record_1 = []
+        self.output_record_2 = []
+        self.output_record_3 = []
+        self.output_record_4 = []
+
         self.zone_id_records = np.empty((0, zone_count), dtype=bool)
         self.zone_type_records = {zt: [] for zt in self.zone_types}
 
-    def make_entry(self, vel, g_time, g_analog):
+    def make_entry(self, vel, g_time, in_1, in_2, out_1, out_2, out_3, out_4):
         '''
         Makes an entry in all the session logs.
 
@@ -241,8 +246,11 @@ class VRLog(object):
         :param g_time: The internal clock value of the Gramophone.
         :type g_time: int
 
-        :param g_analog: The analogue input state of the Gramophone.
-        :type g_analog: float
+        :param in_1: The state of digital input 1.
+        :type in_1: int
+
+        :param in_2: The state of digital input 2.
+        :type in_2: int
         '''
         self.time_record.append(self.session.runtime.value())
         self.g_time_record.append(g_time)
@@ -261,13 +269,13 @@ class VRLog(object):
         self.teleport_record.append(int(self.session.teleported))
         self.session.teleported = False
 
-        self.port_records['A'].append(
-            int(self.session.gramophone.ports['A'].state))
-        self.port_records['B'].append(
-            int(self.session.gramophone.ports['B'].state))
-        self.port_records['C'].append(
-            int(self.session.gramophone.ports['C'].state))
-        self.analog_input_record.append(g_analog)
+        self.input_record_1.append(in_1)
+        self.input_record_2.append(in_2)
+        self.output_record_1.append(out_1)
+        self.output_record_2.append(out_2)
+        self.output_record_3.append(out_3)
+        self.output_record_4.append(out_4)
+
         self.pause_record.append(int(self.session.paused))
 
         if len(self.time_record) >= 600:
@@ -282,11 +290,12 @@ class VRLog(object):
         self.flush(self.pos_record, 'position')
         self.flush(self.teleport_record, 'teleport')
         self.flush(self.pause_record, 'paused')
-        self.flush(self.analog_input_record, 'analog_input')
-
-        self.flush(self.port_records['A'], 'ports/A')
-        self.flush(self.port_records['B'], 'ports/B')
-        self.flush(self.port_records['C'], 'ports/C')
+        self.flush(self.input_record_1, 'input_1')
+        self.flush(self.input_record_2, 'input_2')
+        self.flush(self.output_record_1, 'output_1')
+        self.flush(self.output_record_2, 'output_2')
+        self.flush(self.output_record_3, 'output_3')
+        self.flush(self.output_record_4, 'output_4')
 
         for zone_type in self.zone_types:
             self.flush(
@@ -347,9 +356,9 @@ class Session(object):
         None to disable this monitor. None by default.
     :type right_monitor: int or None
     
-    :param gramophone_port: The port the Gramophone used for the simulation is connected to.
+    :param gramophone_serial: The serial of the Gramophone used for the simulation.
         Set to None to find a Gramophone automatically. None by default.
-    :type gramophone_port: str or None
+    :type gramophone_serial: int or None
     
     :param fullscreen: Should the simulation run in fullscreen mode? True by default.
     :type fullscreen: bool
@@ -363,7 +372,7 @@ class Session(object):
     '''
 
     def __init__(self, level, vel_ratio=1, runtime_limit=None,
-                 left_monitor=1, right_monitor=None, gramophone_port=None,
+                 left_monitor=1, right_monitor=None, gramophone_serial=None,
                  fullscreen=True, offset_arrow=False, skip_save=False):
 
         self.level = level
@@ -371,17 +380,26 @@ class Session(object):
         self.runtime_limit = runtime_limit
         self.left_monitor = left_monitor
         self.right_monitor = right_monitor
-        self.gramophone_port = gramophone_port
+        self.gramophone_serial = gramophone_serial
         self.offset_arrow = offset_arrow
         self.skip_save = skip_save
 
-        self.gramophone = Gramophone()
+        grams = Gramophone.find_devices()
+        if gramophone_serial is None:
+            self.gramophone = grams[0]
+        else:
+            for gram in grams:
+                if gram.product_serial == gramophone_serial:
+                    self.gramophone = gramophone_serial
+                    break
+
         self.vr_units = []
         self.runtime = Stopwatch()
         self.position = level.zone_offset - 1
         self.current_zone = self.level.zones[0]
         self.paused = False
         self.teleported = False
+        self.last_position = 0
 
         # Render the level if it wasn't pre rendered
         if not level.rendered:
@@ -407,9 +425,20 @@ class Session(object):
             :type dt: float
             '''
             # print('FPS:', 1/dt)s
-            # velocity = round(-self.vel_ratio * self.gramophone.bcg_v)
-            velocity = round(-self.vel_ratio * self.gramophone.get_mean_vel())
-            g_time, g_analog = self.gramophone.bcg_t, self.gramophone.bcg_a
+            self.gramophone.read_linmaze_params()
+            velocity = round(
+                self.vel_ratio*(self.gramophone.last_position - self.last_position)/14400)
+            self.last_position = self.gramophone.last_position
+            g_time, in_1, in_2, out_1, out_2, out_3, out_4 = \
+                self.gramophone.last_time,  \
+                self.gramophone.last_in_1,  \
+                self.gramophone.last_in_2,  \
+                self.gramophone.last_out_1, \
+                self.gramophone.last_out_2, \
+                self.gramophone.last_out_3, \
+                self.gramophone.last_out_4
+
+
             if not self.paused:
                 self.movement(velocity)
 
@@ -417,7 +446,7 @@ class Session(object):
             self.check_rules(velocity)
 
             if not self.skip_save:
-                self.log.make_entry(velocity, g_time, g_analog)
+                self.log.make_entry(velocity, g_time, in_1, in_2, out_1, out_2, out_3, out_4)
 
             if self.runtime_limit is not None and\
                     self.runtime.value() >= self.runtime_limit * 60:
@@ -466,13 +495,13 @@ class Session(object):
         for vru in self.vr_units:
             self.virtual_length += vru["length"]
 
-        # Connect Gramophone
-        if self.gramophone_port is None:
-            self.gramophone.autoconnect()
-        else:
-            self.gramophone.connect(self.gramophone_port)
-        # self.gramophone.logFilename = self.folder + "/ErrorLog.txt"
-        self.gramophone.start_bcg()
+        # Connect Gramophone, and reset outputs to 0
+        self.gramophone.open()
+        self.gramophone.write_output(1, 0)
+        self.gramophone.write_output(2, 0)
+        self.gramophone.write_output(3, 0)
+        self.gramophone.write_output(4, 0)
+        self.gramophone.write_analog(0)
 
         # Save start date and time
         self.start_time = time.time()
@@ -501,7 +530,6 @@ class Session(object):
 
         # Reset runtime & display start message
         self.runtime.reset()
-        self.gramophone.reset()
         print("Starting VR session \n  Level: " + self.level.name +
               "\n  Date & Time: " + self.start_time_hr +
               "\n  Log file: " + str(self.filename) + "\n")
@@ -516,7 +544,13 @@ class Session(object):
         pyglet.app.run()
 
         # After main app is closed
-        self.gramophone.disconnect()
+        # Reset outputs to 0 and disconnect the Gramophone
+        self.gramophone.write_output(1, 0)
+        self.gramophone.write_output(2, 0)
+        self.gramophone.write_output(3, 0)
+        self.gramophone.write_output(4, 0)
+        self.gramophone.write_analog(0)
+        self.gramophone.close()
 
         # Save all remaining data
         if not self.skip_save:

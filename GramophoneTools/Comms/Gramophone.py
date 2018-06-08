@@ -129,6 +129,7 @@ class Gramophone(hid.HidDevice):
                   0x40: Parameter('AO', 'Analogue output.', 'float'),
                   0xFF: Parameter('LED', 'LED state changed', 'uint8'),
                   0xAA: Parameter('REC', 'Bundle of parameters for the Recorder module.', 'recorder'),
+                  0xBB: Parameter('LINM', 'Bundle of parameters for the LinMaze module.', 'linmaze')
                   }
 
     @classmethod
@@ -187,6 +188,16 @@ class Gramophone(hid.HidDevice):
         self.product_month = None
         self.product_day = None
 
+        self.last_position = 0
+        self.last_time = 0
+        self.last_velocity = 0
+        self.last_in_1 = 0
+        self.last_in_2 = 0
+        self.last_out_1 = 0
+        self.last_out_2 = 0
+        self.last_out_3 = 0
+        self.last_out_4 = 0
+
         self.sensor_values = {'VSEN3V3': None,
                               'VSEN5V': None,
                               'TSENMCU': None,
@@ -229,7 +240,7 @@ class Gramophone(hid.HidDevice):
         if val_type == 'list':
             return list(payload)
         if val_type == 'recorder':
-            recorder_data = []
+            recorder_data = [] # time, vel, in_1, in_2
             recorder_data.append(int.from_bytes(
                 payload[0:8], 'little', signed=False))
             recorder_data.append(struct.unpack(
@@ -237,6 +248,20 @@ class Gramophone(hid.HidDevice):
             recorder_data.append(payload[13])
             recorder_data.append(payload[14])
             return recorder_data
+        if val_type == 'linmaze':
+            linmaze_data = [] # time, pos, in_1, in_2, out_1, out_2, out_3, out_4
+            linmaze_data.append(int.from_bytes(
+                payload[0:8], 'little', signed=False))
+            linmaze_data.append(int.from_bytes(
+                payload[8:12], 'little', signed=True))
+            linmaze_data.append(payload[12])
+            linmaze_data.append(payload[13])
+
+            linmaze_data.append(payload[14])
+            linmaze_data.append(payload[15])
+            linmaze_data.append(payload[16])
+            linmaze_data.append(payload[17])
+            return linmaze_data
 
         return None
 
@@ -291,8 +316,14 @@ class Gramophone(hid.HidDevice):
     def read_recorder_params(self):
         self.read_params(0xAA, [0x05, 0x11, 0x20, 0x21])
 
+    def read_linmaze_params(self):
+        self.read_params(0xBB, [0x05, 0x10, 0x20, 0x21, 0x30, 0x31, 0x32, 0x33])
+
     def write_output(self, output, value):
         self.write_param(0x30+output-1, [int(value)])
+
+    def write_analog(self, value):
+        self.write_param(0x40, list(struct.pack('f', value)))
 
     def ping(self):
         data = sample(range(0, 255), 5)
@@ -322,8 +353,6 @@ class Gramophone(hid.HidDevice):
         self.send(msn, 0x0B, params)
 
     def write_param(self, param, payload):
-        if param == 0x40:
-            payload = list(struct.pack('f', payload[0]))
         self.send(param, 0x0C, [param]+payload)
 
     def send(self, msn, cmd, payload):
@@ -435,8 +464,10 @@ class Gramophone(hid.HidDevice):
 
                 if Gramophone.parameters[msn].name == 'ENCVEL':
                     self.transmitter.emit_velocity(val)
+                    self.last_velocity = val
                 if Gramophone.parameters[msn].name == 'ENCPOS':
                     self.transmitter.emit_position(val)
+                    self.last_position = val
                 if Gramophone.parameters[msn].name == 'SENSORS':
                     self.sensor_values['VSEN3V3'] = val[0]
                     self.sensor_values['VSEN5V'] = val[1]
@@ -444,8 +475,24 @@ class Gramophone(hid.HidDevice):
                     self.sensor_values['TSENEXT'] = val[3]
                 if Gramophone.parameters[msn].name == 'DI':
                     self.transmitter.emit_inputs(val)
+                    self.last_in_1 = val[0]
+                    self.last_in_2 = val[1]
                 if Gramophone.parameters[msn].name == 'REC':
                     self.transmitter.emit_recorder(val)
+                    self.last_time = val[0]
+                    self.last_velocity = val[1]
+                    self.last_in_1 = val[2]
+                    self.last_in_2 = val[3]
+                if Gramophone.parameters[msn].name == 'LINM':
+                    self.transmitter.emit_recorder(val)
+                    self.last_time = val[0]
+                    self.last_position = val[1]
+                    self.last_in_1 = val[2]
+                    self.last_in_2 = val[3]
+                    self.last_out_1 = val[4]
+                    self.last_out_2 = val[5]
+                    self.last_out_3 = val[6]
+                    self.last_out_4 = val[7]
 
             if cmd not in [0x00, 0x01, 0x02, 0x04, 0x05, 0x08, 0x0B]:
                 print('CMD', hex(cmd))
