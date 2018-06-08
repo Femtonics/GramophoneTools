@@ -407,6 +407,8 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         if self.gram is None or not self.gram.is_open:
             self.gram = self.selected_gramophone
             self.gram.open()
+            self.gram.reset_time()
+            self.gram.reset_position()
             self.gram.start_reader(
                 'rec', 'recorder', self.settings['sampling_freq'])
             self.reset_graph()
