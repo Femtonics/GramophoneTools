@@ -113,11 +113,11 @@ class Gramophone(hid.HidDevice):
                   0x04: Parameter('TSENEXT', 'External temperature sensor on the board.', 'float'),
                   0x0A: Parameter('SENSORS', 'The voltages and temperatures in one parameter', 'float_list'),
                   0x05: Parameter('TIME', 'The time of the internal clock of the device.', 'uint64'),
-                  0x10: Parameter('ENCPOS', 'Encoder position.', 'int32'),
+                  0x10: Parameter('ENCPOS', 'Encoder position.', '-int32'),
                   0x11: Parameter('ENCVEL', 'Encoder velocity.', 'vel_struct'),
                   0x12: Parameter('ENCVELWIN', 'Encoder velocity window size.', 'uint16'),
                   0x13: Parameter('ENCHOME', 'Encoder homing.', 'uint8'),
-                  0x14: Parameter('ENCHOMEPOS', 'Encoder home position.', 'int32'),
+                  0x14: Parameter('ENCHOMEPOS', 'Encoder home position.', '-int32'),
                   0x20: Parameter('DI-1', 'Digital input 1.', 'uint8'),
                   0x21: Parameter('DI-2', 'Digital input 2.', 'uint8'),
                   0x25: Parameter('DI', 'Digital inputs.', 'list'),
@@ -233,10 +233,12 @@ class Gramophone(hid.HidDevice):
             return float_list
         if val_type == 'int32':
             return int.from_bytes(payload, 'little', signed=True)
+        if val_type == '-int32':
+            return -int.from_bytes(payload, 'little', signed=True)
         if val_type in ['uint8', 'uint16', 'uint64']:
             return int.from_bytes(payload, 'little', signed=False)
         if val_type == 'vel_struct':
-            return struct.unpack('f', payload[0:4])[0]*float(payload[4])
+            return -struct.unpack('f', payload[0:4])[0]*float(payload[4])
         if val_type == 'list':
             return list(payload)
         if val_type == 'recorder':
@@ -463,11 +465,11 @@ class Gramophone(hid.HidDevice):
                           'Value:', val)
 
                 if Gramophone.parameters[msn].name == 'ENCVEL':
-                    self.transmitter.emit_velocity(-val)
-                    self.last_velocity = -val
+                    self.transmitter.emit_velocity(val)
+                    self.last_velocity = val
                 if Gramophone.parameters[msn].name == 'ENCPOS':
-                    self.transmitter.emit_position(-val)
-                    self.last_position = -val
+                    self.transmitter.emit_position(val)
+                    self.last_position = val
                 if Gramophone.parameters[msn].name == 'SENSORS':
                     self.sensor_values['VSEN3V3'] = val[0]
                     self.sensor_values['VSEN5V'] = val[1]
@@ -480,13 +482,13 @@ class Gramophone(hid.HidDevice):
                 if Gramophone.parameters[msn].name == 'REC':
                     self.transmitter.emit_recorder(val)
                     self.last_time = val[0]
-                    self.last_velocity = -val[1]
+                    self.last_velocity = val[1]
                     self.last_in_1 = val[2]
                     self.last_in_2 = val[3]
                 if Gramophone.parameters[msn].name == 'LINM':
                     self.transmitter.emit_recorder(val)
                     self.last_time = val[0]
-                    self.last_position = -val[1]
+                    self.last_position = val[1]
                     self.last_in_1 = val[2]
                     self.last_in_2 = val[3]
                     self.last_out_1 = val[4]
