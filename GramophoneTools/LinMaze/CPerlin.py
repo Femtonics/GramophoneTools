@@ -1,11 +1,14 @@
 import ctypes
 import math
 import os
+import platform
 from random import randrange
 
-
 DIR = os.path.dirname(__file__)
-perlin_lib = ctypes.CDLL(DIR+'/perlin.dll')
+if platform.architecture()[0] == '64bit':
+    perlin_lib = ctypes.CDLL(DIR+'/perlin64.dll')
+if platform.architecture()[0] == '32bit':
+    perlin_lib = ctypes.CDLL(DIR+'/perlin32.dll')
 
 
 def perlin2d(x, y, freq, depth):
