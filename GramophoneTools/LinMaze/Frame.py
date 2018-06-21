@@ -9,7 +9,7 @@ import dill as pickle
 import numpy as np
 from PIL import Image
 
-from GramophoneTools.LinMaze import Perlin
+from GramophoneTools.LinMaze import perlin
 from GramophoneTools.LinMaze.Tools import Stopwatch, progressbar
 
 
@@ -306,8 +306,7 @@ class Cloud(RandomFrame):
         return super().__str__() + " - Type: Cloud"
 
     def make(self):
-        self.frame = Perlin.makeFrame(
-            [self.width, self.height], 'cloud', self.seed)
+        self.frame = perlin.cloud(self.width, self.height, self.seed)
         super().make()
 
 
@@ -319,8 +318,7 @@ class Marble(RandomFrame):
         return super().__str__() + " - Type: Marble"
 
     def make(self):
-        self.frame = Perlin.makeFrame(
-            [self.width, self.height], 'marble', self.seed)
+        self.frame = perlin.marble(self.width, self.height, self.seed)
         super().make()
 
 
@@ -332,8 +330,7 @@ class Wood(RandomFrame):
         return super().__str__() + " - Type: Wood"
 
     def make(self):
-        self.frame = Perlin.makeFrame(
-            [self.width, self.height], 'wood', self.seed)
+        self.frame = perlin.wood(self.width, self.height, self.seed)
         super().make()
 
 
