@@ -43,7 +43,7 @@ setup(
             'sphinx_rtd_theme']},
     python_requires='>=3',
     package_data={
-        'GramophoneTools.LinMaze': ['res/icon.png'],
+        'GramophoneTools.LinMaze': ['res/icon.png', '*.dll'],
         'GramophoneTools.Recorder': ['*.ui', '*.pyw'],
     },
     entry_points={
