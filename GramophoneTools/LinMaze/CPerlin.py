@@ -1,6 +1,8 @@
 import ctypes
 import math
 import os
+from random import randrange
+
 
 DIR = os.path.dirname(__file__)
 perlin_lib = ctypes.CDLL(DIR+'/perlin.dll')
@@ -18,28 +20,28 @@ def perlin2d(x, y, freq, depth):
 
 def cloud(width, height):
     img = np.zeros((width, height))
-    for index, _ in np.ndenumerate(img):
-        x, y = index[0], index[1]
-        img[x][y] = int(255*perlin2d(x, y, 1/70, 5))
+    xoff, yoff = randrange(1e6), randrange(1e6)
+    for (x, y), _ in np.ndenumerate(img):
+        img[x][y] = int(255*perlin2d(x+xoff, y+yoff, 1/70, 5))
     return np.transpose(img)
 
 
 def marble(width, height):
     img = np.zeros((width, height))
-    for index, _ in np.ndenumerate(img):
-        x, y = index[0], index[1]
-        img[x][y] = perlin2d(x, y, 1/70, 5)
-        img[x][y] = int(255*(math.sin(16 * x * 1/width + 4 * (img[x][y] - 0.5)) + 1) * 0.5)
+    xoff, yoff = randrange(1e6), randrange(1e6)
+    for (x, y), _ in np.ndenumerate(img):
+        noise = perlin2d(x+xoff, y+yoff, 1/70, 5)
+        img[x][y] = int(255*(math.sin(16 * x * 1/width + 4 * (noise - 0.5)) + 1) * 0.5)
 
     return np.transpose(img)
 
 
 def wood(width, height):
     img = np.zeros((width, height))
-    for index, _ in np.ndenumerate(img):
-        x, y = index[0], index[1]
-        g = perlin2d(x, y, 1/150, 1) * 13
-        img[x][y] = 255*(g-int(g))
+    xoff, yoff = randrange(1e6), randrange(1e6)
+    for (x, y), _ in np.ndenumerate(img):
+        noise = perlin2d(x+xoff, y+yoff, 1/150, 2) * 13
+        img[x][y] = 255*(noise-int(noise))
     return np.transpose(img)
 
 
