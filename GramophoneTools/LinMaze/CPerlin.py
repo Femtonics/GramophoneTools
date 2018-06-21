@@ -34,7 +34,7 @@ def marble(width, height):
     xoff, yoff = randrange(1e6), randrange(1e6)
     for (x, y), _ in np.ndenumerate(img):
         noise = perlin2d(x+xoff, y+yoff, 1/70, 5)
-        img[x][y] = int(255*(math.sin(16 * x * 1/width + 4 * (noise - 0.5)) + 1) * 0.5)
+        img[x][y] = int(255*(math.sin(16*x/width + 4*(noise - 0.5)) + 1) * 0.5)
 
     return np.transpose(img)
 
