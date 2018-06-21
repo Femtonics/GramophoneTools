@@ -2,7 +2,9 @@ import ctypes
 import math
 import os
 import platform
-import random 
+import random
+
+import numpy as np
 
 DIR = os.path.dirname(__file__)
 if platform.architecture()[0] == '64bit':
@@ -52,7 +54,6 @@ def wood(width, height, seed=None):
 
 
 if __name__ == '__main__':
-    import numpy as np
     from PIL import Image
     import time
     start = time.time()
