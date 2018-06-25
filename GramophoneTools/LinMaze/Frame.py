@@ -158,9 +158,7 @@ class Frame(object):
         Tries to load the given Frame from cache or makes it and returns
         the rendered Frame.
         '''
-        frame = frame.from_cache()
-        if not frame.made:
-            frame.make()
+        frame.make()
         return frame
 
     @property
@@ -179,18 +177,6 @@ class Frame(object):
         if not os.path.exists(appdata_root + '/GramophoneTools/FrameCache'):
             os.makedirs(appdata_root + '/GramophoneTools/FrameCache')
 
-        # Cache the rendered Frame
-        file = open(self.filename, 'bw')
-        pickle.dump(self, file)
-        file.close()
-
-    def from_cache(self):
-        ''' Tries to load the Frame from cache. '''
-        if os.path.isfile(self.filename):
-            with open(self.filename, 'br') as ffile:
-                return pickle.load(ffile)
-        else:
-            return self
 
     def make_img(self):
         ''' Makes a PIL Image of the Frame. '''

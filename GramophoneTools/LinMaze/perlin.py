@@ -24,33 +24,33 @@ def perlin2d(x, y, freq, depth):
 
 
 def cloud(width, height, seed=None):
-    img = np.zeros((width, height))
+    img = np.zeros((height, width))
     random.seed(seed)
     xoff, yoff = random.randrange(1e6), random.randrange(1e6)
     for (x, y), _ in np.ndenumerate(img):
         img[x][y] = int(255*perlin2d(x+xoff, y+yoff, 1/70, 5))
-    return np.transpose(img)
+    return img
 
 
 def marble(width, height, seed=None):
-    img = np.zeros((width, height))
+    img = np.zeros((height, width))
     random.seed(seed)
     xoff, yoff = random.randrange(1e6), random.randrange(1e6)
     for (x, y), _ in np.ndenumerate(img):
         noise = perlin2d(x+xoff, y+yoff, 1/70, 5)
         img[x][y] = int(255*(math.sin(16*x/width + 4*(noise - 0.5)) + 1) * 0.5)
 
-    return np.transpose(img)
+    return img
 
 
 def wood(width, height, seed=None):
-    img = np.zeros((width, height))
+    img = np.zeros((height, width))
     random.seed(seed)
     xoff, yoff = random.randrange(1e6), random.randrange(1e6)
     for (x, y), _ in np.ndenumerate(img):
         noise = perlin2d(x+xoff, y+yoff, 1/150, 2) * 13
         img[x][y] = 255*(noise-int(noise))
-    return np.transpose(img)
+    return img
 
 
 if __name__ == '__main__':
