@@ -161,22 +161,10 @@ class Frame(object):
         frame.make()
         return frame
 
-    @property
-    def filename(self):
-        ''' The file that contains the cached Frame. '''
-        appdata_root = os.getenv('ALLUSERSPROFILE')
-        return appdata_root + '/GramophoneTools/FrameCache/' + "%08X" % hash(self) + '.vrf'
-
     def make(self):
         ''' Renders the Frame. '''
         self.make_texture()
         self.made = True
-
-        # Make data folder if necessary
-        appdata_root = os.getenv('ALLUSERSPROFILE')
-        if not os.path.exists(appdata_root + '/GramophoneTools/FrameCache'):
-            os.makedirs(appdata_root + '/GramophoneTools/FrameCache')
-
 
     def make_img(self):
         ''' Makes a PIL Image of the Frame. '''
