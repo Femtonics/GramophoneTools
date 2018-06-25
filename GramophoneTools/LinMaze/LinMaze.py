@@ -545,6 +545,10 @@ class Session(object):
 
         # After main app is closed
         # Reset outputs to 0 and disconnect the Gramophone
+        self.gramophone.stop_burst(1)
+        self.gramophone.stop_burst(2)
+        self.gramophone.stop_burst(3)
+        self.gramophone.stop_burst(4)
         self.gramophone.write_output(1, 0)
         self.gramophone.write_output(2, 0)
         self.gramophone.write_output(3, 0)

@@ -98,15 +98,16 @@ class PortOn(Event):
     :type level: Level
 
     :param port: Which output to use on the device.
-    :type port: str -- 'A', 'B' or 'C'
+    :type port: int
     '''
 
     def __init__(self, level, port):
         super().__init__(level)
-        self.port = port.upper()
+        self.port = port
 
     def trigger(self):
-        self.session.gramophone.port_on(self.port)
+        self.session.gramophone.write_output(self.port, 1)
+        self.session.gramophone.read_outputs()
         super().trigger()
 
     def __str__(self):
@@ -114,7 +115,14 @@ class PortOn(Event):
 
     @property
     def triggerable(self):
-        return not bool(self.session.gramophone.ports[self.port].state)
+        if self.port == 1:
+            return not bool(self.session.gramophone.last_out_1)
+        if self.port == 2:
+            return not bool(self.session.gramophone.last_out_2)
+        if self.port == 3:
+            return not bool(self.session.gramophone.last_out_3)
+        if self.port == 4:
+            return not bool(self.session.gramophone.last_out_4)
 
 
 class PortOff(Event):
@@ -130,15 +138,24 @@ class PortOff(Event):
 
     def __init__(self, level, port):
         super().__init__(level)
-        self.port = port.upper()
+        self.port = port
 
     def trigger(self):
-        self.session.gramophone.port_off(self.port)
+        self.session.gramophone.write_output(self.port, 0)
+        self.session.gramophone.read_outputs()
         super().trigger()
 
     @property
     def triggerable(self):
-        return bool(self.session.gramophone.ports[self.port].state)
+        if self.port == 1:
+            return bool(self.session.gramophone.last_out_1)
+        if self.port == 2:
+            return bool(self.session.gramophone.last_out_2)
+        if self.port == 3:
+            return bool(self.session.gramophone.last_out_3)
+        if self.port == 4:
+            return bool(self.session.gramophone.last_out_4)
+
 
     def __str__(self):
         return "Turn OFF port " + str(self.port)
@@ -153,18 +170,18 @@ class StartBurst(Event):
     :type level: Level
     
     :param port: Which output to use on the device.
-    :type port: str -- 'A', 'B' or 'C'
+    :type port: int
 
-    :param on_time: How long should the port by set to high befor pause.
+    :param on_time: How long should the port by set to high before a pause.
     :type on_time: float
 
-    :param pause_time: How long should pause be.
+    :param pause_time: How long should the pauses be.
     :type pause_time: float
     '''
 
     def __init__(self, level, port, on_time, pause_time):
         super().__init__(level)
-        self.port = port.upper()
+        self.port = port
         self.on_time = on_time
         self.pause_time = pause_time
 
@@ -175,7 +192,7 @@ class StartBurst(Event):
 
     @property
     def triggerable(self):
-        return not self.session.gramophone.ports[self.port].bursting
+        return not self.session.gramophone.bursting[self.port]
 
     def __str__(self):
         return "Start " + str(self.on_time) + " sec bursts with " \
@@ -190,12 +207,12 @@ class StopBurst(Event):
     :type level: Level
 
     :param port: Which output should stop bursting.
-    :type port: str -- 'A', 'B' or 'C'
+    :type port: int
     '''
 
     def __init__(self, level, port):
         super().__init__(level)
-        self.port = port.upper()
+        self.port = port
 
     def trigger(self):
         self.session.gramophone.stop_burst(self.port)
@@ -204,7 +221,7 @@ class StopBurst(Event):
             # print("Bursting is already off on port", self.port, '\n')
     @property
     def triggerable(self):
-        return self.session.gramophone.ports[self.port].bursting
+        return self.session.gramophone.bursting[self.port]
 
     def __str__(self):
         return "Stop the bursts on port " + str(self.port)

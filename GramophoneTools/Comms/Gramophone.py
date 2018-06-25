@@ -1,4 +1,5 @@
 import struct
+import threading
 from collections import namedtuple
 from random import randint, sample
 from threading import Thread
@@ -7,6 +8,14 @@ from time import sleep, time
 from PyQt5.QtCore import QObject, QThread, pyqtSignal, pyqtSlot
 from pywinusb import hid
 
+
+def background(fn):
+    """ Decorator for functions that should run in the background. """
+    def run(*k, **kw):
+        t = threading.Thread(target=fn, args=k, kwargs=kw)
+        t.start()
+        return t
+    return run
 
 class Transmitter(QObject):
     """
@@ -197,6 +206,12 @@ class Gramophone(hid.HidDevice):
         self.last_out_2 = 0
         self.last_out_3 = 0
         self.last_out_4 = 0
+
+        self.bursting = {1: False,
+                         2: False,
+                         3: False,
+                         4: False}
+        self.burst_threads = []
 
         self.sensor_values = {'VSEN3V3': None,
                               'VSEN5V': None,
@@ -479,6 +494,11 @@ class Gramophone(hid.HidDevice):
                     self.transmitter.emit_inputs(val)
                     self.last_in_1 = val[0]
                     self.last_in_2 = val[1]
+                if Gramophone.parameters[msn].name == 'DO':
+                    self.last_out_1 = val[0]
+                    self.last_out_2 = val[1]
+                    self.last_out_3 = val[2]
+                    self.last_out_4 = val[3]
                 if Gramophone.parameters[msn].name == 'REC':
                     self.transmitter.emit_recorder(val)
                     self.last_time = val[0]
@@ -500,6 +520,18 @@ class Gramophone(hid.HidDevice):
                 print('CMD', hex(cmd))
                 print('plen', plen)
                 print('payload', payload)
+
+    @background
+    def start_burst(self, port, on_time, pause_time):
+        self.bursting[port] = True
+        while self.bursting[port]:
+            self.write_output(port, 1)
+            sleep(on_time)
+            self.write_output(port, 0)
+            sleep(pause_time)
+
+    def stop_burst(self, port):
+        self.bursting[port] = False
 
     def start_reader(self, name, param, freq):
         command = {'position': self.read_position,
