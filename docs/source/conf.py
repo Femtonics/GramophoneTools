@@ -19,7 +19,7 @@ sys.path.append(os.path.abspath('../../GramophoneTools'))
 sys.path.append(os.path.abspath('../../GramophoneTools/Recorder'))
 sys.path.append(os.path.abspath('../../GramophoneTools/LinMaze'))
 sys.path.append(os.path.abspath('../../GramophoneTools/Comms'))
-from ver import __version__ as g_ver
+import GramophoneTools
 import sphinx_rtd_theme
 
 # -- Project information -----------------------------------------------------
@@ -29,9 +29,9 @@ copyright = '2018, Femtonics Ltd.'
 author = 'Femtonics Ltd.'
 
 # The short X.Y version
-version = g_ver
+version = GramophoneTools.__version__
 # The full version, including alpha/beta/rc tags
-release = g_ver+'-beta'
+release = version+'-beta'
 
 
 # -- General configuration ---------------------------------------------------

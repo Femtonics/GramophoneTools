@@ -1,10 +1,10 @@
 # Always prefer setuptools over distutils
 from setuptools import setup, find_packages
-from GramophoneTools.ver import __version__ as g_ver
+import GramophoneTools
 
 setup(
     name='GramophoneTools',
-    version=g_ver,
+    version=GramophoneTools.__version__,
     description='Tools for Gramophone systems by Femtonics Ltd.',
     url='http://femtonics.eu/',
     author='Femtonics Ltd.',
@@ -19,6 +19,7 @@ setup(
     license='GNU GPLv3',
     keywords='femtonics gramophone',
     project_urls={
+        'GitHub': 'https://github.com/Femtonics/GramophoneTools',
         'Documentation': 'http://gramophonetools.readthedocs.io',
         'User Guide': 'http://gramophonetools.readthedocs.io/en/latest/_downloads/Gramophone%20User%20Guide.pdf'},
     packages=['GramophoneTools.Comms', 'GramophoneTools.LinMaze',
@@ -48,6 +49,6 @@ setup(
     },
     entry_points={
         'gui_scripts': ['gramrec = GramophoneTools.Recorder.Main:main'],
-        'console_scripts': ['gramver = GramophoneTools.ver:print_version']
+        'console_scripts': ['gramver = GramophoneTools:print_version']
     }
 )
