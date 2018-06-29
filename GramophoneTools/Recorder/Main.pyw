@@ -396,11 +396,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
 
     @property
     def selected_gramophone(self):
-        target_serial = self.gram_dropdown.currentData(0)
-        gram = [gram
-                for gram in self.gram_list
-                if hex(gram.product_serial) == target_serial][0]
-        return gram
+        return self.gram_list[int(self.gram_dropdown.currentData(0))]
 
     def connect(self):
         """ Connects to the currently selected Gramophone. """
@@ -429,8 +425,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
     def refresh_gram_list(self):
         """ Refreshes the list of available Gramophones. """
         self.gram_list = Gramophone.find_devices()
-        product_serials = [hex(device.product_serial)
-                           for device in self.gram_list]
+        product_serials = list(self.gram_list.keys())
         if self.gram_list:
             self.connect_btn.setProperty("enabled", True)
             self.gram_info_btn.setProperty("enabled", True)

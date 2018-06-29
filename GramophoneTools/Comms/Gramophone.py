@@ -144,7 +144,7 @@ class Gramophone(hid.HidDevice):
     @classmethod
     def find_devices(cls):
         dev_filter = hid.HidDeviceFilter(vendor_id=0x0483, product_id=0x5750)
-        devices = []
+        devices = {}
         for dev in dev_filter.get_devices():
             gram = cls(dev, verbose=False)
             gram.open()
@@ -154,7 +154,7 @@ class Gramophone(hid.HidDevice):
                 gram.read_product_info()
                 sleep(0.1)
                 if gram.product_name == 'GRAMO-01':
-                    devices.append(gram)
+                    devices[gram.product_serial] = gram
                     break
             gram.close()
         return devices

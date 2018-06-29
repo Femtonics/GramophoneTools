@@ -385,13 +385,11 @@ class Session(object):
         self.skip_save = skip_save
 
         grams = Gramophone.find_devices()
-        if gramophone_serial is None:
-            self.gramophone = grams[0]
+        if self.gramophone_serial is None:
+            print('No Gramophone specified. Using the first one.')
+            self.gramophone = grams[list(grams)[0]]
         else:
-            for gram in grams:
-                if gram.product_serial == gramophone_serial:
-                    self.gramophone = gramophone_serial
-                    break
+            self.gramophone = grams[self.gramophone_serial]
 
         self.vr_units = []
         self.runtime = Stopwatch()
