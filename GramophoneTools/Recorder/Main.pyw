@@ -396,7 +396,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
 
     @property
     def selected_gramophone(self):
-        return self.gram_list[int(self.gram_dropdown.currentData(0))]
+        return self.gram_list[int(self.gram_dropdown.currentData(0), 16)]
 
     def connect(self):
         """ Connects to the currently selected Gramophone. """
@@ -430,7 +430,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
             self.connect_btn.setProperty("enabled", True)
             self.gram_info_btn.setProperty("enabled", True)
             self.gram_dropdown.clear()
-            self.gram_dropdown.addItems(product_serials)
+            self.gram_dropdown.addItems(list(map(hex, product_serials)))
         else:
             self.gram_dropdown.clear()
             self.connect_btn.setProperty("enabled", False)
