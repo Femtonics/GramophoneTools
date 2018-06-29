@@ -17,6 +17,23 @@ def background(fn):
         return t
     return run
 
+def find_devices():
+    dev_filter = hid.HidDeviceFilter(vendor_id=0x0483, product_id=0x5750)
+    devices = {}
+    for dev in dev_filter.get_devices():
+        gram = Gramophone(dev, verbose=False)
+        gram.open()
+        for _ in range(5):
+            gram.read_sensors()
+            gram.read_firmware_info()
+            gram.read_product_info()
+            sleep(0.1)
+            if gram.product_name == 'GRAMO-01':
+                devices[gram.product_serial] = gram
+                break
+        gram.close()
+    return devices
+
 class Transmitter(QObject):
     """
     Emits Qt signals to transmit infromation from incoming packets.
@@ -26,6 +43,7 @@ class Transmitter(QObject):
     position_diff_signal = pyqtSignal(int)
     inputs_signal = pyqtSignal(int, int)
     recorder_signal = pyqtSignal(int, float, int, int)
+    device_error = pyqtSignal(str)
 
     def __init__(self):
         super().__init__()
@@ -70,6 +88,15 @@ class Transmitter(QObject):
         """
         self.recorder_signal.emit(values[0], values[1],
                                   values[2], values[3])
+
+    def emit_device_error(self, error_msg):
+        """ 
+        Emit a signal with the given error message.
+
+        :param error_msg: The error message.
+        :type error_msg: str
+        """
+        self.device_error.emit(str(error_msg))
 
 
 class Reader(QObject):
@@ -141,23 +168,6 @@ class Gramophone(hid.HidDevice):
                   0xBB: Parameter('LINM', 'Bundle of parameters for the LinMaze module.', 'linmaze')
                   }
 
-    @classmethod
-    def find_devices(cls):
-        dev_filter = hid.HidDeviceFilter(vendor_id=0x0483, product_id=0x5750)
-        devices = {}
-        for dev in dev_filter.get_devices():
-            gram = cls(dev, verbose=False)
-            gram.open()
-            for _ in range(5):
-                gram.read_sensors()
-                gram.read_firmware_info()
-                gram.read_product_info()
-                sleep(0.1)
-                if gram.product_name == 'GRAMO-01':
-                    devices[gram.product_serial] = gram
-                    break
-            gram.close()
-        return devices
 
     def __init__(self, device, verbose=False):
         self.device = device
@@ -377,8 +387,12 @@ class Gramophone(hid.HidDevice):
         filler = [0] * (65-plen-8)
         full = [0x0] + self.target + self.source + \
             [msn, cmd, plen] + payload + filler
-        self.report.set_raw_data(full)
-        self.report.send()
+        try:
+            self.report.set_raw_data(full)
+            self.report.send()
+        except hid.helpers.HIDError as hid_error:
+            # print('HID ERROR', hid_error)
+            self.transmitter.emit_device_error(hid_error)
 
         # print('Sent:',[hex(byte) for byte in full])
 

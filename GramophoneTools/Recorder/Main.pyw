@@ -11,24 +11,27 @@ from statistics import mean
 
 import h5py
 import matplotlib.pyplot as plt
-from GramophoneTools.Comms.Gramophone import Gramophone
-from GramophoneTools.Recorder import GramLogging
 from PyQt5 import QtCore
-from PyQt5.QtCore import QObject, QAbstractTableModel, QModelIndex, pyqtSlot
+from PyQt5.QtCore import QAbstractTableModel, QModelIndex, QObject, pyqtSlot
 from PyQt5.QtGui import QKeySequence
 from PyQt5.QtSerialPort import QSerialPort
-from PyQt5.QtWidgets import QApplication, QFileDialog, QHeaderView, QMessageBox, QShortcut
+from PyQt5.QtWidgets import (QApplication, QFileDialog, QHeaderView,
+                             QMessageBox, QShortcut)
 from PyQt5.uic import loadUiType
 
-# GLOBALS
 DIR = os.path.dirname(__file__)
-sys.path.append(DIR)
-ABOUT_WIN_BASE, ABOUT_WIN_UI = loadUiType(DIR+'\\about.ui')
-LICENSE_WIN_BASE, LICENSE_WIN_UI = loadUiType(DIR+'\\license.ui')
-SETTINGS_WIN_BASE, SETTINGS_WIN_UI = loadUiType(DIR+'\\settings.ui')
-DEVINFO_WIN_BASE, DEVINFO_WIN_UI = loadUiType(DIR+'\\device_info.ui')
-MAIN_WIN_BASE, MAIN_WIN_UI = loadUiType(DIR+'\\main.ui')
-APPDATA = os.getenv('ALLUSERSPROFILE')
+sys.path.append(DIR+'/..')
+import Comms
+import GramLogging
+
+
+# GLOBALS
+ABOUT_WIN_BASE, ABOUT_WIN_UI = loadUiType(DIR+'/about.ui')
+LICENSE_WIN_BASE, LICENSE_WIN_UI = loadUiType(DIR+'/license.ui')
+SETTINGS_WIN_BASE, SETTINGS_WIN_UI = loadUiType(DIR+'/settings.ui')
+DEVINFO_WIN_BASE, DEVINFO_WIN_UI = loadUiType(DIR+'/device_info.ui')
+MAIN_WIN_BASE, MAIN_WIN_UI = loadUiType(DIR+'/main.ui')
+PROGRAM_DATA = os.getenv('ALLUSERSPROFILE')
 
 
 class aboutWindow(ABOUT_WIN_BASE, ABOUT_WIN_UI):
@@ -67,7 +70,7 @@ class settingsWindow(SETTINGS_WIN_BASE, SETTINGS_WIN_UI):
         self.close()
 
     def load_settings(self):
-        db = shelve.open(APPDATA+'/GramophoneTools/settings')
+        db = shelve.open(PROGRAM_DATA+'/GramophoneTools/settings')
         self.main_win.settings['gramo_names'] = db.get('gramo_names', {})
         self.main_win.settings['sampling_freq'] = db.get('sampling_freq', 50)
         self.main_win.settings['trigger_channel'] = db.get(
@@ -87,7 +90,7 @@ class settingsWindow(SETTINGS_WIN_BASE, SETTINGS_WIN_UI):
         if self.trigger_radio_2.isChecked():
             self.main_win.settings['trigger_channel'] = 2
 
-        with shelve.open(APPDATA+'/GramophoneTools/settings') as db:
+        with shelve.open(PROGRAM_DATA+'/GramophoneTools/settings') as db:
             db['gramo_names'] = self.main_win.settings['gramo_names']
             db['sampling_freq'] = self.main_win.settings['sampling_freq']
             db['trigger_channel'] = self.main_win.settings['trigger_channel']
@@ -238,7 +241,6 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
                                 os.path.basename(self.log.filename) + '[*]')
         else:
             self.setWindowTitle('Gramophone Recorder - New log [*]')
-            
 
     def new_file(self):
         """ Creates a new blank velocity log file and sets it
@@ -339,8 +341,8 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
     def show_manual(self):
         """ Opens the Gramophone User Guide in the default
             pdf reader. """
-        os.startfile(os.path.join(
-            DIR, "../../docs/source/Gramophone User Guide.pdf"))
+        os.startfile(
+            DIR+"/../../docs/source/user_guide/Gramophone User Guide.pdf")
 
     def show_settings(self):
         """ Opens a settings window. """
@@ -410,21 +412,23 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
             self.reset_graph()
             self.update_conn_state()
             self.gram.transmitter.recorder_signal.connect(self.receiver)
+            self.gram.transmitter.device_error.connect(self.gramophone_error)
 
     def disconnect(self):
         """ Disconnects the currently connected Gramophone. """
-        if self.gram.is_open:
-            self.gram.stop_reader()
-            self.gram.close()
-            self.reset_graph()
-            self.update_timer(0)
-            self.update_conn_state()
-            self.gram.transmitter.recorder_signal.disconnect(self.receiver)
+        # if self.gram.is_open:
+        self.gram.stop_reader()
+        self.gram.close()
+        self.reset_graph()
+        self.update_timer(0)
+        self.update_conn_state()
+        self.gram.transmitter.recorder_signal.disconnect(self.receiver)
+        self.gram.transmitter.device_error.disconnect(self.gramophone_error)
 
     @pyqtSlot()
     def refresh_gram_list(self):
         """ Refreshes the list of available Gramophones. """
-        self.gram_list = Gramophone.find_devices()
+        self.gram_list = Comms.find_devices()
         product_serials = list(self.gram_list.keys())
         if self.gram_list:
             self.connect_btn.setProperty("enabled", True)
@@ -564,35 +568,23 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
                 self.counter_box.setEnabled(True)
                 self.counter_box.stepUp()
 
-    @pyqtSlot(QSerialPort.SerialPortError)
-    def gramophone_error(self, error_code):
+    @pyqtSlot(str)
+    def gramophone_error(self, error_message):
         """ Slot for the errorOccurred signal of the Gramophone. Displays
             a message box with the warning, disconnects if necessary. """
-        if error_code == 2:
-            msg_box = QMessageBox(self)
-            msg_box.setIcon(QMessageBox.Warning)
-            msg_box.setWindowTitle("Connection error!")
-            msg_box.setText("Cannot connect to Gramophone on port "
-                            + self.gram.port_name)
-            msg_box.setInformativeText('Device is no longer available'
-                                       ' or in use by an other process.')
-            msg_box.setStandardButtons(QMessageBox.Ok)
-            msg_box.setDefaultButton(QMessageBox.Ok)
-            msg_box.exec()
-        if error_code == 9:
-            msg_box = QMessageBox(self)
-            msg_box.setIcon(QMessageBox.Critical)
-            msg_box.setWindowTitle("Connection error!")
-            msg_box.setText("The connection to the Gramophone was lost.")
-            msg_box.setInformativeText('Please check cables.')
-            msg_box.setStandardButtons(QMessageBox.Ok)
-            msg_box.setDefaultButton(QMessageBox.Ok)
-            msg_box.exec()
-        if error_code != 13:
-            self.disconnect()
-
-        print('ERROR:', error_code)
+        self.disconnect()
+        print('ERROR:', error_message)
         self.update_conn_state()
+
+        msg_box = QMessageBox(self)
+        msg_box.setIcon(QMessageBox.Critical)
+        msg_box.setWindowTitle("Connection error!")
+        msg_box.setText("The connection to the Gramophone was lost.")
+        msg_box.setInformativeText(error_message)
+        msg_box.setStandardButtons(QMessageBox.Ok)
+        msg_box.setDefaultButton(QMessageBox.Ok)
+        msg_box.exec()
+
 
     @pyqtSlot()
     def update_table_size(self):
@@ -838,8 +830,8 @@ class VelLogModel(QAbstractTableModel):
 
 
 def main():
-    if not os.path.exists(APPDATA + '/GramophoneTools'):
-        os.makedirs(APPDATA + '/GramophoneTools')
+    if not os.path.exists(PROGRAM_DATA + '/GramophoneTools'):
+        os.makedirs(PROGRAM_DATA + '/GramophoneTools')
     APP = QApplication(sys.argv)
     WIN = pyGramWindow()
     # WIN.show_elements()

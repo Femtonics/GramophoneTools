@@ -1,4 +1,9 @@
-__version__ = '0.5.4'
+from . import Comms
+from . import Recorder
+from . import LinMaze
+
+
+__version__ = '0.5.5'
 
 def print_version():
     global __version__
