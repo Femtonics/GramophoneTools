@@ -35,7 +35,8 @@ setup(
         'pyqtgraph',
         'matplotlib',
         'opencv-python',
-        'pywinusb'],
+        'pywinusb',
+        'xlsxwriter'],
     extras_require={
         'tests': [
             'pytest'],

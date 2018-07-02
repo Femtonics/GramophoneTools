@@ -9,6 +9,7 @@ pyqtgraph
 matplotlib
 opencv-python
 pywinusb
+xlsxwriter
 # For docs
 sphinx
 sphinx_rtd_theme

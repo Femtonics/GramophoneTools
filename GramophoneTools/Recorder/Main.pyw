@@ -353,6 +353,42 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         self.device_info_win = deviceInfoWindow(self.selected_gramophone)
         self.device_info_win.show()
 
+    def xls_export(self):
+        import xlsxwriter
+
+        if self.log.records:
+            options = QFileDialog.Options()
+            fileformat = "Excel workbook (*.xlsx)"
+            filename, _ = QFileDialog.getSaveFileName(
+                self, "Save velocity log", "", fileformat, options=options)
+
+            if filename:
+                counter = 0
+                workbook = xlsxwriter.Workbook(filename)
+                worksheet = workbook.add_worksheet('Data')
+                for record in self.log.records:
+                    # Create a workbook and add a worksheet.
+                    # worksheet.write(0,counter, record.unique_id)
+                    worksheet.merge_range(0, counter, 0, counter+1, record.unique_id)
+                    comment = 'ID:{}\nDate: {}\nStart: {}\nFinish:{}\nLength: {}\nMean velocity: {}\nComment: {}'.format(
+                        record.rec_id, record.date_hr, record.start_time_hr, record.finish_time_hr, record.length_hr, record.mean_vel, record.comment
+                    )
+                    worksheet.write_comment(0,counter, comment)
+                    worksheet.write(1,counter, 'time')
+                    worksheet.write(1,counter+1, 'velocity')
+
+                    for t_id, t in enumerate(record.times):
+                        worksheet.write(t_id+2, counter, t)
+
+                    for v_id, v in enumerate(record.velocities):
+                        worksheet.write(v_id+2, counter+1, v)
+
+
+                    counter += 2
+
+            workbook.close()
+
+
     @pyqtSlot(bool)
     def toggle_out_1(self, value):
         self.gram.write_output(1, value)
