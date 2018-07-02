@@ -200,6 +200,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         self.actionAbout.triggered.connect(self.show_about)
         self.actionLicense.triggered.connect(self.show_license)
         self.actionGramophone_manual.triggered.connect(self.show_manual)
+        self.actionExport_to_xls.triggered.connect(self.xls_export)
 
         # Keyboard shortcuts
         self.out_1_sc = QShortcut(QKeySequence('Ctrl+1'), self)
@@ -251,7 +252,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
                 self.save()
 
             if self.log is not None:
-                self.log.close_logfile()
+                self.log.close_log_file()
 
             self.counter_box.setValue(1)
 
@@ -279,13 +280,12 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
             current working file. """
         self.new_file()
         if self.select_file(mode='open'):
-            log_file = h5py.File(self.log.filename, "r")
-            for key in list(log_file.keys()):
-                loaded_record = GramLogging.FileRecord(key)
-                self.log_model.add_record(loaded_record)
-
-            log_file.close()
+            self.log.open_log_file()
             self.update_table_size()
+
+        for i in range(len(self.log.records)):
+            self.log_model.beginInsertRows(QModelIndex(), i, i)
+            self.log_model.endInsertRows()
 
     def save(self):
         ''' Saves the currently used log file. Returns
@@ -297,7 +297,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
             else:
                 return False
         else:
-            self.log.open_logfile()
+            self.log.open_log_file()
             self.log.save()
             self.setWindowModified(False)
             self.update_title()
@@ -416,14 +416,14 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
 
     def disconnect(self):
         """ Disconnects the currently connected Gramophone. """
-        # if self.gram.is_open:
-        self.gram.stop_reader()
-        self.gram.close()
-        self.reset_graph()
-        self.update_timer(0)
-        self.update_conn_state()
-        self.gram.transmitter.recorder_signal.disconnect(self.receiver)
-        self.gram.transmitter.device_error.disconnect(self.gramophone_error)
+        if self.gram.is_open:
+            self.gram.stop_reader()
+            self.gram.close()
+            self.reset_graph()
+            self.update_timer(0)
+            self.update_conn_state()
+            self.gram.transmitter.recorder_signal.disconnect(self.receiver)
+            self.gram.transmitter.device_error.disconnect(self.gramophone_error)
 
     @pyqtSlot()
     def refresh_gram_list(self):
@@ -687,7 +687,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         if self.gram is not None:
             self.disconnect()
 
-        self.log.close_logfile()
+        self.log.close_log_file()
 
     # Dev functions
     @pyqtSlot()
@@ -780,8 +780,8 @@ class VelLogModel(QAbstractTableModel):
                 self.log.records[index.row()].comment = value
                 self.dataChanged.emit(index, index)
                 return True
-        else:
-            return False
+        
+        return False
 
     def headerData(self, section, orientation, role):
         """ Returns the haeder data the GUI is asking for. """

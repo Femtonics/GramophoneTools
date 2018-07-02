@@ -15,11 +15,13 @@ class VelocityLog(object):
     def __init__(self, filename):
         self.filename = filename
         self.records = []
-        self.logfile = None
+        self.log_file = None
 
-    def open_logfile(self):
+    def open_log_file(self):
         if os.path.isfile(self.filename):
             self.log_file = h5py.File(self.filename, "r+")
+            for key in sorted(self.log_file.keys(), key=lambda key: self.log_file[key].attrs['start_time']):
+                self.records.append(FileRecord(self.log_file[key]))
         else:
             self.log_file = h5py.File(self.filename, "w")
 
@@ -29,8 +31,8 @@ class VelocityLog(object):
             if isinstance(record, MemoryRecord):
                 self.records[rec_id] = record.save(self.log_file)
 
-    def close_logfile(self):
-        if self.logfile is not None:
+    def close_log_file(self):
+        if self.log_file is not None:
             self.log_file.close()
 
 
@@ -159,6 +161,7 @@ class FileRecord(Record):
     def __init__(self, file_group):
         super().__init__()
         self.file_group = file_group
+        # print(file_group.attrs['id'])
 
     @property
     def times(self):
@@ -183,7 +186,7 @@ class FileRecord(Record):
     @property
     def rec_id(self):
         """ Returns the record's ID form file """
-        return self.file_group.attrs['id']
+        return int(self.file_group.attrs['id'])
 
     @rec_id.setter
     def rec_id(self, value):
