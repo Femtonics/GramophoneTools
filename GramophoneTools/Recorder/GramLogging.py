@@ -197,6 +197,7 @@ class MemoryRecord(Record):
         log_file.create_group(self.unique_id)
         log_file[self.unique_id].attrs['id'] = self.rec_id
         log_file[self.unique_id].attrs['comment'] = self.comment
+        log_file[self.unique_id].attrs['date_hr'] = self.date_hr
         log_file[self.unique_id].attrs['start_time'] = self.start_time
         log_file[self.unique_id].attrs['start_time_hr'] = self.start_time_hr
         log_file[self.unique_id].attrs['finish_time'] = self.finish_time
