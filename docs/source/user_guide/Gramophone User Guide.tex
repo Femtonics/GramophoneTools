@@ -386,11 +386,12 @@ Follow the installation steps:
 
 \newpage
 \subsection{Python modules}
-All Gramophone related modules are collected in a single python package. To install it run the following command in Windows Power Shell, Command Prompt or Anaconda Prompt:
+All Gramophone related modules are collected in a single python package. To install it run the following command as an administrator in Windows Power Shell, Command Prompt or Anaconda Prompt:
 \begin{verbatim}
 pip install GramophoneTools
 \end{verbatim}
 
+\note{In Windows 10 you can open an Power Shell window as an administrator by right clicking on the start menu and choosing the "Windows PowerShell (Admin)" option.}
 
 \subsubsection{Updating}
 To find out if there is a newer version available run:
@@ -585,6 +586,8 @@ Example:
 	LVL.add_block('cloud', length=1000, random_seed=27, zone_type='neutral')
 \end{lstlisting}
 
+\nocite{When specifying the parameters of a frame, always name the arguments (as seen above).}
+
 \subsection{Events}
 Events are things that can happen to the animal. The following table shows the different kinds you
 can define.\\
@@ -633,7 +636,7 @@ can define.\\
 \begin{paramlist}
 \param{target\_position, pause\_position, unpause\_position} Integer numbers that gives a target position in pixels.
 \param{list\_of\_target\_zones} A list of strings with all the zone types that are valid targets for this teleport event (eg.: \texttt{['neutral', 'left', 'right']}).
-\param{port} The output port used for this event. Can be \texttt{'A'}, \texttt{'B'} or \texttt{'C'}.
+\param{port} The digital output port used for this event. An integer number between 1 and 4.
 \param{on\_time} A parameter for bursting. The time for which the port will be pulled high in seconds.
 \param{pause\_time} A parameter for bursting. The time for which the port will be pulled low in seconds.
 \end{paramlist}
@@ -643,12 +646,12 @@ Example:
 \begin{lstlisting}
 	# EVENTS
 	LVL.add_event('tp', 'random_teleport', ['right', 'left'])
-	LVL.add_event('start_puff', 'start_burst', 'B', 0.1, 0.05)
-	LVL.add_event('stop_puff', 'stop_burst', 'B')
+	LVL.add_event('start_puff', 'start_burst', 2, 0.1, 0.05)
+	LVL.add_event('stop_puff', 'stop_burst', 2)
 	LVL.add_event('pp', 'pause', 0)
 	LVL.add_event('up', 'unpause', None)
-	LVL.add_event('open_A', 'port_on', 'A')
-	LVL.add_event('close_A', 'port_off', 'A')
+	LVL.add_event('port_1_high', 'port_on', 1)
+	LVL.add_event('port_1_low', 'port_off', 1)
 \end{lstlisting}
 
 \subsection{Rules}
@@ -688,8 +691,8 @@ Example:
 	LVL.add_rule('zone', 'stop_puff', 'neutral', 0)
 	LVL.add_rule('speed', 'pp', 'above', 1000, 100)
 	LVL.add_rule('speed', 'up', 'below', 1000, 100)
-	LVL.add_rule('velocity', 'open_A', 'above', 20, 3)
-	LVL.add_rule('velocity', 'close_A', 'below', 15, 3)
+	LVL.add_rule('velocity', 'port_1_high', 'above', 20, 3)
+	LVL.add_rule('velocity', 'port_1_low', 'below', 15, 3)
 \end{lstlisting}
 
 The rules defined in this example will result in the following:
@@ -736,10 +739,9 @@ LVL.play(left_monitor=None, right_monitor=1, vel_ratio=2, gramofon_port='COM3', 
 When you call the play command you will be presented with a file selection window, on which you can select the location and filename of your log file. The log is automatically saved every 10 seconds or on the end of the simulation (on proper exit, do not close the console window, close the simulation window or select it and exit with the \texttt{Esc} key).\\
 
 
-
 %\enote{the HDF5 structure will change as the final product has more IO. also, move this to the dev docs instead}
 %
-The log file is an HDF5 file with a \texttt{.vrl} extension. For more information about it's structure please consult the online documentation of the LinMaze module. \enote{Link to docs}
+The log file is an HDF5 file with a \texttt{.vrl} extension. For more information about it's structure please visit the \href{http://gramophonetools.readthedocs.io/en/latest/linmaze_out.html}{\textbf{online documentation of the LinMaze module}}.
 
 %\begin{itemize}
 %\param{analogue\_input} the state of the analogue input [0,1024]
