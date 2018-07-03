@@ -9,9 +9,9 @@ import pyglet
 from pyglet.gl import *
 
 from GramophoneTools.LinMaze import Rule
-from GramophoneTools.Comms.Gramophone import Gramophone
 from GramophoneTools.LinMaze.Tools.Stopwatch import Stopwatch
 from GramophoneTools.LinMaze.Tools.filehandler import select_file
+import GramophoneTools.Comms as Comms
 
 
 
@@ -384,7 +384,7 @@ class Session(object):
         self.offset_arrow = offset_arrow
         self.skip_save = skip_save
 
-        grams = Gramophone.find_devices()
+        grams = Comms.find_devices()
         if self.gramophone_serial is None:
             print('No Gramophone specified. Using the first one.')
             self.gramophone = grams[list(grams)[0]]
