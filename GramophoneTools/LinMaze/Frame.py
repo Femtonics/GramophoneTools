@@ -397,7 +397,10 @@ class ImageFile(Frame):
     display_name = "Image file"
 
     def __init__(self, height, filename):
-        img = cv2.imread(filename)[:height, :, :]
+        img = cv2.imread(filename)
+        if img.shape[0] != height:
+            target_width = round(img.shape[1]*(height/img.shape[0]))
+            img = cv2.resize(img, (target_width, height))
         img = np.flip(img, 0)
         img = np.flip(img, 2)
 
