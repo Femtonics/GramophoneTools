@@ -398,14 +398,16 @@ class ImageFile(Frame):
 
     def __init__(self, height, filename):
         img = cv2.imread(filename)[:height, :, :]
+        img = np.flip(img, 0)
+        img = np.flip(img, 2)
 
         img_height, img_width, _ = img.shape
         super().__init__(img_width, img_height)
-        self.frame = img
+        self.frame = img.astype(np.uint8)
 
     def make(self):
         self.make_texture()
         self.made = True
 
     def make_texture(self):
-        self.texture = np.flip(self.frame, 0).astype(np.uint8)
+        self.texture = self.frame
