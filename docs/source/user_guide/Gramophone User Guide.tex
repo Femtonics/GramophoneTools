@@ -427,9 +427,10 @@ The Gramophone recorder is software that can make high accuracy velocity recordi
 	\node[anchor=south west] at (0,0) {\includegraphics[scale=0.49]{pyGram_recording.PNG}};
 	%\draw[gray,very thin] (0,0) grid (6,10);
 \draw[<-] (5.5,8) --++ (3,1) --++ (3,0) node[above=3pt,anchor=south east,inner sep=0]{Connect button};
-\draw[<-] (5.5,6.8) --++ (3,1) --++ (3,0) node[above=3pt,anchor=south east,inner sep=0]{Internal timer};
-\draw[<-] (5.5,5.3) --++ (3,1) --++ (3,0) node[above=3pt,anchor=south east,inner sep=0]{Record counter};
+\draw[<-] (5.5,7.0) --++ (3,1) --++ (3,0) node[above=3pt,anchor=south east,inner sep=0]{Internal timer};
+\draw[<-] (5.5,6.0) --++ (3,1) --++ (3,0) node[above=3pt,anchor=south east,inner sep=0]{Record counter};\draw[<-] (5.5,5.0) --++ (3,1) --++ (3,0) node[above=3pt,anchor=south east,inner sep=0]{Output control};
 
+%\draw[<-] (2.5,9) --++ (-3,3) --++ (-5,0) node[above=3pt,anchor=south west,inner sep=0]{Refresh, settings and info button};
 \draw[<-] (0.5,8) --++ (-3,1) --++ (-3,0) node[above=3pt,anchor=south west,inner sep=0]{Gramophone list};
 \draw[<-] (0.5,6) --++ (-3,1) --++ (-3,0) node[above=3pt,anchor=south west,inner sep=0]{Live velocity graph};
 \draw[<-] (0.5,2.5) --++ (-3,1) --++ (-3,0) node[above=3pt,anchor=south west,inner sep=0]{List of records};
@@ -447,17 +448,18 @@ To accurately record velocity with the Gramophone system follow these steps.
 \item Fix the mouse in the head holder. If necessary, adjust the height of the holder as explained in the  \nameref{sec:height_adjust} section.
 \item Put the Gramophone with the mouse into the microscope, such that the craniotomy window on the head of the mouse lines up with the microscope's objective perfectly.
 \item Connect the grounding point to a ground with the included cable (Figure \ref{fig:gram_ports}a).
-\item Connect the digital output of the microscope with digital input \#1 (Figure \ref{fig:gram_ports}c) with a BNC cable.
+\item Connect the digital output of the microscope with a digital input of the Gramophone (Figure \ref{fig:gram_ports}c) with a BNC cable.
 \item Connect the Gramophone to the computer with the included USB cable (Figure \ref{fig:gram_ports}b).
 \end{enumerate}
 
 \subsubsection{Microscope configuration}
-\enote{Expalin how to configure a trigger in MES/MESc}
+Configure the microscope to pull its digital output to hight for the time period you wish to record (eg.: pull to high when the shutter opens and to low when it closes).
 
 \subsubsection{Software setup}
 \begin{enumerate}
 \item Start the Gramophone recorder with the icon on the Desktop or from the terminal with the \texttt{gramrec} command.
 \item Select the Gramophone you wish to record from the dropdown list (see: Figure \ref{fig:pygram_recording}). If you can't find the connected device in the list, you can refresh it with the button next to it.
+\item Click the gear button next to the list of Gramophones and in the window that opened set the trigger channel to the input you connected the microscope to.
 \item Click the Connect button (see: Figure \ref{fig:pygram_recording}). The current velocity will be plotted on the Live velocity plot.
 \item Start your measurement protocol in MES or MESc, the recorder will automatically capture velocity for every measurement unit.
 \item You can see the velocity records on the List of records (Figure \ref{fig:pygram_recording}). You can select any number of records with the mouse and plot or delete them with the Record tools below the list.
@@ -475,6 +477,8 @@ To make a new Level you have to make a small Pyton script. All levels should sta
 \note{You can comment out lines by adding a \texttt{\#} character in front or make multiple line comment by wrapping with triple \texttt{\textquotesingle} characters \lstinline{''' like this '''}. Comments will be coloured green in the following examples.}
 \\
 
+\newpage
+
 First create a Level object. In these examples I will call mine \texttt{LVL}.
 
 \begin{lstlisting}
@@ -490,8 +494,6 @@ if __name__ == '__main__':
 		)
 \end{lstlisting}
 
-
-\newpage
 The parameters for the Level are:
 \begin{paramlist}  
 \param{name} can be any string, this will show up in default file names.
