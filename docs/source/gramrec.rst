@@ -13,3 +13,10 @@ Logging module
 
 .. automodule:: GramLogging
    :members:
+
+Output
+------
+.. toctree::
+   :maxdepth: 2
+
+   gramrec_out
