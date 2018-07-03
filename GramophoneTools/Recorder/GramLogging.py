@@ -6,6 +6,7 @@ from abc import ABC, abstractmethod
 
 import h5py
 import numpy as np
+import xlsxwriter
 
 
 class VelocityLog(object):
@@ -34,6 +35,61 @@ class VelocityLog(object):
     def close_log_file(self):
         if self.log_file is not None:
             self.log_file.close()
+
+    def xls_export(self, filename):
+        if self.records:
+            counter = 0
+            workbook = xlsxwriter.Workbook(filename)
+            data_sheet = workbook.add_worksheet('Data')
+            metadata_sheet = workbook.add_worksheet('Metadata')
+            for record in self.records:
+                # Data sheet
+                data_sheet.merge_range(0, counter, 0, counter+1, record.unique_id)
+
+                comment = 'ID:{}\nDate: {}\nStart: {}\nFinish:{}\nLength: {}\nMean velocity: {}\nComment: {}'.format(
+                    record.rec_id, record.date_hr, record.start_time_hr, record.finish_time_hr, record.length_hr, record.mean_vel, record.comment
+                )
+                data_sheet.write_comment(0,counter, comment, {'x_scale': 1.5, 'y_scale': 1.5})
+                data_sheet.write(1,counter, 'time')
+                data_sheet.write(1,counter+1, 'velocity')
+
+                for t_id, t in enumerate(record.times):
+                    data_sheet.write(t_id+2, counter, t)
+
+                for v_id, v in enumerate(record.velocities):
+                    data_sheet.write(v_id+2, counter+1, v)
+
+                # Metadata sheet
+                metadata_sheet.write(1, 0, 'ID')
+                metadata_sheet.write(2, 0, 'Date')
+                metadata_sheet.write(3, 0, 'Start')
+                metadata_sheet.write(4, 0, 'Finish')
+                metadata_sheet.write(5, 0, 'Length')
+                metadata_sheet.write(6, 0, 'Mean velocity')
+                metadata_sheet.write(7, 0, 'Comment')
+
+                metadata_sheet.write(0, (counter+2)//2, record.unique_id)
+                metadata_sheet.write(1, (counter+2)//2, record.rec_id)
+                metadata_sheet.write(2, (counter+2)//2, record.date_hr)
+                metadata_sheet.write(3, (counter+2)//2, record.start_time_hr)
+                metadata_sheet.write(4, (counter+2)//2, record.finish_time_hr)
+                metadata_sheet.write(5, (counter+2)//2, record.length_hr)
+                metadata_sheet.write(6, (counter+2)//2, record.mean_vel)
+                metadata_sheet.write(7, (counter+2)//2, record.comment)
+
+                counter += 2
+
+            # Formatting
+            cell_format_center = workbook.add_format({'align': 'center'})
+            cell_format_bold = workbook.add_format({'bold': True})
+            cell_format_center_bold = workbook.add_format({'bold': True, 'align': 'center', 'valign': 'vcenter'})
+
+            metadata_sheet.set_column(0, 0, 15, cell_format_bold)
+            metadata_sheet.set_column(1, (counter+2)//2-1, 20, cell_format_center)
+
+            metadata_sheet.set_row(0, 20, cell_format_center_bold)
+
+        workbook.close()
 
 
 class Record(ABC):
