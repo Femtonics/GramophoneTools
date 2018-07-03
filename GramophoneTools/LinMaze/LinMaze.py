@@ -199,13 +199,17 @@ class VRLog(object):
                                 maxshape=(None,), dtype=np.int8)
         self.vrl.create_dataset("paused", (0,),
                                 maxshape=(None,), dtype=np.int8)
-        self.vrl.create_dataset("analog_input", (0,),
-                                maxshape=(None,), dtype=np.uint16)
-        self.vrl.create_dataset("ports/A", (0,),
+        self.vrl.create_dataset("input_1", (0,),
                                 maxshape=(None,), dtype=np.int8)
-        self.vrl.create_dataset("ports/B", (0,),
+        self.vrl.create_dataset("input_2", (0,),
                                 maxshape=(None,), dtype=np.int8)
-        self.vrl.create_dataset("ports/C", (0,),
+        self.vrl.create_dataset("output_1", (0,),
+                                maxshape=(None,), dtype=np.int8)
+        self.vrl.create_dataset("output_2", (0,),
+                                maxshape=(None,), dtype=np.int8)
+        self.vrl.create_dataset("output_3", (0,),
+                                maxshape=(None,), dtype=np.int8)
+        self.vrl.create_dataset("output_4", (0,),
                                 maxshape=(None,), dtype=np.int8)
 
         zone_count = len(session.level.zones)
