@@ -59,12 +59,14 @@ def transition(list_of_frames, transition_width):
         tw1 = transition_width
         transitions = []
 
+        decrease = np.linspace(1, 0, tw1)
+        increase = np.linspace(0, 1, tw1)
         for fid in range(len(frames))[:-1]:
-            transitions.append(np.round(np.linspace(1, 0, tw1) * frames[fid].frame[:, -tw1:]) +
-                               np.round(np.linspace(0, 1, tw1) * frames[fid + 1].frame[:, :tw1]))
+            transitions.append(np.round(decrease * frames[fid].frame[:, -tw1:]) +
+                               np.round(increase * frames[fid + 1].frame[:, :tw1]))
 
-        transitions.append(np.round(np.linspace(1, 0, tw1) * frames[-1].frame[:, -tw1:]) +
-                           np.round(np.linspace(0, 1, tw1) * frames[0].frame[:, :tw1]))
+        transitions.append(np.round(decrease * frames[-1].frame[:, -tw1:]) +
+                           np.round(increase * frames[0].frame[:, :tw1]))
 
         tw2 = transition_width // 2
         for tid in range(len(transitions))[:-1]:
