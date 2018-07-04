@@ -40,7 +40,42 @@ def multi_make(list_of_frames):
     return list(results)
 
 
-def apply_transition(list_of_frames, transition_width):
+def transition(left, right, transition_width):
+    """ 
+    Takes two 2 dimensional matrices representing a grayscale image 
+    and returns them with a smooth transition of given width between them. 
+
+    :param left: The image on the left.
+    :type left: np.array with ndim=2
+
+    :param right: The image on the right.
+    :type right: np.array with ndim=2
+
+    :param transition_width: The width of the smooth transition.
+    :type transition_width: int
+    """
+
+    if transition_width % 2:
+        transition_width += 1
+
+    tw1 = transition_width
+    tw2 = transition_width // 2
+
+    decrease = np.linspace(1, 0, tw1)
+    increase = np.linspace(0, 1, tw1)
+    if left.ndim < 3 and right.ndim < 3: #can't transition between RGB frames
+        transition = np.round(decrease * left[:, -tw1:] + increase * right[:, :tw1])
+
+        left = left[:, :-tw2]
+        right = right[:, tw2:]
+
+        left[:, -tw2:] = transition[:, :tw2]
+        right[:, :tw2] = transition[:, -tw2:]
+
+    return (left, right)
+
+
+def frame_transitions(list_of_frames, transition_width):
     ''' 
     Makes a list of frames with smooth transitions between them.
 
@@ -54,37 +89,29 @@ def apply_transition(list_of_frames, transition_width):
     '''
     frames = list_of_frames
     if transition_width > 0:
-        if transition_width % 2:
-            transition_width += 1
-        tw1 = transition_width
-        transitions = []
 
-        decrease = np.linspace(1, 0, tw1)
-        increase = np.linspace(0, 1, tw1)
-        for fid in range(len(frames))[:-1]:
-            transitions.append(np.round(decrease * frames[fid].frame[:, -tw1:]) +
-                               np.round(increase * frames[fid + 1].frame[:, :tw1]))
+        for i, _ in enumerate(frames):
+            j = (i+1)%(len(frames))
+            left_r, right_r = transition(
+                frames[i].texture[...,0], frames[j].texture[...,0], transition_width)
+            left_g, right_g = transition(
+                frames[i].texture[...,1], frames[j].texture[...,1], transition_width)
+            left_b, right_b = transition(
+                frames[i].texture[...,2], frames[j].texture[...,2], transition_width)
 
-        transitions.append(np.round(decrease * frames[-1].frame[:, -tw1:]) +
-                           np.round(increase * frames[0].frame[:, :tw1]))
+            frames[i].texture = np.dstack((left_r, left_g, left_b))
+            frames[j].texture = np.dstack((right_r, right_g, right_b))
 
-        tw2 = transition_width // 2
-        for tid in range(len(transitions))[:-1]:
-            frames[tid].frame = frames[tid].frame[:, :-tw2]
-            frames[tid].frame[:, -tw2:] = transitions[tid][:, :tw2]
-            frames[tid + 1].frame = frames[tid + 1].frame[:, tw2:]
-            frames[tid + 1].frame[:, :tw2] = transitions[tid][:, -tw2:]
+        # frames[-1].frame, frames[0].frame = transition(
+        #     frames[-1].frame, frames[0].frame, transition_width)
+            
+        for i in range(len(frames)):
+            if isinstance(frames[i], ImageFile):
+                frames[i].frame = frames[i].texture
 
-        frames[-1].frame = frames[-1].frame[:, :-tw2]
-        frames[-1].frame[:, -tw2:] = transitions[-1][:, :tw2]
 
-        frames[0].frame = frames[0].frame[:, tw2:]
-        frames[0].frame[:, :tw2] = transitions[-1][:, -tw2:]
 
-    # Remake textures
-    for frame in frames:
-        frame.make_texture()
-    return frames
+    return list(frames)
 
 
 def combine(list_of_frames):
@@ -189,14 +216,15 @@ class Frame(object):
 
     def make_texture(self):
         ''' Makes the Frame's texture field that stores RGB data to be used as an OpenGL texture . '''
-        # Flip Frame up and down to fit with opengl indexing
-        flipped_frame = np.flip(
-            self.frame, 0)
-        frame_r = np.round(self.rgb[0] * flipped_frame)
-        frame_g = np.round(self.rgb[1] * flipped_frame)
-        frame_b = np.round(self.rgb[2] * flipped_frame)
-        data = np.dstack((frame_r, frame_g, frame_b))
-        self.texture = data.astype(np.uint8)
+        if self.texture is None:
+            # Flip Frame up and down to fit with opengl indexing
+            flipped_frame = np.flip(
+                self.frame, 0)
+            frame_r = np.round(self.rgb[0] * flipped_frame)
+            frame_g = np.round(self.rgb[1] * flipped_frame)
+            frame_b = np.round(self.rgb[2] * flipped_frame)
+            data = np.dstack((frame_r, frame_g, frame_b))
+            self.texture = data.astype(np.uint8)
 
     def mirror(self):
         ''' Horizontally mirrors the Frame '''

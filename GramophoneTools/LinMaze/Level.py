@@ -210,7 +210,7 @@ class Level(object):
         if not self.rendered:
             print('\n'+self.name,  '>>\n')
             self.frames = Frame.multi_make(self.frames)
-            self.frames = Frame.apply_transition(self.frames, self.transition_width)
+            self.frames = Frame.frame_transitions(self.frames, self.transition_width)
 
             loadtime = Stopwatch.Stopwatch()
             for count, frame in enumerate(self.frames):
