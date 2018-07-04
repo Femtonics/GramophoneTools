@@ -40,7 +40,7 @@ def multi_make(list_of_frames):
     return list(results)
 
 
-def transition(list_of_frames, transition_width):
+def apply_transition(list_of_frames, transition_width):
     ''' 
     Makes a list of frames with smooth transitions between them.
 
