@@ -425,6 +425,7 @@ class ImageFile(Frame):
     display_name = "Image file"
 
     def __init__(self, height, filename):
+        self.filename = filename
         img = cv2.imread(filename)
         if img.shape[0] != height:
             target_width = round(img.shape[1]*(height/img.shape[0]))
@@ -435,6 +436,9 @@ class ImageFile(Frame):
         img_height, img_width, _ = img.shape
         super().__init__(img_width, img_height)
         self.frame = img.astype(np.uint8)
+
+    def __str__(self):
+        return super().__str__() + " - Type: Image file - Filename: "+ self.filename
 
     def make(self):
         self.make_texture()
