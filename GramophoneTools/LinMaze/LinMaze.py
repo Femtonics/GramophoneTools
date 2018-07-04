@@ -13,7 +13,11 @@ from GramophoneTools.LinMaze.Tools.Stopwatch import Stopwatch
 from GramophoneTools.LinMaze.Tools.filehandler import select_file
 import GramophoneTools.Comms as Comms
 
-
+class LinMazeError(Exception):
+    """
+    Generic Exception for LinMaze related errors.
+    """
+    pass
 
 class VRWindow(pyglet.window.Window):
     '''
@@ -389,11 +393,14 @@ class Session(object):
         self.skip_save = skip_save
 
         grams = Comms.find_devices()
-        if self.gramophone_serial is None:
-            print('No Gramophone specified. Using the first one.')
-            self.gramophone = grams[list(grams)[0]]
+        if grams:
+            if self.gramophone_serial is None:
+                print('\nNo Gramophone specified. Using the first one.')
+                self.gramophone = grams[list(grams)[0]]
+            else:
+                self.gramophone = grams[self.gramophone_serial]
         else:
-            self.gramophone = grams[self.gramophone_serial]
+            raise(LinMazeError('No gramophones connected.'))
 
         self.vr_units = []
         self.runtime = Stopwatch()

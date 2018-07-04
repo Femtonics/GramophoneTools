@@ -257,5 +257,7 @@ class Level(object):
         :param kwargs: Keyword arguments of the Session created.
 
         '''
-        LinMaze.Session(self, *args, **kwargs)
-        # play_session.start()
+        try:
+            LinMaze.Session(self, *args, **kwargs)
+        except LinMaze.LinMazeError as err:
+            print('\nERROR:', err)
