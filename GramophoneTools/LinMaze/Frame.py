@@ -394,7 +394,7 @@ class SineWave(WaveFrame):
 
     def __str__(self):
         return super().__str__() + " - Type: Sine wave - Wavelength: " + \
-            str(self.wavelength) + " - Angle: " + str(self.angle)
+            str(self.wavelength) + " - Angle: " + str(math.degrees(self.angle))
 
     def make(self):
         for index, val in np.ndenumerate(self.wave_temp):
@@ -407,7 +407,7 @@ class SquareWave(WaveFrame):
 
     def __str__(self):
         return super().__str__() + " - Type: Square wave - Wavelength: " + \
-            str(self.wavelength) + " - Angle: " + str(self.angle)
+            str(self.wavelength) + " - Angle: " + str(math.degrees(self.angle))
 
     def make(self):
         for index, val in np.ndenumerate(self.wave_temp):
