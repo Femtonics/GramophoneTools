@@ -261,3 +261,4 @@ class Level(object):
             LinMaze.Session(self, *args, **kwargs)
         except LinMaze.LinMazeError as err:
             print('\nERROR:', err)
+            input()
