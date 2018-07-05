@@ -20,7 +20,7 @@ from PyQt5.QtWidgets import (QApplication, QFileDialog, QHeaderView,
 from PyQt5.uic import loadUiType
 
 from GramophoneTools import Comms
-from GramophoneTools.Recorder import GramLogging
+from GramophoneTools.Recorder import logger
 
 DIR = os.path.dirname(__file__)
 sys.path.append(DIR+'/.')
@@ -143,7 +143,7 @@ class deviceInfoWindow(DEVINFO_WIN_BASE, DEVINFO_WIN_UI):
 class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
     """ The main window of the Gramophone reader. """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, devmode, log_file, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.setupUi(self)
 
@@ -173,8 +173,15 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         self.reset_graph()
 
         # Make initial file
-        self.log = None
-        self.new_file()
+        self.log = log_file
+        if log_file is None:
+            self.new_file()
+        else:
+            self.log.open_log_file()
+            for i in range(len(self.log.records)):
+                self.log_model.beginInsertRows(QModelIndex(), i, i)
+                self.log_model.endInsertRows()
+
         self.current_record = None
 
         # Buttons
@@ -222,7 +229,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         self.gram = None
 
         # Developer options
-        self.menuDEV.menuAction().setVisible(False)
+        self.menuDEV.menuAction().setVisible(devmode)
         self.DEV_reset_gram_timer.triggered.connect(self.reset_gram_timer)
         self.DEV_make_dummy.triggered.connect(self.make_dummy)
 
@@ -257,7 +264,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
             self.counter_box.setValue(1)
 
             # Table of recordings
-            self.log = GramLogging.VelocityLog(None)
+            self.log = logger.VelocityLog(None)
             self.log_model = VelLogModel(self.log)
             self.log_model.dataChanged.connect(self.log_changed)
             self.log_model.rowsInserted.connect(self.update_table_size)
@@ -556,7 +563,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
             self.timer_zero = self.gram.last_time/10
             if self.recording:
                 # self.gram.reset_time()
-                self.current_record = GramLogging.MemoryRecord(
+                self.current_record = logger.MemoryRecord(
                     self.counter_box.value())
                 self.current_record.start()
 
@@ -710,7 +717,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         """ Function only available for developers. Creates
             a dummy record in the current velocity log with
             randomized data. """
-        dummy = GramLogging.DummyRecord()
+        dummy = logger.DummyRecord()
         self.log_model.add_record(dummy)
         self.update_table_size()
         self.log_changed()
@@ -838,11 +845,11 @@ class VelLogModel(QAbstractTableModel):
         plt.show()
 
 
-def main():
+def main(devmode=False, log_file=None):
     if not os.path.exists(PROGRAM_DATA + '/GramophoneTools'):
         os.makedirs(PROGRAM_DATA + '/GramophoneTools')
     APP = QApplication(sys.argv)
-    WIN = pyGramWindow()
+    WIN = pyGramWindow(devmode, log_file)
     # WIN.show_elements()
     WIN.show()
     sys.exit(APP.exec_())
