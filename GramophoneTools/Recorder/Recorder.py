@@ -174,8 +174,9 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
 
         # Make initial file
         self._log = None
-        self.new_file()
-        if log_file is not None:
+        if log_file is None:
+            self.new_file()
+        else:
             self.select_file(mode=None, filename=log_file)
 
         self.current_record = None
@@ -337,9 +338,9 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
                 if filename:
                     self.log = logger.VelocityLog.from_file(filename)
 
-        # for i in range(len(self.log.records)):
-        #     self.log_model.beginInsertRows(QModelIndex(), i, i)
-        #     self.log_model.endInsertRows()
+        else:
+            self.log = logger.VelocityLog.from_file(filename)
+
         self.update_title()
         self.update_table_size()
 
