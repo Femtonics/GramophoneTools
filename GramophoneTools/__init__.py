@@ -3,7 +3,7 @@ from . import Recorder
 from . import LinMaze
 
 
-__version__ = '0.5.15'
+__version__ = '0.5.16'
 
 def print_version():
     global __version__
