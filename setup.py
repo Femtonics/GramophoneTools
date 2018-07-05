@@ -49,7 +49,7 @@ setup(
         'GramophoneTools.Recorder': ['*.ui', '*.pyw'],
     },
     entry_points={
-        'gui_scripts': ['gramrec = GramophoneTools.Recorder.Main:main'],
+        'gui_scripts': ['gramrec = GramophoneTools.Recorder.__main__:main'],
         'console_scripts': ['gramver = GramophoneTools:print_version']
     }
 )
