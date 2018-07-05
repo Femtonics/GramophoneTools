@@ -16,26 +16,41 @@ class VelocityLog(object):
     def __init__(self):
         self.filename = None
         self.records = []
+        self.deleted = []
         self.log_file = None
 
-    def open_log_file(self, filename):
+    @classmethod
+    def from_file(cls, filename):
+        loaded_log = cls()
+        try:
+            loaded_log.filename = filename
+            loaded_log.log_file = h5py.File(loaded_log.filename, "a")
+            for key in sorted(loaded_log.log_file.keys(), key=lambda key: loaded_log.log_file[key].attrs['start_time']):
+                loaded_log.records.append(FileRecord(loaded_log.log_file[key]))
+        except OSError as err:
+            print(err)
+
+        return loaded_log
+
+    def open_log_file(self, filename, mode='a'):
         self.filename = filename
-        if os.path.isfile(self.filename):
-            self.log_file = h5py.File(self.filename, "r+")
-            for key in sorted(self.log_file.keys(), key=lambda key: self.log_file[key].attrs['start_time']):
-                self.records.append(FileRecord(self.log_file[key]))
-        else:
-            self.log_file = h5py.File(self.filename, "w")
+        self.log_file = h5py.File(self.filename, mode)
 
     def save(self):
         """ Saves all records from this log to file. """
         for rec_id, record in enumerate(self.records):
-            if isinstance(record, MemoryRecord):
-                self.records[rec_id] = record.save(self.log_file)
+            print('Saved:', record)
+            self.records[rec_id] = record.save(self.log_file)
+
+        for record in self.deleted:
+            if isinstance(record, FileRecord):
+                del self.log_file[record.unique_id]
+        self.deleted = []
 
     def close_log_file(self):
         if self.log_file is not None:
             self.log_file.close()
+            self.log_file = None
 
     def xls_export(self, filename):
         if self.records:
@@ -151,6 +166,30 @@ class Record(ABC):
             format defined by the length_format class variable. """
         return time.strftime(self.length_format, time.localtime(self.length))
 
+    def save(self, log_file):
+        '''
+        Saves this record into a file and returns a FileRecord that can replace it.
+
+        :param log_file: An opened HDF5 file
+        :type log_file: h5py.File
+        '''
+
+        log_file.create_group(self.unique_id)
+        log_file[self.unique_id].attrs['id'] = self.rec_id
+        log_file[self.unique_id].attrs['comment'] = self.comment
+        log_file[self.unique_id].attrs['date_hr'] = self.date_hr
+        log_file[self.unique_id].attrs['start_time'] = self.start_time
+        log_file[self.unique_id].attrs['start_time_hr'] = self.start_time_hr
+        log_file[self.unique_id].attrs['finish_time'] = self.finish_time
+        log_file[self.unique_id].attrs['finish_time_hr'] = self.finish_time_hr
+        log_file[self.unique_id].attrs['length'] = self.length
+        log_file[self.unique_id].attrs['length_hr'] = self.length_hr
+        log_file[self.unique_id].attrs['mean_velocity'] = self.mean_vel
+
+        log_file[self.unique_id+'/time'] = self.times
+        log_file[self.unique_id+'/velocity'] = self.velocities
+
+        return FileRecord(log_file[self.unique_id])
 
 class MemoryRecord(Record):
     """ A velocity record that is in memory ie. not saved yet. """
@@ -187,49 +226,24 @@ class MemoryRecord(Record):
         self.times = np.array(self.times, dtype=np.uint64) - min(self.times)
         self.velocities = np.array(self.velocities, dtype=float)
 
-    def save(self, log_file):
-        '''
-        Saves this record into a file and returns a FileRecord that can replace it.
-
-        :param log_file: An opened HDF5 file
-        :type log_file: h5py.File
-        '''
-
-        log_file.create_group(self.unique_id)
-        log_file[self.unique_id].attrs['id'] = self.rec_id
-        log_file[self.unique_id].attrs['comment'] = self.comment
-        log_file[self.unique_id].attrs['date_hr'] = self.date_hr
-        log_file[self.unique_id].attrs['start_time'] = self.start_time
-        log_file[self.unique_id].attrs['start_time_hr'] = self.start_time_hr
-        log_file[self.unique_id].attrs['finish_time'] = self.finish_time
-        log_file[self.unique_id].attrs['finish_time_hr'] = self.finish_time_hr
-        log_file[self.unique_id].attrs['length'] = self.length
-        log_file[self.unique_id].attrs['length_hr'] = self.length_hr
-        log_file[self.unique_id].attrs['mean_velocity'] = self.mean_vel
-
-        log_file[self.unique_id+'/time'] = self.times
-        log_file[self.unique_id+'/velocity'] = self.velocities
-
-        return FileRecord(log_file[self.unique_id])
-
-
 class FileRecord(Record):
     """ A velocity record that is saved in a HDF5 file. """
 
     def __init__(self, file_group):
         super().__init__()
         self.file_group = file_group
-        # print(file_group.attrs['id'])
+        self.m_rec_id = None
+        self.m_comment = None
 
     @property
     def times(self):
         """ Returns the time data form file """
-        return self.file_group['time']
+        return self.file_group['time'][...]
 
     @property
     def velocities(self):
         """ Returns the velocity data form file """
-        return self.file_group['velocity']
+        return self.file_group['velocity'][...]
 
     @property
     def start_time(self):
@@ -244,22 +258,28 @@ class FileRecord(Record):
     @property
     def rec_id(self):
         """ Returns the record's ID form file """
-        return int(self.file_group.attrs['id'])
+        if self.m_rec_id is None:
+            return int(self.file_group.attrs['id'])
+        else:
+            return self.m_rec_id
 
     @rec_id.setter
     def rec_id(self, value):
         """ Sets the record's ID in the file """
-        self.file_group.attrs['id'] = value
+        self.m_rec_id = value
 
     @property
     def comment(self):
         """ Returns the record's comment form file """
-        return self.file_group.attrs['comment']
+        if self.m_comment is None:
+            return self.file_group.attrs['comment']
+        else:
+            return self.m_comment
 
     @comment.setter
     def comment(self, value):
         """ Sets the record's comment in the file """
-        self.file_group.attrs['comment'] = value
+        self.m_comment = value
 
     @property
     def mean_vel(self):

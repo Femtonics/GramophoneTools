@@ -173,7 +173,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         self.reset_graph()
 
         # Make initial file
-        self.log = None
+        self._log = None
         self.new_file()
         if log_file is not None:
             self.select_file(mode=None, filename=log_file)
@@ -229,6 +229,27 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         self.DEV_reset_gram_timer.triggered.connect(self.reset_gram_timer)
         self.DEV_make_dummy.triggered.connect(self.make_dummy)
 
+    @property
+    def log(self):
+        return self._log
+    
+    @log.setter
+    def log(self, value):
+        if self.log is not None:
+            self.log.close_log_file()
+
+        self._log = value
+        self.log_model = VelLogModel(self._log)
+        self.log_model.dataChanged.connect(self.log_changed)
+        self.log_model.rowsInserted.connect(self.update_table_size)
+        self.records_table.setModel(self.log_model)
+        self.records_table.horizontalHeader().setSectionResizeMode(QHeaderView.Fixed)
+        # self.records_table.horizontalHeader().setResizeMode(QHeaderView.Fixed) #old
+        # self.records_table.resizeColumnsToContents()
+        self.update_table_size()
+        self.update_title()
+
+
     @pyqtSlot()
     def log_changed(self):
         """ Calll this function when the velocity log is modified
@@ -254,21 +275,9 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
             if response == 'save':
                 self.save()
 
-            if self.log is not None:
-                self.log.close_log_file()
-
             self.counter_box.setValue(1)
 
             self.log = logger.VelocityLog()
-            self.log_model = VelLogModel(self.log)
-            self.log_model.dataChanged.connect(self.log_changed)
-            self.log_model.rowsInserted.connect(self.update_table_size)
-            self.records_table.setModel(self.log_model)
-            self.records_table.horizontalHeader().setSectionResizeMode(QHeaderView.Fixed)
-            self.update_table_size()
-            # self.records_table.horizontalHeader().setResizeMode(QHeaderView.Fixed) #old
-            # self.records_table.resizeColumnsToContents()
-            self.update_title()
             self.setWindowModified(False)
 
     def new_window(self):
@@ -280,7 +289,10 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
     def open(self):
         """ Opens a velocity log from file and sets it as the
             current working file. """
-        self.new_file()
+        response = self.save_warning()
+        if response != 'cancel':
+            if response == 'save':
+                self.save()
         self.select_file(mode='open')
 
     def save(self):
@@ -288,7 +300,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
             True if the file is saved or False if saving
             was cancelled '''
         if self.log.filename is None:
-            if self.select_file():
+            if self.select_file(mode='save'):
                 return self.save()
             else:
                 return False
@@ -315,21 +327,25 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
             if mode == 'save': # Show a save dialog
                 filename, _ = QFileDialog.getSaveFileName(
                     self, "Save velocity log", "", fileformat, options=options)
+                if filename:
+                    self.log.open_log_file(filename, 'w')
 
             if mode == 'open': # Show an open dialog
                 filename, _ = QFileDialog.getOpenFileName(
                     self, "Open velocity log", "", fileformat, options=options)
-        
-        if filename:
-            self.log.open_log_file(filename)
-            for i in range(len(self.log.records)):
-                self.log_model.beginInsertRows(QModelIndex(), i, i)
-                self.log_model.endInsertRows()
-            self.update_title()
-            self.update_table_size()
-            return True
-        else:
-            return False
+
+                if filename:
+                    self.log = logger.VelocityLog.from_file(filename)
+
+        # for i in range(len(self.log.records)):
+        #     self.log_model.beginInsertRows(QModelIndex(), i, i)
+        #     self.log_model.endInsertRows()
+        self.update_title()
+        self.update_table_size()
+
+
+        print('File selected:',filename)
+        return bool(filename)
 
     def show_about(self):
         """ Displays the About window. """
@@ -463,6 +479,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         if self.delete_warning(len(self.selected_rows)) == 'delete':
             while self.selected_rows:
                 self.log_model.removeRows(self.selected_rows[0], 1)
+            self.setWindowModified(True)
         else:
             pass
 
@@ -821,6 +838,7 @@ class VelLogModel(QAbstractTableModel):
     def removeRows(self, row, count, parent=QModelIndex()):
         """ Removes 'count' number of rows starting at 'row' """
         self.beginRemoveRows(parent, row, row+count-1)
+        self.log.deleted += self.log.records[row:row+count]
         self.log.records = self.log.records[:row] + \
             self.log.records[row+count:]
         self.endRemoveRows()
