@@ -19,11 +19,11 @@ from PyQt5.QtWidgets import (QApplication, QFileDialog, QHeaderView,
                              QMessageBox, QShortcut)
 from PyQt5.uic import loadUiType
 
-DIR = os.path.dirname(__file__)
-sys.path.append(DIR+'/..')
-import Comms
-import GramLogging
+from GramophoneTools import Comms
+from GramophoneTools.Recorder import GramLogging
 
+DIR = os.path.dirname(__file__)
+sys.path.append(DIR+'/.')
 
 # GLOBALS
 ABOUT_WIN_BASE, ABOUT_WIN_UI = loadUiType(DIR+'/about.ui')
