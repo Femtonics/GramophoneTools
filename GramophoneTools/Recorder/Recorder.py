@@ -173,14 +173,10 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         self.reset_graph()
 
         # Make initial file
-        self.log = log_file
-        if log_file is None:
-            self.new_file()
-        else:
-            self.log.open_log_file()
-            for i in range(len(self.log.records)):
-                self.log_model.beginInsertRows(QModelIndex(), i, i)
-                self.log_model.endInsertRows()
+        self.log = None
+        self.new_file()
+        if log_file is not None:
+            self.select_file(mode=None, filename=log_file)
 
         self.current_record = None
 
@@ -263,8 +259,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
 
             self.counter_box.setValue(1)
 
-            # Table of recordings
-            self.log = logger.VelocityLog(None)
+            self.log = logger.VelocityLog()
             self.log_model = VelLogModel(self.log)
             self.log_model.dataChanged.connect(self.log_changed)
             self.log_model.rowsInserted.connect(self.update_table_size)
@@ -286,13 +281,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         """ Opens a velocity log from file and sets it as the
             current working file. """
         self.new_file()
-        if self.select_file(mode='open'):
-            self.log.open_log_file()
-            self.update_table_size()
-
-        for i in range(len(self.log.records)):
-            self.log_model.beginInsertRows(QModelIndex(), i, i)
-            self.log_model.endInsertRows()
+        self.select_file(mode='open')
 
     def save(self):
         ''' Saves the currently used log file. Returns
@@ -304,7 +293,6 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
             else:
                 return False
         else:
-            self.log.open_log_file()
             self.log.save()
             self.setWindowModified(False)
             self.update_title()
@@ -316,21 +304,29 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         if self.select_file():
             self.save()
 
-    def select_file(self, mode='save'):
+    def select_file(self, mode='save', filename=None):
         ''' Displays a file selection dialog for velocity
             log files. Mode can be 'save' or 'open'. '''
-        options = QFileDialog.Options()
-        fileformat = "pyGram logs (*.vlg)"
 
-        if mode == 'save':
-            filename, _ = QFileDialog.getSaveFileName(
-                self, "Save velocity log", "", fileformat, options=options)
-        if mode == 'open':
-            filename, _ = QFileDialog.getOpenFileName(
-                self, "Open velocity log", "", fileformat, options=options)
+        if filename is None:
+            options = QFileDialog.Options()
+            fileformat = "pyGram logs (*.vlg)"
+
+            if mode == 'save': # Show a save dialog
+                filename, _ = QFileDialog.getSaveFileName(
+                    self, "Save velocity log", "", fileformat, options=options)
+
+            if mode == 'open': # Show an open dialog
+                filename, _ = QFileDialog.getOpenFileName(
+                    self, "Open velocity log", "", fileformat, options=options)
+        
         if filename:
-            self.log.filename = filename
+            self.log.open_log_file(filename)
+            for i in range(len(self.log.records)):
+                self.log_model.beginInsertRows(QModelIndex(), i, i)
+                self.log_model.endInsertRows()
             self.update_title()
+            self.update_table_size()
             return True
         else:
             return False

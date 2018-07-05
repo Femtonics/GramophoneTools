@@ -13,12 +13,13 @@ class VelocityLog(object):
     """ A container object for velocity recordins. Handles
         saving records to HDF5 files. """
 
-    def __init__(self, filename):
-        self.filename = filename
+    def __init__(self):
+        self.filename = None
         self.records = []
         self.log_file = None
 
-    def open_log_file(self):
+    def open_log_file(self, filename):
+        self.filename = filename
         if os.path.isfile(self.filename):
             self.log_file = h5py.File(self.filename, "r+")
             for key in sorted(self.log_file.keys(), key=lambda key: self.log_file[key].attrs['start_time']):
@@ -272,7 +273,8 @@ class DummyRecord(Record):
 
     def __init__(self):
         from random import randint
-        super().__init__(randint(1, 999))
+        super().__init__()
+        self.rec_id = randint(1, 999)
         self.start_time = time.time()
         self.finish_time = time.time()+10
         self.times = list(range(3, 10000, 3))
