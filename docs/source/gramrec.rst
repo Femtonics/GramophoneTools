@@ -4,14 +4,14 @@ Recorder module
 Main module
 -----------
 
-.. automodule:: Main
+.. automodule:: Recorder
    :members:
 
 
 Logging module
 --------------
 
-.. automodule:: GramLogging
+.. automodule:: logger
    :members:
 
 Output
