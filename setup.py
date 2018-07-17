@@ -23,8 +23,8 @@ setup(
         'Documentation': 'http://gramophonetools.readthedocs.io',
         'User Guide': 'http://gramophonetools.readthedocs.io/en/latest/_downloads/Gramophone%20User%20Guide.pdf'},
     packages=['GramophoneTools.Comms', 'GramophoneTools.LinMaze',
-              'GramophoneTools.LinMaze.Tools', 'GramophoneTools.Recorder'],
-    py_modules=["GramophoneTools.ver"],
+              'GramophoneTools.LinMaze.Tools', 'GramophoneTools.Recorder', 'GramophoneTools'],
+    # py_modules=["GramophoneTools.ver"],
     install_requires=[
         'h5py',
         'PyQt5',
@@ -46,8 +46,10 @@ setup(
     python_requires='>=3',
     package_data={
         'GramophoneTools.LinMaze': ['res/icon.png', '*.dll'],
-        'GramophoneTools.Recorder': ['*.ui', '*.pyw'],
+        'GramophoneTools.Recorder': ['*.ui'],
+        'GramophoneTools': ['*.pdf']
     },
+    include_package_data=True,
     entry_points={
         'gui_scripts': ['gramrec = GramophoneTools.Recorder.__main__:main'],
         'console_scripts': ['gramver = GramophoneTools:print_version']
