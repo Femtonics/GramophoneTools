@@ -22,9 +22,11 @@ setup(
         'GitHub': 'https://github.com/Femtonics/GramophoneTools',
         'Documentation': 'http://gramophonetools.readthedocs.io',
         'User Guide': 'http://gramophonetools.readthedocs.io/en/latest/_downloads/Gramophone%20User%20Guide.pdf'},
-    packages=['GramophoneTools.Comms', 'GramophoneTools.LinMaze',
-              'GramophoneTools.LinMaze.Tools', 'GramophoneTools.Recorder', 'GramophoneTools'],
+    packages=['GramophoneTools', 'GramophoneTools.Comms', 'GramophoneTools.LinMaze',
+              'GramophoneTools.LinMaze.Tools', 'GramophoneTools.Recorder', 'GramophoneTools.examples', 'GramophoneTools.docs'],
     # py_modules=["GramophoneTools.ver"],
+    package_dir={'GramophoneTools.examples': 'examples',
+                 'GramophoneTools.docs': 'docs/build/html'},
     install_requires=[
         'h5py',
         'PyQt5',
@@ -47,11 +49,11 @@ setup(
     package_data={
         'GramophoneTools.LinMaze': ['res/icon.png', '*.dll'],
         'GramophoneTools.Recorder': ['*.ui'],
-        'GramophoneTools': ['*.pdf']
+        'GramophoneTools.docs': ['*', '*/*', '*/*/*', '*/*/*/*']
     },
     include_package_data=True,
     entry_points={
         'gui_scripts': ['gramrec = GramophoneTools.Recorder.__main__:main'],
-        'console_scripts': ['gramver = GramophoneTools:print_version']
+        'console_scripts': ['gramver = GramophoneTools:print_version', 'gram = GramophoneTools:main']
     }
 )
