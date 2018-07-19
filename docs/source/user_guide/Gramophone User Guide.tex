@@ -171,7 +171,7 @@ The Gramophone system is a single dimension locomotion tracking device for head-
 \section{Compatibility}
 The system is compatible with Microsoft Windows 7 or newer. To run the computer software, a Python 3.6 interpreter is required.
 
-The system can be used in conjunction with Femtonics SMART microscopes and certain custom built models. To get further information about compatibility with your device, please contact Femtonics Ltd. at \href{mailto:info@femtonics.eu}{info@femtonics.eu}. \enote{Is this okay?}
+The system can be used in conjunction with Femtonics SMART microscopes and certain custom built models. To get further information about compatibility with your device, please contact Femtonics Ltd. at \href{mailto:info@femtonics.eu}{info@femtonics.eu}.
 
 %\section{Warranty}
 %\enote{TODO}
@@ -181,7 +181,8 @@ If you need further assistance, please contact Femtonics Ltd. via e-mail at \hre
 
 \section{Cleaning instructions}
 \subsection{Disk}
-Remove the disk (Figure \ref{fig:gram_overview}a) by unscrewing its mounting screw (Figure \ref{fig:gram_overview}b) and clean it with warm soapy water. The disk can be sterilized with alcohol-based disinfectants and is resistant to temperatures up to \enote{add temp resisitance when available} \degree C.
+Remove the disk (Figure \ref{fig:gram_overview}a) by unscrewing its mounting screw (Figure \ref{fig:gram_overview}b) and clean it with warm soapy water. The disk can be sterilized with alcohol-based disinfectants.
+% and is resistant to temperatures up to \enote{add temp resisitance when available} \degree C.
 
 \subsection{System}
 Disconnect the device from the computer by unplugging the USB cable (Figure \ref{fig:gram_ports}b). Clean the device with a damp cloth.
@@ -198,8 +199,8 @@ Disconnect the device from the computer by unplugging the USB cable (Figure \ref
 
 \subsection{Specifications}
 \begin{itemize}
-\item Operating temperature: \enote{get exact values}
-\item Relative humidity during operation: \enote{get exact values}
+\item Operating temperature: 0-60 \degree C
+\item Relative humidity during operation:  $<$ 90\%, avoid condensation 
 \item Power requirements - 5V DC @500mA via USB. The use of passive USB hubs is prohibited.
 \end{itemize}
 
@@ -303,7 +304,7 @@ The position of the head-holder can be adjusted both sideways and back and forth
 No additional drivers are required for the Gramophone system. It operates as a HID (Human Interface Device), for which, all drivers are provided by modern operating systems.
 
 \newpage
-\subsection{Python interpreter}
+\subsection{Python interpreter \label{sec:python_install}}
 To run the computer software of the Gramophone system, a Python 3.6 interpreter has to be installed. To install it, download the latest Miniconda installer for your version of Windows
 (links: 
 \href{https://repo.continuum.io/miniconda/Miniconda3-latest-Windows-x86.exe}{\textbf{32-bit}}
@@ -409,16 +410,21 @@ To start Python scripts (files with .py extension) with a double click in Window
 
 \note{The ProgramData folder is hidden in Windows so you have to type the location in the address bar to navigate there, or make hidden files and folders visible.}
 
+\subsection{Associating .vlg files with the GramophoneTools Recorder}
+The velocity recorder produces .vlg files as an output (see: \ref{sec:recorder_out}). To open these in the Recorder, right click on a .vlg file, select open with, search for an application on the computer and select \texttt{gramrec.exe} in the scripts folder of your Python installation. If you installed Python as described above (see: section \ref{sec:python_install}) this can be found here: \path{C:\ProgramData\Miniconda3\Scripts}.
 
-%\subsection{Setting environment variables}
-%\enote{won't be needed after package management installer is done}
-%
-%To be able to store your level files anywhere you have to add the install location of the LinMaze software to your environment variables.
-%\\
-%Open the Start menu and start typing "environment" in the results select the "Edit the system environment variables". In the System properties window click the "Environment Variables..." button. In the Environment Variables window add a new variable with the name \verb|PYTHONPATH| a the folder of the Python scripts as the value (eg. \verb|C:\VR\LinMaze2|).
+\note{The ProgramData folder is hidden in Windows so you have to type the location in the address bar to navigate there, or make hidden files and folders visible.}
 
-\newpage
-\section{Gramophone recorder} 
+\note{You can also make an icon for \texttt{gramrec.exe} on the desktop to make starting it easier.}
+
+\section{Software overview}
+The GramophoneTools package has three modules. The \texttt{Comms} module handles all communication with the device. This can be used to develop your own application for the Gramophone. The Recorder module is an application with a GUI (Graphical User Interface) that can be used to record the animals velocity in a triggered manner. The LinMaze module is a collection of tools used to generate a 2 dimensional linear maze the mouse can navigate. Events and Rules can be added to this maze to implement various conditioning tasks.
+
+After installing the GramophoneTools package, you can use a number of commands. The \texttt{gramrec} command simply starts the Recorder application. You can include a path to a .vlg file as a command line argument to open it with the recorder. The \texttt{gram} command can be used for various things, run \texttt{gram help} to find out more.
+
+\note{You can open a terminal for these commands in Windows 10 by right clicking the start menu and selecting the 'Windows PowerShell' option, or you can run them in the Run window by pressing 'Win+R'.}
+
+\section{Recorder module} 
 The Gramophone recorder is software that can make high accuracy velocity recordings. To keep the velocity records in sync with two-photon measurements the digital input 1 (Figure \ref{fig:gram_ports}c) is used as a trigger input for recordings. 
 
 	\begin{figure}[H]
@@ -466,7 +472,10 @@ Configure the microscope to pull its digital output to hight for the time period
 
 \end{enumerate}
 
-\section{LinMaze}
+\subsection{Recording results \label{sec:recorder_out}}
+The velocity log file is an HDF5 file with a \texttt{.vlg} extension. For more information about it's structure please visit the \href{http://gramophonetools.readthedocs.io/en/latest/gramrec_out.html}{\textbf{online documentation of the Recorder module}}.
+
+\section{LinMaze module}
 LinMaze is a simple virtual linear maze system. It can generate patterns based on parameters and stitch these patterns together into an endless loop the mouse can navigate in using the Gramophone. Optionally, you can define rules to condition the mouse to a task eg. to differentiate between different patterns and behave accordingly.
 
 \subsection{Levels}
@@ -504,7 +513,7 @@ The parameters for the Level are:
 \end{paramlist}
 
 \subsection{Frames}
-Frames are rectangular pictures that can be displayed by the system. There are 8 different types of generated Frames you can add to your level (see: Figure \ref{fig:frame_types}). In addition you can turn image files into Frames. Frames are always as high as the screen, and as long as the given length parameter. In case of Frames made from image files, make sure the height of the image is the same as the height of the screen.
+Frames are rectangular pictures that can be displayed by the system. There are 8 different types of generated Frames you can add to your level (see: Figure \ref{fig:frame_types}). In addition you can turn image files into Frames. Frames are always as high as the screen, and as long as the given length parameter. Blocks are Frames with a \texttt{zone\_type} parameter. This way you can refer to a group of patterns by making zone rules (see: section \ref{sec:rules}).
 
 \begin{figure}
 \centering
@@ -656,7 +665,7 @@ Example:
 	LVL.add_event('port_1_low', 'port_off', 1)
 \end{lstlisting}
 
-\subsection{Rules}
+\subsection{Rules \label{sec:rules}}
 Rules are the third and last core component of Levels, these are what connect the Events to conditions so that you can define how you want the conditioning to happen. There are 3 different types you can use.\\
 
 
@@ -725,7 +734,7 @@ The optional arguments are:
 \param{runtime\_limit} float number. How long should the simulation run (in minutes).
 \param{left\_monitor} integer number or \lstinline{None}. Which monitor is used as a left side display.
 \param{right\_monitor} integer number or \lstinline{None}. Which monitor is used as a right side display.
-\param{gramofon\_port} the COM port the gramophone is connected to as a string eg. 'COM3' or None for automatic selection of the first connected gramophone. \enote{final product will have HID devices not COM ports}
+\param{gramophone\_serial} the serial number of the Gramophone device you wish to use. It can be given as a hexadecimal number eg.: \lstinline{0xA0002}. If a device is not specified a random connected one will be selected automatically.
 \param{fullscreen} \lstinline{True} for full screen and \lstinline{False} for windowed mode.
 \param{skip\_save} If set the \lstinline{True} a save dialog for the log file will not be shown on start. Useful when testing levels.
 \end{paramlist}
@@ -737,12 +746,12 @@ Example:
 LVL.play(left_monitor=None, right_monitor=1, vel_ratio=2, gramofon_port='COM3', runtime_limit=5, fullscreen=True)
 \end{lstlisting}
 
+\subsection{Examples}
+A collection of examples are available on GitHub in the examples folder of the GramophoneTools repository. Alternatively you can open this folder of examples after installing the GramophoneTools package with the \texttt{gram examples} command.
+
 \subsection{Simulation results}
 When you call the play command you will be presented with a file selection window, on which you can select the location and filename of your log file. The log is automatically saved every 10 seconds or on the end of the simulation (on proper exit, do not close the console window, close the simulation window or select it and exit with the \texttt{Esc} key).\\
 
-
-%\enote{the HDF5 structure will change as the final product has more IO. also, move this to the dev docs instead}
-%
 The log file is an HDF5 file with a \texttt{.vrl} extension. For more information about it's structure please visit the \href{http://gramophonetools.readthedocs.io/en/latest/linmaze_out.html}{\textbf{online documentation of the LinMaze module}}.
 
 %\begin{itemize}
@@ -771,7 +780,6 @@ The log file is an HDF5 file with a \texttt{.vrl} extension. For more informatio
 % \newpage
 % \section{Release notes}
 
-% \enote{too technical, move to dev docs?}
 
 % \subsection{LinMaze changelog}
 % \subsubsection*{2018.03.01.}
