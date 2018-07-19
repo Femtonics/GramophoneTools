@@ -2,10 +2,16 @@
 from setuptools import setup, find_packages
 import GramophoneTools
 
+readme = open('README.md', 'r')
+README_TEXT = readme.read()
+readme.close()
+
 setup(
     name='GramophoneTools',
     version=GramophoneTools.__version__,
     description='Tools for Gramophone systems by Femtonics Ltd.',
+    long_description=README_TEXT,
+    long_description_content_type='text/markdown',
     url='http://femtonics.eu/',
     author='Femtonics Ltd.',
     author_email='info@femtonics.eu',
