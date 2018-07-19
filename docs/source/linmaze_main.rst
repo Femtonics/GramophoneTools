@@ -1,14 +1,14 @@
 The Window class
 ================
-.. autoclass:: LinMaze.VRWindow
+.. autoclass:: LinMaze.LinMaze.VRWindow
    :members:
 
 The Logger class
 ================
-.. autoclass:: LinMaze.VRLog
+.. autoclass:: LinMaze.LinMaze.VRLog
    :members:
 
 The Session class
 =================
-.. autoclass:: LinMaze.Session
+.. autoclass:: LinMaze.LinMaze.Session
    :members:
