@@ -92,25 +92,26 @@ class VRWindow(pyglet.window.Window):
         if symbol == pyglet.window.key.R:
             self.session.gramophone.reset()
 
-        if symbol == pyglet.window.key.F1:
-            target = int(not self.session.gramophone.last_out_1)
-            self.session.gramophone.write_output(1, target)
-            self.session.gramophone.read_outputs()
+        if modifiers & pyglet.window.key.MOD_CTRL:
+            if symbol == pyglet.window.key._1:
+                target = int(not self.session.gramophone.last_out_1)
+                self.session.gramophone.write_output(1, target)
+                self.session.gramophone.read_outputs()
 
-        if symbol == pyglet.window.key.F2:
-            target = int(not self.session.gramophone.last_out_2)
-            self.session.gramophone.write_output(2, target)
-            self.session.gramophone.read_outputs()
+            if symbol == pyglet.window.key._2:
+                target = int(not self.session.gramophone.last_out_2)
+                self.session.gramophone.write_output(2, target)
+                self.session.gramophone.read_outputs()
 
-        if symbol == pyglet.window.key.F3:
-            target = int(not self.session.gramophone.last_out_3)
-            self.session.gramophone.write_output(3, target)
-            self.session.gramophone.read_outputs()
+            if symbol == pyglet.window.key._3:
+                target = int(not self.session.gramophone.last_out_3)
+                self.session.gramophone.write_output(3, target)
+                self.session.gramophone.read_outputs()
 
-        if symbol == pyglet.window.key.F4:
-            target = int(not self.session.gramophone.last_out_4)
-            self.session.gramophone.write_output(4, target)
-            self.session.gramophone.read_outputs()
+            if symbol == pyglet.window.key._4:
+                target = int(not self.session.gramophone.last_out_4)
+                self.session.gramophone.write_output(4, target)
+                self.session.gramophone.read_outputs()
 
     def on_close(self):
         pyglet.app.exit()
