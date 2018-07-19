@@ -1,6 +1,6 @@
 ''' 3 different zones. Aversive is punishing '''
 
-from GramophoneTools.LinMaze.Level import Level
+import GramophoneTools.LinMaze.Level as Level
 
 if __name__ == '__main__':
 
@@ -13,25 +13,25 @@ if __name__ == '__main__':
     )
 
     # FRAMES
-    LVL.add_block('cloud', length=1280, zone_type='neutral')
+    LVL.add_block('cloud',  length=1280, zone_type='neutral')
     LVL.add_block('square', length=1280, wavelength=150, angle=0, zone_type='aversive')
-    LVL.add_block('cloud', length=1280, zone_type='neutral')
+    LVL.add_block('cloud',  length=1280, zone_type='neutral')
     LVL.add_block('square', length=1280, wavelength=150, angle=315, zone_type='left')
-    LVL.add_block('cloud', length=1.5*1280, random_seed=38, zone_type='neutral')
+    LVL.add_block('cloud',  length=1920, zone_type='neutral')
     LVL.add_block('square', length=1280, wavelength=150, angle=45, zone_type='right')
-    LVL.add_block('cloud', length=5*1280, random_seed=39, zone_type='neutral')
+    LVL.add_block('cloud',  length=6400, zone_type='neutral')
     LVL.add_block('square', length=1280, wavelength=150, angle=45, zone_type='right')
-    LVL.add_block('cloud', length=1.5*1280, random_seed=40, zone_type='neutral')
+    LVL.add_block('cloud',  length=1920, zone_type='neutral')
     LVL.add_block('square', length=1280, wavelength=150, angle=315, zone_type='left')
-    LVL.add_block('cloud', length=1.5*1280, random_seed=41, zone_type='neutral')
+    LVL.add_block('cloud',  length=1920, zone_type='neutral')
     LVL.add_block('square', length=1280, wavelength=150, angle=0, zone_type='aversive')
-    LVL.add_block('cloud', length=3*1280, random_seed=42, zone_type='neutral')
+    LVL.add_block('cloud',  length=3840, zone_type='neutral')
     LVL.add_block('square', length=1280, wavelength=150, angle=315, zone_type='left')
-    LVL.add_block('cloud', length=1.5*1280, random_seed=43, zone_type='neutral')
+    LVL.add_block('cloud',  length=1920, zone_type='neutral')
     LVL.add_block('square', length=1280, wavelength=150, angle=0, zone_type='aversive')
-    LVL.add_block('cloud', length=3*1280, random_seed=44, zone_type='neutral')
+    LVL.add_block('cloud',  length=3840, zone_type='neutral')
     LVL.add_block('square', length=1280, wavelength=150, angle=45, zone_type='right')
-    LVL.add_block('cloud', length=1*1280, random_seed=45, zone_type='neutral')
+    LVL.add_block('cloud',  length=1280, zone_type='neutral')
     
     # EVENTS
     LVL.add_event('tp_to_non_neutral', 'random_teleport', ['right', 'left','aversive'])
