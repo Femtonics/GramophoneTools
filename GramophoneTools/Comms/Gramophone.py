@@ -400,19 +400,8 @@ class Gramophone(hid.HidDevice):
             self.report.set_raw_data(full)
             self.report.send()
         except hid.helpers.HIDError as hid_error:
-            # print('HID ERROR', hid_error)
             self.transmitter.emit_device_error(hid_error)
 
-        # print('Sent:',[hex(byte) for byte in full])
-
-        # print('Sent')
-        # print('Target', self.target)
-        # print('Source', self.source)
-        # print('MSN', msn)
-        # print('CMD', cmd)
-        # print('PLen', plen)
-        # print('Payload', payload)
-        # print()
 
     def data_handler(self, data):
         target = data[1:3]
@@ -536,7 +525,6 @@ class Gramophone(hid.HidDevice):
                     self.last_out_3 = val[6]
                     self.last_out_4 = val[7]
                 if Gramophone.parameters[msn].name == 'LINM':
-                    # self.transmitter.emit_recorder(val)
                     self.last_time = val[0]
                     self.last_position = val[1]
                     self.last_in_1 = val[2]
