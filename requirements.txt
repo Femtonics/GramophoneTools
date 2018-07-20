@@ -10,6 +10,8 @@ matplotlib
 opencv-python
 pywinusb
 xlsxwriter
+# For development
+pyqt5-tools
 # For docs
 sphinx
 sphinx_rtd_theme
