@@ -42,7 +42,7 @@ class Transmitter(QObject):
     position_signal = pyqtSignal(int)
     position_diff_signal = pyqtSignal(int)
     inputs_signal = pyqtSignal(int, int)
-    recorder_signal = pyqtSignal(int, float, int, int)
+    recorder_signal = pyqtSignal(int, float, int, int, int, int, int, int)
     device_error = pyqtSignal(str)
 
     def __init__(self):
@@ -81,13 +81,15 @@ class Transmitter(QObject):
     def emit_recorder(self, values):
         """ 
         Emit a signal with all the data required by the Recorder module.
-        These are the current time, velocity and input states in order.
+        These are the current time, velocity, input- and output states in order.
 
-        :param values: A list containing the time, velocity and input states.
-        :type values: [int, float, int, int]
+        :param values: A list containing the time, velocity, input- and output states.
+        :type values: [int, float, int, int, int, int, int, int]
         """
         self.recorder_signal.emit(values[0], values[1],
-                                  values[2], values[3])
+                                  values[2], values[3],
+                                  values[4], values[5],
+                                  values[6], values[7])
 
     def emit_device_error(self, error_msg):
         """ 
@@ -267,14 +269,21 @@ class Gramophone(hid.HidDevice):
         if val_type == 'list':
             return list(payload)
         if val_type == 'recorder':
-            recorder_data = [] # time, vel, in_1, in_2
+            recorder_data = [] # time, vel, in_1, in_2,  out_1, out_2, out_3, out_4
             recorder_data.append(int.from_bytes(
                 payload[0:8], 'little', signed=False))
             recorder_data.append(-struct.unpack(
                 'f', payload[8:12])[0]*float(payload[12]))
             recorder_data.append(payload[13])
             recorder_data.append(payload[14])
+
+            recorder_data.append(payload[15])
+            recorder_data.append(payload[16])
+            recorder_data.append(payload[17])
+            recorder_data.append(payload[18])
+
             return recorder_data
+
         if val_type == 'linmaze':
             linmaze_data = [] # time, pos, in_1, in_2, out_1, out_2, out_3, out_4
             linmaze_data.append(int.from_bytes(
@@ -341,7 +350,7 @@ class Gramophone(hid.HidDevice):
         self.send(0x00, 0x08, [])
 
     def read_recorder_params(self):
-        self.read_params(0xAA, [0x05, 0x11, 0x20, 0x21])
+        self.read_params(0xAA, [0x05, 0x11, 0x20, 0x21, 0x30, 0x31, 0x32, 0x33])
 
     def read_linmaze_params(self):
         self.read_params(0xBB, [0x05, 0x10, 0x20, 0x21, 0x30, 0x31, 0x32, 0x33])
@@ -522,8 +531,12 @@ class Gramophone(hid.HidDevice):
                     self.last_velocity = val[1]
                     self.last_in_1 = val[2]
                     self.last_in_2 = val[3]
+                    self.last_out_1 = val[4]
+                    self.last_out_2 = val[5]
+                    self.last_out_3 = val[6]
+                    self.last_out_4 = val[7]
                 if Gramophone.parameters[msn].name == 'LINM':
-                    self.transmitter.emit_recorder(val)
+                    # self.transmitter.emit_recorder(val)
                     self.last_time = val[0]
                     self.last_position = val[1]
                     self.last_in_1 = val[2]

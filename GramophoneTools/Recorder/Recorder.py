@@ -384,19 +384,19 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
 
     @pyqtSlot(bool)
     def toggle_out_1(self, value):
-        self.gram.write_output(1, value)
+        self.gram.write_output(1, int(value))
 
     @pyqtSlot(bool)
     def toggle_out_2(self, value):
-        self.gram.write_output(2, value)
+        self.gram.write_output(2, int(value))
 
     @pyqtSlot(bool)
     def toggle_out_3(self, value):
-        self.gram.write_output(3, value)
+        self.gram.write_output(3, int(value))
 
     @pyqtSlot(bool)
     def toggle_out_4(self, value):
-        self.gram.write_output(4, value)
+        self.gram.write_output(4, int(value))
 
     def reset_graph(self):
         """ Resets the live velocity plot to its starting
@@ -523,11 +523,12 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
             self.statusbar.showMessage('Disconnected from Gramophone '
                                        + hex(self.gram.product_serial), 3000)
 
-    @pyqtSlot(int, float, int, int)
-    def receiver(self, timer, velocity, in_1, in_2):
+    @pyqtSlot(int, float, int, int, int, int, int, int)
+    def receiver(self, timer, velocity, in_1, in_2, out_1, out_2, out_3, out_4):
         self.update_timer(timer/10)
         self.update_graph(velocity)
         self.update_rec_state(in_1, in_2)
+        self.update_output_state(out_1, out_2, out_3, out_4)
         if self.recording:
             if self.settings['trigger_channel'] == 1:
                 current_state = in_1
@@ -597,6 +598,12 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
                 self.connect_btn.setEnabled(True)
                 self.counter_box.setEnabled(True)
                 self.counter_box.stepUp()
+
+    def update_output_state(self, out_1, out_2, out_3, out_4):
+        self.out_1_btn.setChecked(bool(out_1))
+        self.out_2_btn.setChecked(bool(out_2))
+        self.out_3_btn.setChecked(bool(out_3))
+        self.out_4_btn.setChecked(bool(out_4))
 
     @pyqtSlot(str)
     def gramophone_error(self, error_message):
