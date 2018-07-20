@@ -251,6 +251,9 @@
              <property name="text">
               <string>1</string>
              </property>
+             <property name="shortcut">
+              <string>Ctrl+1</string>
+             </property>
              <property name="checkable">
               <bool>true</bool>
              </property>
@@ -284,6 +287,9 @@
              </property>
              <property name="text">
               <string>2</string>
+             </property>
+             <property name="shortcut">
+              <string>Ctrl+2</string>
              </property>
              <property name="checkable">
               <bool>true</bool>
@@ -319,6 +325,9 @@
              <property name="text">
               <string>3</string>
              </property>
+             <property name="shortcut">
+              <string>Ctrl+3</string>
+             </property>
              <property name="checkable">
               <bool>true</bool>
              </property>
@@ -352,6 +361,9 @@
              </property>
              <property name="text">
               <string>4</string>
+             </property>
+             <property name="shortcut">
+              <string>Ctrl+4</string>
              </property>
              <property name="checkable">
               <bool>true</bool>

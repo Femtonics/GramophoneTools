@@ -13,10 +13,8 @@ import h5py
 import matplotlib.pyplot as plt
 from PyQt5 import QtCore
 from PyQt5.QtCore import QAbstractTableModel, QModelIndex, QObject, pyqtSlot
-from PyQt5.QtGui import QKeySequence
 from PyQt5.QtSerialPort import QSerialPort
-from PyQt5.QtWidgets import (QApplication, QFileDialog, QHeaderView,
-                             QMessageBox, QShortcut)
+from PyQt5.QtWidgets import QApplication, QFileDialog, QHeaderView, QMessageBox
 from PyQt5.uic import loadUiType
 
 from GramophoneTools import Comms
@@ -189,10 +187,10 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         self.delete_btn.clicked.connect(self.delete_btn_cb)
         self.settings_btn.clicked.connect(self.show_settings)
         self.gram_info_btn.clicked.connect(self.show_device_info)
-        self.out_1_btn.toggled.connect(self.toggle_out_1)
-        self.out_2_btn.toggled.connect(self.toggle_out_2)
-        self.out_3_btn.toggled.connect(self.toggle_out_3)
-        self.out_4_btn.toggled.connect(self.toggle_out_4)
+        self.out_1_btn.clicked.connect(self.toggle_out_1)
+        self.out_2_btn.clicked.connect(self.toggle_out_2)
+        self.out_3_btn.clicked.connect(self.toggle_out_3)
+        self.out_4_btn.clicked.connect(self.toggle_out_4)
 
         # Menu actions
         self.actionNew_File.triggered.connect(self.new_file)
@@ -205,19 +203,6 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         self.actionLicense.triggered.connect(self.show_license)
         self.actionGramophone_manual.triggered.connect(self.show_manual)
         self.actionExport_to_xls.triggered.connect(self.xls_export)
-
-        # Keyboard shortcuts
-        self.out_1_sc = QShortcut(QKeySequence('Ctrl+1'), self)
-        self.out_1_sc.activated.connect(self.out_1_btn.toggle)
-
-        self.out_2_sc = QShortcut(QKeySequence('Ctrl+2'), self)
-        self.out_2_sc.activated.connect(self.out_2_btn.toggle)
-
-        self.out_3_sc = QShortcut(QKeySequence('Ctrl+3'), self)
-        self.out_3_sc.activated.connect(self.out_3_btn.toggle)
-
-        self.out_4_sc = QShortcut(QKeySequence('Ctrl+4'), self)
-        self.out_4_sc.activated.connect(self.out_4_btn.toggle)
 
         # Initialize GUI
         self.refresh_gram_list()
@@ -384,6 +369,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
 
     @pyqtSlot(bool)
     def toggle_out_1(self, value):
+        print(time.time(), 'Toggled 1 to', int(value))
         self.gram.write_output(1, int(value))
 
     @pyqtSlot(bool)
