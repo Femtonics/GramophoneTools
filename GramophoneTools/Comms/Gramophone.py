@@ -415,7 +415,10 @@ class Gramophone(hid.HidDevice):
             payload = data[8:8+plen]
 
             if cmd == 0x00:
-                delay = time()-self.ping_time
+                if self.ping_time is None:
+                    print('Communication error: Received a pong but ping was never sent.')
+                else:
+                    delay = time()-self.ping_time
                 print('Pong!', payload)
                 print('Delay:', delay, 'sec\n')
 
