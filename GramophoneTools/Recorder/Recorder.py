@@ -731,7 +731,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
     def reset_gram_timer(self):
         """ Function only available for developers. Sends a Reset
             internal clock command to the Gramophone. """
-        self.gram.write(b'R')
+        self.gram.reset_time()
 
     @pyqtSlot()
     def make_dummy(self):
