@@ -125,6 +125,7 @@ class Record(ABC):
     start_time = NotImplemented
     finish_time = NotImplemented
     comment = NotImplemented
+    sampling_freq = NotImplemented
 
     @property
     def unique_id(self):
@@ -185,6 +186,7 @@ class Record(ABC):
         log_file[self.unique_id].attrs['length'] = self.length
         log_file[self.unique_id].attrs['length_hr'] = self.length_hr
         log_file[self.unique_id].attrs['mean_velocity'] = self.mean_vel
+        log_file[self.unique_id].attrs['sampling_freq'] = self.sampling_freq
 
         log_file[self.unique_id+'/time'] = self.times
         log_file[self.unique_id+'/velocity'] = self.velocities
@@ -194,7 +196,7 @@ class Record(ABC):
 class MemoryRecord(Record):
     """ A velocity record that is in memory ie. not saved yet. """
 
-    def __init__(self, rec_id):
+    def __init__(self, rec_id, sampling_freq):
         super().__init__()
 
         # Data
@@ -203,6 +205,7 @@ class MemoryRecord(Record):
 
         # Metadata
         self.rec_id = rec_id
+        self.sampling_freq = float(sampling_freq)
         self.start_time = None
         self.finish_time = None
         self.comment = ''
@@ -287,6 +290,11 @@ class FileRecord(Record):
         """ Returns the record's mean velocity form file """
         return self.file_group.attrs['mean_velocity']
 
+    @property
+    def sampling_freq(self):
+        """ Returns the record's mean velocity form file """
+        return self.file_group.attrs['sampling_freq']
+
 
 class DummyRecord(Record):
     """ A record with random data insted of recorded velocity. Can be used for
@@ -297,6 +305,7 @@ class DummyRecord(Record):
         from scipy.interpolate import interp1d
         super().__init__()
         self.rec_id = randint(1, 999)
+        self.sampling_freq = 100.0
         self.start_time = time.time()
         self.finish_time = time.time()+10
         self.times = np.linspace(0, 10_000, num=1e3, endpoint=True, dtype=np.uint64)

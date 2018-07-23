@@ -565,7 +565,8 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
             if self.recording:
                 # self.gram.reset_time()
                 self.current_record = logger.MemoryRecord(
-                    self.counter_box.value())
+                    self.counter_box.value(),
+                    self.settings['sampling_freq'])
                 self.current_record.start()
 
                 # Update GUI
