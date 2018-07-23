@@ -299,7 +299,7 @@ class DummyRecord(Record):
         self.rec_id = randint(1, 999)
         self.start_time = time.time()
         self.finish_time = time.time()+10
-        self.times = np.linspace(0, 10_000, num=1e4, endpoint=True, dtype=np.uint64)
+        self.times = np.linspace(0, 10_000, num=1e3, endpoint=True, dtype=np.uint64)
         vel_f = interp1d(np.linspace(0, 10_000, num=10, endpoint=True),
                          np.random.rand(10)*50_000, kind='cubic', )
         self.velocities = vel_f(self.times).astype(float)
