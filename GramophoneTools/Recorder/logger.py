@@ -294,10 +294,13 @@ class DummyRecord(Record):
 
     def __init__(self):
         from random import randint
+        from scipy.interpolate import interp1d
         super().__init__()
         self.rec_id = randint(1, 999)
         self.start_time = time.time()
         self.finish_time = time.time()+10
-        self.times = list(range(3, 10000, 3))
-        self.velocities = [randint(-50, 50) for _ in self.times]
-        self.comment = 'I am a dummy record'
+        self.times = np.linspace(0, 10_000, num=1e4, endpoint=True, dtype=np.uint64)
+        vel_f = interp1d(np.linspace(0, 10_000, num=10, endpoint=True),
+                         np.random.rand(10)*50_000, kind='cubic', )
+        self.velocities = vel_f(self.times).astype(float)
+        self.comment = 'Fake data'
