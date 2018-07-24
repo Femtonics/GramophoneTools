@@ -308,8 +308,8 @@ class DummyRecord(Record):
         self.sampling_freq = 100.0
         self.start_time = time.time()
         self.finish_time = time.time()+10
-        self.times = np.linspace(0, 10_000, num=1e3, endpoint=True, dtype=np.uint64)
-        vel_f = interp1d(np.linspace(0, 10_000, num=10, endpoint=True),
-                         np.random.rand(10)*50_000, kind='cubic', )
+        self.times = np.linspace(0, 10_000, num=1001, dtype=np.uint64)
+        vel_f = interp1d(np.linspace(0, 10_000, num=11),
+                         np.random.rand(11)*50_000, kind='cubic', )
         self.velocities = vel_f(self.times).astype(float)
         self.comment = 'Fake data'
