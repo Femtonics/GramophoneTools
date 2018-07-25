@@ -12,7 +12,7 @@ from statistics import mean
 import h5py
 import matplotlib.pyplot as plt
 from PyQt5 import QtCore
-from PyQt5.QtCore import QAbstractTableModel, QModelIndex, QObject, pyqtSlot
+from PyQt5.QtCore import QAbstractTableModel, QModelIndex, QObject, QThread, pyqtSignal, pyqtSlot
 from PyQt5.QtSerialPort import QSerialPort
 from PyQt5.QtWidgets import QApplication, QFileDialog, QHeaderView, QMessageBox
 from PyQt5.uic import loadUiType
@@ -99,40 +99,38 @@ class deviceInfoWindow(DEVINFO_WIN_BASE, DEVINFO_WIN_UI):
         super().__init__(*args, **kwargs)
         self.setupUi(self)
         self.gram = gram
+        product_info = self.gram.product_info
+        firmware_info = self.gram.firmware_info
 
         self.close_btn.clicked.connect(self.close)
-
-        prod_name = 'Name: ' + str(self.gram.product_name)
-        revision = 'Revision: ' + str(self.gram.product_revision)
-        serial = 'Serial: ' + hex(self.gram.product_serial)
-        production = 'Production: ' + \
-            str(self.gram.product_year)+'.' + \
-            str(self.gram.product_month).zfill(2) + '.' + \
-            str(self.gram.product_day).zfill(2)+'.'
+        prod_name = 'Name: ' + product_info['name']
+        revision = 'Revision: ' + product_info['revision']
+        serial = 'Serial: ' + hex(product_info['serial'])
+        production = 'Production ({}): {}'.format(
+            product_info['production_format'], product_info['production'])
 
         self.product_label.setText(
             prod_name+'\n'+revision+'\n'+serial+'\n'+production)
 
-        release = 'Relase: ' + \
-            str(self.gram.firmware_release) + '.'+str(self.gram.firmware_sub)
-        build = 'Build: ' + str(self.gram.firmware_build)
-        date = 'Date: ' + str(self.gram.firmware_year)+'.' +\
-            str(self.gram.firmware_month).zfill(2)+'.' +\
-            str(self.gram.firmware_day).zfill(2)
-        time = 'Time: ' + str(self.gram.firmware_hour).zfill(2)+':' +\
-            str(self.gram.firmware_minute).zfill(2)+':' +\
-            str(self.gram.firmware_second).zfill(2)
+        release = 'Relase:'+ firmware_info['release']
+        build = 'Build:'+ firmware_info['build']
+        date = 'Date ({}): {}'.format(firmware_info['date_format'], firmware_info['date'])
+        ftime = 'Time ({}): {}'.format(firmware_info['time_format'], firmware_info['time'])
 
-        self.firmware_label.setText(release+'\n'+build+'\n'+date+'\n'+time)
+        self.firmware_label.setText(release+'\n'+build+'\n'+date+'\n'+ftime)
+        
+        self.refresh_sensor_label()
+        self.refresh_btn.clicked.connect(self.refresh_sensor_label)
 
-        voltage3v3 = 'Voltage on 3.3V rail: ' +\
-            '{0:.2f}'.format(self.gram.sensor_values['VSEN3V3'])+' V'
-        voltage5v = 'Voltage on 5V rail: ' +\
-            '{0:.2f}'.format(self.gram.sensor_values['VSEN5V'])+' V'
-        mcu_temp = 'MCU temperature: ' +\
-            '{0:.2f}'.format(self.gram.sensor_values['TSENMCU'])+' C'
-        ext_temp = 'External temperature: ' +\
-            '{0:.2f}'.format(self.gram.sensor_values['TSENEXT'])+' C'
+    def refresh_sensor_label(self):
+        sensors = {}
+        for key, val in self.gram.read_sensors().items():
+            sensors[self.gram.parameters[key].name] = val
+
+        voltage3v3 = 'Voltage on 3.3V rail: ' +'{0:.2f}'.format(sensors['VSEN3V3'])+' V'
+        voltage5v = 'Voltage on 5V rail: ' +'{0:.2f}'.format(sensors['VSEN5V'])+' V'
+        mcu_temp = 'MCU temperature: ' +'{0:.2f}'.format(sensors['TSENMCU'])+' C'
+        ext_temp = 'External temperature: ' + '{0:.2f}'.format(sensors['TSENEXT'])+' C'
 
         self.sensor_label.setText(
             voltage3v3+'\n'+voltage5v+'\n'+mcu_temp+'\n'+ext_temp)
@@ -209,6 +207,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
 
         # Gramophone
         self.gram = None
+        self.connected = False
 
         # Developer options
         self.menuDEV.menuAction().setVisible(devmode)
@@ -369,7 +368,6 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
 
     @pyqtSlot(bool)
     def toggle_out_1(self, value):
-        print(time.time(), 'Toggled 1 to', int(value))
         self.gram.write_output(1, int(value))
 
     @pyqtSlot(bool)
@@ -403,42 +401,39 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
     @pyqtSlot()
     def connect_btn_cb(self):
         """ Callback for the connect button. """
-        if self.gram is None:
+        if self.gram is None or not self.connected:
             self.connect()
         else:
-            if self.gram.is_open:
-                self.disconnect()
-            else:
-                self.connect()
-
+            self.disconnect()
+            
     @property
     def selected_gramophone(self):
         return self.gram_list[int(self.gram_dropdown.currentData(0), 16)]
 
     def connect(self):
         """ Connects to the currently selected Gramophone. """
-        if self.gram is None or not self.gram.is_open:
+        if self.gram is None or not self.connected:
+            self.connected = True
             self.gram = self.selected_gramophone
-            self.gram.open()
-            self.gram.reset_time()
-            self.gram.reset_position()
-            self.gram.start_reader(
-                'rec', 'recorder', self.settings['sampling_freq'])
-            self.reset_graph()
+
+            self.reader = Reader(self.gram, self.settings['sampling_freq'])
+            self.reader.start()
+            self.reader.recorder_signal.connect(self.receiver)
+            self.reader.device_error.connect(self.gramophone_error)
+
             self.update_conn_state()
-            self.gram.transmitter.recorder_signal.connect(self.receiver)
-            self.gram.transmitter.device_error.connect(self.gramophone_error)
 
     def disconnect(self):
         """ Disconnects the currently connected Gramophone. """
-        if self.gram.is_open:
-            self.gram.stop_reader()
-            self.gram.close()
-            self.reset_graph()
-            self.update_timer(0)
+        if self.connected:
+            self.connected = False
+
+            self.reader.stop()
+            self.reader.recorder_signal.disconnect(self.receiver)
+            self.reader.device_error.disconnect(self.gramophone_error)
+
             self.update_conn_state()
-            self.gram.transmitter.recorder_signal.disconnect(self.receiver)
-            self.gram.transmitter.device_error.disconnect(self.gramophone_error)
+            
 
     @pyqtSlot()
     def refresh_gram_list(self):
@@ -481,7 +476,11 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
     def update_conn_state(self):
         """ Updates the GUI depending on wheter the software is
             currently connected to a Gramophone. """
-        if self.gram.is_open:
+        
+        self.reset_graph()
+        self.update_timer(0)
+
+        if self.connected:
             # Change GUI for connected state
             self.gram_dropdown.setEnabled(False)
             self.refresh_btn.setEnabled(False)
@@ -493,7 +492,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
             self.connect_btn.setProperty("text", "Disconnect")
 
             self.statusbar.showMessage('Connected to Gramophone '
-                                       + hex(self.gram.product_serial), 3000)
+                                       + hex(self.gram.product_info['serial']), 3000)
 
         else:
             # Change GUI for disconnected state
@@ -507,7 +506,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
             self.connect_btn.setProperty("text", "Connect")
             self.refresh_gram_list()
             self.statusbar.showMessage('Disconnected from Gramophone '
-                                       + hex(self.gram.product_serial), 3000)
+                                       +  hex(self.gram.product_info['serial']), 3000)
 
     @pyqtSlot(int, float, int, int, int, int, int, int)
     def receiver(self, timer, velocity, in_1, in_2, out_1, out_2, out_3, out_4):
@@ -597,8 +596,6 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         """ Slot for the errorOccurred signal of the Gramophone. Displays
             a message box with the warning, disconnects if necessary. """
         self.disconnect()
-        print('ERROR:', error_message)
-        self.update_conn_state()
 
         msg_box = QMessageBox(self)
         msg_box.setIcon(QMessageBox.Critical)
@@ -853,6 +850,65 @@ class VelLogModel(QAbstractTableModel):
         plt.legend()
         plt.show()
 
+
+class Reader(QObject):
+    """
+    A worker that can continnously send commands to the Gramophone with a given frequency.
+
+    :param name: The name of this reader. Can be used for identification to stop a specific reader.
+    :type name: str
+
+    :param read_func: The read function that should be called.
+    :type read_func: function
+
+    :param frequency: The frequency at which the function should be called in Hz.
+    :type frequency: float
+    """
+
+    recorder_signal = pyqtSignal(int, float, int, int, int, int, int, int)
+    device_error = pyqtSignal(str)
+
+    def __init__(self, gram, frequency):
+        super().__init__()
+        self.read_func = gram.read_recorder_params
+        self.frequency = frequency
+        self.reading = None
+
+    @pyqtSlot()
+    def read(self):
+        """ Start calling the read function repeatedly. Slot for a QThread. """
+        self.reading = True
+        while self.reading:
+            try:
+                result = self.read_func()
+            except Comms.GramophoneError as err:
+                print('Gramophone comm. error:', err)
+                self.device_error.emit(str(err))
+                break
+            else:
+                gtime = result[0x05]
+                vel = result[0x11]
+                in_1 = result[0x20]
+                in_2 = result[0x21]
+                out_1 = result[0x30]
+                out_2 = result[0x31]
+                out_3 = result[0x32]
+                out_4 = result[0x33]
+                self.recorder_signal.emit(gtime, vel, in_1, in_2, out_1, out_2, out_3, out_4)
+                time.sleep(1/self.frequency)
+     
+    def start(self):
+        self.thread = QThread()
+        # self.readers.append((thread, reader))
+        self.moveToThread(self.thread)
+
+        self.thread.started.connect(self.read)
+        self.thread.start()
+
+    def stop(self):
+        self.reading = False
+        self.thread.quit()
+        self.thread.wait()
 
 def main(devmode=False, log_file=None):
     if not os.path.exists(PROGRAM_DATA + '/GramophoneTools'):

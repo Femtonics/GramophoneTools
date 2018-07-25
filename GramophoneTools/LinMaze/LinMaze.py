@@ -89,29 +89,22 @@ class VRWindow(pyglet.window.Window):
         if symbol == pyglet.window.key.M:
             self.minimize()
 
-        if symbol == pyglet.window.key.R:
-            self.session.gramophone.reset()
-
         if modifiers & pyglet.window.key.MOD_CTRL:
             if symbol == pyglet.window.key._1:
-                target = int(not self.session.gramophone.last_out_1)
+                target = int(not self.session.last_read['DO-1'])
                 self.session.gramophone.write_output(1, target)
-                self.session.gramophone.read_outputs()
 
             if symbol == pyglet.window.key._2:
-                target = int(not self.session.gramophone.last_out_2)
+                target = int(not self.session.last_read['DO-2'])
                 self.session.gramophone.write_output(2, target)
-                self.session.gramophone.read_outputs()
 
             if symbol == pyglet.window.key._3:
-                target = int(not self.session.gramophone.last_out_3)
+                target = int(not self.session.last_read['DO-3'])
                 self.session.gramophone.write_output(3, target)
-                self.session.gramophone.read_outputs()
 
             if symbol == pyglet.window.key._4:
-                target = int(not self.session.gramophone.last_out_4)
+                target = int(not self.session.last_read['DO-4'])
                 self.session.gramophone.write_output(4, target)
-                self.session.gramophone.read_outputs()
 
     def on_close(self):
         pyglet.app.exit()
@@ -455,19 +448,14 @@ class Session(object):
             :type dt: float
             '''
             # print('FPS:', 1/dt)s
-            self.gramophone.read_linmaze_params()
-            velocity = round(
-                self.vel_ratio*(self.gramophone.last_position - self.last_position)/14400)
-            self.last_position = self.gramophone.last_position
-            g_time, in_1, in_2, out_1, out_2, out_3, out_4 = \
-                self.gramophone.last_time,  \
-                self.gramophone.last_in_1,  \
-                self.gramophone.last_in_2,  \
-                self.gramophone.last_out_1, \
-                self.gramophone.last_out_2, \
-                self.gramophone.last_out_3, \
-                self.gramophone.last_out_4
+            
+            params = {}
+            for key, val in self.gramophone.read_linmaze_params().items():
+                params[self.gramophone.parameters[key].name] = val       
 
+            self.last_read = params
+            velocity = round(self.vel_ratio*(params['ENCPOS'] - self.last_position)/14400)
+            self.last_position = params['ENCPOS']
 
             if not self.paused:
                 self.movement(velocity)
@@ -476,7 +464,10 @@ class Session(object):
             self.check_rules(velocity)
 
             if not self.skip_save:
-                self.log.make_entry(velocity, g_time, in_1, in_2, out_1, out_2, out_3, out_4)
+                self.log.make_entry(velocity, params['TIME'],
+                                    params['DI-1'], params['DI-2'],
+                                    params['DO-1'],  params['DO-2'],
+                                    params['DO-3'],  params['DO-4'])
 
             if self.runtime_limit is not None and\
                     self.runtime.value() >= self.runtime_limit * 60:
@@ -526,7 +517,6 @@ class Session(object):
             self.virtual_length += vru["length"]
 
         # Connect Gramophone, and reset outputs to 0
-        self.gramophone.open()
         self.gramophone.write_output(1, 0)
         self.gramophone.write_output(2, 0)
         self.gramophone.write_output(3, 0)
@@ -584,7 +574,6 @@ class Session(object):
         self.gramophone.write_output(3, 0)
         self.gramophone.write_output(4, 0)
         self.gramophone.write_analog(0)
-        self.gramophone.close()
 
         # Save all remaining data
         if not self.skip_save:

@@ -44,7 +44,7 @@ setup(
         'pyqtgraph',
         'matplotlib',
         'opencv-python',
-        'pywinusb',
+        'pyusb',
         'xlsxwriter'],
     extras_require={
         'tests': [
@@ -56,6 +56,7 @@ setup(
     package_data={
         'GramophoneTools.LinMaze': ['res/icon.png', '*.dll'],
         'GramophoneTools.Recorder': ['*.ui'],
+        'GramophoneTools.Comms': ['*.dll'],
         'GramophoneTools.docs': ['*', '*/*', '*/*/*', '*/*/*/*']
     },
     include_package_data=True,

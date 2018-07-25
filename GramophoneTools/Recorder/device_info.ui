@@ -87,7 +87,39 @@ External temperature: </string>
       </spacer>
      </item>
      <item>
+      <widget class="QToolButton" name="refresh_btn">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>26</width>
+         <height>26</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>Detect all connected Gramophones and refresh the list.</string>
+       </property>
+       <property name="text">
+        <string>...</string>
+       </property>
+       <property name="icon">
+        <iconset resource="res/resources.qrc">
+         <normaloff>:/icons/appbar.refresh.png</normaloff>:/icons/appbar.refresh.png</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="close_btn">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>26</height>
+        </size>
+       </property>
        <property name="text">
         <string>Close</string>
        </property>
@@ -97,6 +129,8 @@ External temperature: </string>
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="res/resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

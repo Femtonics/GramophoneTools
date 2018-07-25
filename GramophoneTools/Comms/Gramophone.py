@@ -1,3 +1,4 @@
+import os
 import struct
 import threading
 from collections import namedtuple
@@ -5,9 +6,10 @@ from random import randint, sample
 from threading import Thread
 from time import sleep, time
 
-from PyQt5.QtCore import QObject, QThread, pyqtSignal, pyqtSlot
-from pywinusb import hid
+import usb.core
+import usb.backend.libusb1
 
+DIR = os.path.dirname(__file__)
 
 def background(fn):
     """ Decorator for functions that should run in the background. """
@@ -18,124 +20,72 @@ def background(fn):
     return run
 
 def find_devices():
-    dev_filter = hid.HidDeviceFilter(vendor_id=0x0483, product_id=0x5750)
+    """ Return a dict of Gramophone devices with their serials as keys. """
+    backend = usb.backend.libusb1.get_backend(find_library=lambda x: DIR+"/libusb-1.0.dll")
+    devs = usb.core.find(backend=backend, idVendor=0x0483, idProduct=0x5750, find_all=True)
+
     devices = {}
-    for dev in dev_filter.get_devices():
-        gram = Gramophone(dev, verbose=False)
-        gram.open()
-        for _ in range(5):
-            gram.read_sensors()
-            gram.read_firmware_info()
-            gram.read_product_info()
-            sleep(0.1)
-            if gram.product_name == 'GRAMO-01':
-                devices[gram.product_serial] = gram
-                break
-        gram.close()
+    for dev in devs:
+        G = Gramophone(dev, False)
+        G.read_product_info()
+        G.read_firmware_info()
+        if G.product_info['name'] == 'GRAMO-01':
+            ser = G.product_info['serial']
+            devices[ser] = G
+
     return devices
 
-class Transmitter(QObject):
+class Packet(object):
+    msn = 0
+    def __init__(self, target, source, cmd, payload, msn=None):
+        self.target = target
+        self.source = source
+        self.cmd = [cmd]
+        self.payload = payload
+
+        if msn is None:
+            self.msn = [Packet.msn]
+            Packet.msn += 1
+            Packet.msn %= 256
+        else:
+            self.msn = [msn]
+
+    def __repr__(self):
+        return 'Packet(target={}, source={}, msn={}, cmd={}, payload={})'.format(
+            self.target, self.source, self.msn, self.cmd, self.payload)
+
+    @property
+    def plen(self):
+        return len(self.payload)
+
+    @property
+    def filler(self):
+        return [0] * (65-self.plen-8)
+
+    @property
+    def encoded(self):
+        return self.target + self.source + self.msn + self.cmd +\
+            [self.plen] + self.payload + self.filler
+
+    @classmethod
+    def from_array(cls, array):
+        array = list(array)
+        target = array[0:2]
+        source = array[2:4]
+        msn = array[4]
+        cmd = array[5]
+        plen = array[6]
+        payload = array[7:7+plen]
+
+        return cls(target, source, cmd, payload, msn=msn)
+
+class Gramophone(object):
     """
-    Emits Qt signals to transmit infromation from incoming packets.
+    Representation of a Gramophone device.
+
+    :param device: The USB device identity
+    :type device: usb.core.Device
     """
-    velocity_signal = pyqtSignal(float)
-    position_signal = pyqtSignal(int)
-    position_diff_signal = pyqtSignal(int)
-    inputs_signal = pyqtSignal(int, int)
-    recorder_signal = pyqtSignal(int, float, int, int, int, int, int, int)
-    device_error = pyqtSignal(str)
-
-    def __init__(self):
-        super().__init__()
-        self.last_pos = 0
-
-    def emit_velocity(self, vel):
-        """ 
-        Emit a signal with the given velocity.
-
-        :param vel: The velocity that should be emitted.
-        :type vel: float
-        """
-        self.velocity_signal.emit(vel)
-
-    def emit_position(self, pos):
-        """ 
-        Emit a signal with the given position.
-
-        :param pos: The position that should be emitted.
-        :type pos: int
-        """
-        self.position_signal.emit(pos)
-        self.position_diff_signal.emit(pos-self.last_pos)
-        self.last_pos = pos
-
-    def emit_inputs(self, inputs):
-        """ 
-        Emit a signal with the state of the digital inputs.
-
-        :param inputs: A list containing the states of the two digital inputs.
-        :type inputs: [int, int]
-        """
-        self.inputs_signal.emit(inputs[0], inputs[1])
-
-    def emit_recorder(self, values):
-        """ 
-        Emit a signal with all the data required by the Recorder module.
-        These are the current time, velocity, input- and output states in order.
-
-        :param values: A list containing the time, velocity, input- and output states.
-        :type values: [int, float, int, int, int, int, int, int]
-        """
-        self.recorder_signal.emit(values[0], values[1],
-                                  values[2], values[3],
-                                  values[4], values[5],
-                                  values[6], values[7])
-
-    def emit_device_error(self, error_msg):
-        """ 
-        Emit a signal with the given error message.
-
-        :param error_msg: The error message.
-        :type error_msg: str
-        """
-        self.device_error.emit(str(error_msg))
-
-
-class Reader(QObject):
-    """
-    A worker that can continnously send commands to the Gramophone with a given frequency.
-
-    :param name: The name of this reader. Can be used for identification to stop a specific reader.
-    :type name: str
-
-    :param read_func: The read function that should be called.
-    :type read_func: function
-
-    :param frequency: The frequency at which the function should be called in Hz.
-    :type frequency: float
-    """
-    def __init__(self, name, read_func, frequency):
-        super().__init__()
-        self.name = name
-        self.read_func = read_func
-        self.reading = None
-        self.frequency = frequency
-
-    @pyqtSlot()
-    def read(self):
-        """ Start calling the read function repeatedly. Slot for a QThread. """
-        self.reading = True
-        while self.reading:
-            self.read_func()
-            sleep(1/self.frequency)
-
-    def abort(self):
-        """ Stop calling the read function. """
-        self.reading = False
-
-
-class Gramophone(hid.HidDevice):
-
     error_codes = {0x00: 'PACKET_FAIL_UNKNOWNCMD',
                    0x01: 'PACKET_FAIL_INVALIDCMDSYNTAX',
                    0x04: 'PACKET_FAIL_INVALIDPARAMSYNTAX',
@@ -149,211 +99,239 @@ class Gramophone(hid.HidDevice):
                   0x02: Parameter('VSEN5V', 'Voltage on 5V rail.', 'float'),
                   0x03: Parameter('TSENMCU', 'Internal teperature of the MCU.', 'float'),
                   0x04: Parameter('TSENEXT', 'External temperature sensor on the board.', 'float'),
-                  0x0A: Parameter('SENSORS', 'The voltages and temperatures in one parameter', 'float_list'),
+                  0x0A: Parameter('SENSORS', 'The voltages and temperatures in one parameter', 'combo'),
+                  0x0B: Parameter('VOLTAGES', 'The voltages in one parameter', 'combo'),
+                  0x0C: Parameter('TEMPS', 'The temperatures in one parameter', 'combo'),
                   0x05: Parameter('TIME', 'The time of the internal clock of the device.', 'uint64'),
-                  0x10: Parameter('ENCPOS', 'Encoder position.', '-int32'),
-                  0x11: Parameter('ENCVEL', 'Encoder velocity.', 'vel_struct'),
+                  0x10: Parameter('ENCPOS', 'Encoder position.', 'int32'),
+                  0x11: Parameter('ENCVEL', 'Encoder velocity.', 'vel'),
                   0x12: Parameter('ENCVELWIN', 'Encoder velocity window size.', 'uint16'),
                   0x13: Parameter('ENCHOME', 'Encoder homing.', 'uint8'),
-                  0x14: Parameter('ENCHOMEPOS', 'Encoder home position.', '-int32'),
+                  0x14: Parameter('ENCHOMEPOS', 'Encoder home position.', 'int32'),
                   0x20: Parameter('DI-1', 'Digital input 1.', 'uint8'),
                   0x21: Parameter('DI-2', 'Digital input 2.', 'uint8'),
-                  0x25: Parameter('DI', 'Digital inputs.', 'list'),
+                  0x25: Parameter('DI', 'Digital inputs.', 'combo'),
                   0x30: Parameter('DO-1', 'Digital output 1.', 'uint8'),
                   0x31: Parameter('DO-2', 'Digital output 2.', 'uint8'),
                   0x32: Parameter('DO-3', 'Digital output 3.', 'uint8'),
                   0x33: Parameter('DO-4', 'Digital output 4.', 'uint8'),
-                  0x35: Parameter('DO', 'Digital outputs.', 'list'),
+                  0x35: Parameter('DO', 'Digital outputs.', 'combo'),
                   0x40: Parameter('AO', 'Analogue output.', 'float'),
                   0xFF: Parameter('LED', 'LED state changed', 'uint8'),
-                  0xAA: Parameter('REC', 'Bundle of parameters for the Recorder module.', 'recorder'),
-                  0xBB: Parameter('LINM', 'Bundle of parameters for the LinMaze module.', 'linmaze')
+                  0xAA: Parameter('REC', 'Bundle of parameters for the Recorder module.', 'combo'),
+                  0xBB: Parameter('LINM', 'Bundle of parameters for the LinMaze module.', 'combo')
                   }
 
+    type_lengths = {'float': 4,
+                    'double': 8,
+                    'uint8': 1,
+                    'uint16': 2,
+                    'uint32': 4,
+                    'uint64': 8,
+                    'int8': 1,
+                    'int16': 2,
+                    'int32': 4,
+                    'int64': 8,
+                    'vel': 5
+                    }
+
+    combos = {
+        0x0A:[0x01, 0x02, 0x03, 0x04], # Sensors
+        0x0B:[0x01, 0x02], # Voltages
+        0x0C:[0x03, 0x04], # Temperatures
+        0x25:[0x20, 0x21], # Digital inputs
+        0x35:[0x30, 0x31, 0x32, 0x33], # Digital outputs
+        0xAA:[0x05, 0x11, 0x20, 0x21, 0x30, 0x31, 0x32, 0x33], # Time, vel, io
+        0xBB:[0x05, 0x10, 0x20, 0x21, 0x30, 0x31, 0x32, 0x33]  # Time, pos, io
+        }
+
+    device_states = {0x00: 'IAP', 0x01: 'Application'}
 
     def __init__(self, device, verbose=False):
         self.device = device
-        super().__init__(self.device.device_path,
-                         self.device.parent_instance_id,
-                         self.device.instance_id)
+        self.device.set_configuration()
 
         self.verbose = verbose
 
-        self.report = None
-        self.set_raw_data_handler(self.data_handler)
-
-        self.transmitter = Transmitter()
-        self.readers = []
 
         self.target = [randint(0x00, 0xFF), randint(0x00, 0xFF)]
         self.source = [randint(0x00, 0xFF), randint(0x00, 0xFF)]
-
-        self.ping_time = None
-        self.app_state = 'Unknown'
-        self.is_open = False
-
-        self.firmware_release = None
-        self.firmware_sub = None
-        self.firmware_build = None
-        self.firmware_year = None
-        self.firmware_month = None
-        self.firmware_day = None
-        self.firmware_hour = None
-        self.firmware_minute = None
-        self.firmware_second = None
-
-        self.product_name = None
-        self.product_revision = None
-        self.product_serial = None
-        self.product_year = None
-        self.product_month = None
-        self.product_day = None
-
-        self.last_position = 0
-        self.last_time = 0
-        self.last_velocity = 0
-        self.last_in_1 = 0
-        self.last_in_2 = 0
-        self.last_out_1 = 0
-        self.last_out_2 = 0
-        self.last_out_3 = 0
-        self.last_out_4 = 0
+        self.firmware_info = None
+        self.product_info = None
+        self.dev_state = 'Unknown'
 
         self.bursting = {1: False,
                          2: False,
                          3: False,
                          4: False}
-        self.burst_threads = []
 
-        self.sensor_values = {'VSEN3V3': None,
-                              'VSEN5V': None,
-                              'TSENMCU': None,
-                              'TSENEXT': None}
+        self.readers = []
 
-    def open(self):
-        """ Connect to this device. """
-        super().open()
-        reports = self.find_output_reports()
-        self.report = reports[0]
-        self.check_app()
-        sleep(0.1)
-        if self.app_state == 'IAP':
-            print('Device in IAP state. Resetting...')
-            self.reset()
-            sleep(0.1)
-        self.is_open = True
+    def decode_payload(self, param_id, payload):
+        if self.parameters[param_id].type == 'float':
+            return struct.unpack('f', bytes(payload))[0]
 
-    def close(self):
-        """ Disconnect from this device. """
-        self.report = None
-        super().close()
-        self.is_open = False
-
-    @staticmethod
-    def decode_payload(val_type, payload):
-        if val_type == 'float':
-            return struct.unpack('f', payload)[0]
-        if val_type == 'float_list':
-            float_list = []
-            for I in range(len(payload)//4):
-                float_list.append(struct.unpack('f', payload[I*4:I*4+4])[0])
-            return float_list
-        if val_type == 'int32':
+        if self.parameters[param_id].type in ['int8', 'int16', 'int32', 'int64']:
             return int.from_bytes(payload, 'little', signed=True)
-        if val_type == '-int32':
-            return -int.from_bytes(payload, 'little', signed=True)
-        if val_type in ['uint8', 'uint16', 'uint64']:
+
+        if self.parameters[param_id].type in ['uint8', 'uint16', 'uint32', 'uint64']:
             return int.from_bytes(payload, 'little', signed=False)
-        if val_type == 'vel_struct':
-            return -struct.unpack('f', payload[0:4])[0]*float(payload[4])
-        if val_type == 'list':
-            return list(payload)
-        if val_type == 'recorder':
-            recorder_data = [] # time, vel, in_1, in_2,  out_1, out_2, out_3, out_4
-            recorder_data.append(int.from_bytes(
-                payload[0:8], 'little', signed=False))
-            recorder_data.append(-struct.unpack(
-                'f', payload[8:12])[0]*float(payload[12]))
-            recorder_data.append(payload[13])
-            recorder_data.append(payload[14])
 
-            recorder_data.append(payload[15])
-            recorder_data.append(payload[16])
-            recorder_data.append(payload[17])
-            recorder_data.append(payload[18])
+        if self.parameters[param_id].type == 'vel':
+            return struct.unpack('f', bytes(payload[0:4]))[0]*float(payload[4])
 
-            return recorder_data
-
-        if val_type == 'linmaze':
-            linmaze_data = [] # time, pos, in_1, in_2, out_1, out_2, out_3, out_4
-            linmaze_data.append(int.from_bytes(
-                payload[0:8], 'little', signed=False))
-            linmaze_data.append(-int.from_bytes(
-                payload[8:12], 'little', signed=True))
-            linmaze_data.append(payload[12])
-            linmaze_data.append(payload[13])
-
-            linmaze_data.append(payload[14])
-            linmaze_data.append(payload[15])
-            linmaze_data.append(payload[16])
-            linmaze_data.append(payload[17])
-            return linmaze_data
-
-        return None
+        if self.parameters[param_id].type == 'combo':
+            I = 0
+            values = {}
+            for elemet_id in self.combos[param_id]:
+                e_type = self.parameters[elemet_id].type
+                length = self.type_lengths[e_type] 
+                element = self.decode_payload(elemet_id, payload[I:I+length])
+                I += length
+                values[elemet_id] = element
+            return values
 
     def read_input(self, input_id):
-        self.read_param(0x20+input_id-1)
+        return self.read_param(0x20+input_id-1)
 
     def read_inputs(self):
-        self.read_params(0x25, [0x20, 0x21])
+        return self.read_params(0x25)
 
     def read_output(self, output_id):
-        self.read_param(0x30+output_id-1)
+        return self.read_param(0x30+output_id-1)
 
     def read_outputs(self):
-        self.read_params(0x35, [0x30, 0x31, 0x32, 0x33])
+        return self.read_params(0x35)
 
     def read_analog_out(self):
-        self.read_param(0x40)
+        return self.read_param(0x40)
+        
+    def read_sensors(self):
+        """ Returns the values read from the sensors in a dict with the parameter ids as keys. """
+        return self.read_params(0x0A)
 
     def read_voltages(self):
-        self.read_param(0x01)
-        self.read_param(0x02)
+        return self.read_params(0x0B)
 
     def read_temperatures(self):
-        self.read_param(0x03)
-        self.read_param(0x04)
-
-    def read_sensors(self):
-        self.read_params(0x0A, [0x01, 0x02, 0x03, 0x04])
+        return self.read_params(0x0C)
 
     def read_time(self):
-        self.read_param(0x05)
+        return self.read_param(0x05)
 
     def read_position(self):
-        self.read_param(0x10)
+        return self.read_param(0x10)
 
     def read_velocity(self):
-        self.read_param(0x11)
+        return self.read_param(0x11)
 
     def read_window_size(self):
-        self.read_param(0x12)
+        return self.read_param(0x12)
 
     def read_homing_state(self):
-        self.read_param(0x13)
-        self.read_param(0x14)
+        """
+        0 if the encoder is not trying to find the home position, 
+        1 if it is homing and 2 if the home position was found. 
+        """
+        return self.read_param(0x13)
+
+    def read_homing_poition(self):
+        """ The home postion that can be found by homing. """
+        return self.read_param(0x14)
 
     def read_firmware_info(self):
-        self.send(0x00, 0x04, [])
+        """ 
+        Read the firmware information from the Gramophone.
+        Sets the fimware related variables of the object.
+
+        :returns: A dictionary with the firmware info fields in a human readable format.
+        :rtype: dict
+        """
+        ask_firmware = Packet(self.target, self.source, 0x04, [])
+        firmware_packet = self.send(ask_firmware)
+        payload = firmware_packet.payload
+
+        firmware_release = payload[0]
+        firmware_sub = payload[1]
+        firmware_build = int.from_bytes(payload[2:4], 'little', signed=False)
+        firmware_year = int.from_bytes( payload[4:6], 'little', signed=False)
+        firmware_month = payload[6]
+        firmware_day = payload[7]
+        firmware_hour = payload[8]
+        firmware_minute = payload[9]
+        firmware_second = payload[10]
+
+        info = {
+            'release': str(firmware_release)+'.'+str(firmware_sub),
+            'build': str(firmware_build),
+            'date': str(firmware_day)+'/'+str(firmware_month).zfill(2)+'/'+str(firmware_year).zfill(2),
+            'time': str(firmware_hour)+':'+str(firmware_minute)+':'+str(firmware_second),
+            'date_format': 'dd/mm/yyyy',
+            'time_format': '24h'
+            }
+
+        if self.verbose:
+            print('Firmware version:')
+            print(' -Relase:', info['release'])
+            print(' -Build:', info['build'])
+            print(' -Date ({}): {}'.format(info['date_format'], info['date']))
+            print(' -Time ({}): {}'.format(info['time_format'], info['time']))
+
+        self.firmware_info = info
+        return info
 
     def read_product_info(self):
-        self.send(0x00, 0x08, [])
+        ask_product_info = Packet(self.target, self.source, 0x08, [])
+        product_info_packet = self.send(ask_product_info)
+        payload = product_info_packet.payload
+
+        product_name = ''.join([chr(byte) for byte in payload[0:18] if byte != 0x00])
+        product_revision = ''.join([chr(byte) for byte in payload[18:24]])
+        product_serial = int.from_bytes(payload[24:28], 'little', signed=False)
+        product_year = int.from_bytes(payload[28:30], 'little', signed=False)
+        product_month = int.from_bytes(payload[30:31], 'little', signed=False)
+        product_day = int.from_bytes(payload[31:32], 'little', signed=False)
+
+        info = {
+            'name': product_name,
+            'revision': product_revision,
+            'serial': product_serial, 
+            'production': str(product_day).zfill(2)+'/'+str(product_month).zfill(2)+'/'+str(product_year),
+            'production_format':'dd/mm/yyyy'
+        }
+
+        if self.verbose:
+            print('Product info:')
+            print(' -Name:', info['name'])
+            print(' -Revision:', info['revision'] )
+            print(' -Serial:', hex(info['serial']))
+            print(' -Production ({}): {}'.format(info['production_format'], info['production']))
+
+        self.product_info = info
+        return info
 
     def read_recorder_params(self):
-        self.read_params(0xAA, [0x05, 0x11, 0x20, 0x21, 0x30, 0x31, 0x32, 0x33])
+        return self.read_params(0xAA)
 
     def read_linmaze_params(self):
-        self.read_params(0xBB, [0x05, 0x10, 0x20, 0x21, 0x30, 0x31, 0x32, 0x33])
+        return self.read_params(0xBB)
+
+    def read_dev_state(self):
+        """ 
+        Read the state of the device. The device should be in 0x01 state for usage.
+        The 0x00 state is for setup.
+
+        :returns: The device state. 'Application' or 'IAP'
+        :rtype: str
+        """
+        ask_dev_state = Packet(self.target, self.source, 0x05, [])
+        dev_state = self.send(ask_dev_state)
+        self.dev_state = dev_state.payload[0]
+        state = self.device_states[self.dev_state]
+        if self.verbose:
+            print('Device state:', state)
+
+        return state
 
     def write_output(self, output, value):
         self.write_param(0x30+output-1, [int(value)])
@@ -362,182 +340,99 @@ class Gramophone(hid.HidDevice):
         self.write_param(0x40, list(struct.pack('f', value)))
 
     def ping(self):
-        data = sample(range(0, 255), 5)
-        self.ping_time = time()
-        self.send(0x00, 0x00, data)
-        print('Ping!', data)
-
-    def check_app(self):
-        self.send(0x00, 0x05, [])
-
-    def set_LED(self, state):
-        self.send(0xFF, 0x12, [state])
+        """ Send a ping packet with 5 bytes and print the time the process took. """
+        rdata = sample(range(0, 255), 5)
+        ping_time = time()
+        ping_packet = Packet(self.target, self.source, 0x00, rdata)
+        pong_packet = self.send(ping_packet)
+        took = (time()-ping_time)*1000
+        print('Ping!', ping_packet.payload)
+        print('Pong!', pong_packet.payload)
+        print('Took:', took, 'ms')
 
     def reset(self):
-        self.send(0x00, 0xF0, [])
+        """ Reset the device. Returns None if successful and the error string otherwise. """
+        reset_command = Packet(self.target, self.source, 0xF0, [])
+        response = self.send(reset_command)
+        err = self.decode_response(response)
+        if self.verbose:
+            if err is None:
+                print('Reset successful...')
+            else:
+                print(err)
 
+        return err
+
+    def decode_response(self, response):
+        """
+        Decodes a response. Returns the error message if the command 
+        was not successful and None otherwise.
+
+        :param response: The response to decode.
+        :ptype response: Packet
+        """
+        if response.cmd[0] == 0x01:
+            return None
+        if response.cmd[0] == 0x02:
+            return self.error_codes[response.payload[0]]
+            
     def reset_time(self):
         self.write_param(0x05, [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])
 
     def reset_position(self):
         self.write_param(0x10, [0x00, 0x00, 0x00, 0x00])
 
-    def read_param(self, param):
-        self.send(param, 0x0B, [param])
+    def read_param(self, param_id):
+        ask_param = Packet(self.target, self.source, 0x0B, [param_id])
+        payload = self.send(ask_param).payload
 
-    def read_params(self, msn, params):
-        self.send(msn, 0x0B, params)
+        if payload is not None:
+            val = self.decode_payload(param_id, payload)
+        if self.verbose:
+            print(self.parameters[param_id].name, '=', val)
+
+        return val
+
+    def read_params(self, combo_id):
+        ask_params = Packet(self.target, self.source, 0x0B, self.combos[combo_id])
+        payload = self.send(ask_params).payload
+        values = self.decode_payload(combo_id, payload)
+
+        if self.verbose:
+            for key in self.combos[combo_id]:
+                print(self.parameters[key].name, '=', values[key])
+        
+        return values
 
     def write_param(self, param, payload):
-        self.send(param, 0x0C, [param]+payload)
+        set_param = Packet(self.target, self.source, 0x0C, [param]+payload)
+        response = self.send(set_param)
 
-    def send(self, msn, cmd, payload):
-        plen = len(payload)
-        filler = [0] * (65-plen-8)
-        full = [0x0] + self.target + self.source + \
-            [msn, cmd, plen] + payload + filler
+        if self.verbose:
+            if response.cmd[0] == 0x01:
+                print('Writing', self.parameters[param].name, 'succeeded.')
+            if response.cmd[0] == 0x02:
+                print('Writing', self.parameters[param].name, 'failed.',
+                      self.error_codes[response.payload[0]])
+
+    def send(self, packet):
+        """
+        Sends a Packet to the device.
+
+        :param packet: The Packet to send.
+        :ptype packet: Packet
+        """
         try:
-            self.report.set_raw_data(full)
-            self.report.send()
-        except hid.helpers.HIDError as hid_error:
-            self.transmitter.emit_device_error(hid_error)
+            self.device.write(0x01, packet.encoded)
+            while True:
+                resp = Packet.from_array(self.device.read(0x81, 64))
+                if resp.target == self.source and \
+                        resp.source == self.target and \
+                        resp.msn == packet.msn:
+                    return resp
 
-
-    def data_handler(self, data):
-        target = data[1:3]
-        source = data[3:5]
-        if target == self.source and source == self.target:
-            msn = data[5]
-            cmd = data[6]
-            plen = data[7]
-            payload = data[8:8+plen]
-
-            if cmd == 0x00:
-                if self.ping_time is None:
-                    print('Communication error: Received a pong but ping was never sent.')
-                else:
-                    delay = time()-self.ping_time
-                print('Pong!', payload)
-                print('Delay:', delay, 'sec\n')
-
-            if cmd == 0x01:
-                if self.verbose:
-                    print(Gramophone.parameters[msn].name, 'OK!')
-
-            if cmd == 0x02:
-                print(Gramophone.parameters[msn].name, 'failed.',
-                      self.error_codes[payload[0]])
-
-            if cmd == 0x04:
-                self.firmware_release = payload[0]
-                self.firmware_sub = payload[1]
-                self.firmware_build = int.from_bytes(
-                    payload[2:4], 'little', signed=False)
-                self.firmware_year = int.from_bytes(
-                    payload[4:6], 'little', signed=False)
-                self.firmware_month = payload[6]
-                self.firmware_day = payload[7]
-                self.firmware_hour = payload[8]
-                self.firmware_minute = payload[9]
-                self.firmware_second = payload[10]
-
-                if self.verbose:
-                    print('Firmware version')
-                    print('Relase:', str(self.firmware_release) +
-                          '.'+str(self.firmware_sub))
-                    print('Build:', self.firmware_build)
-                    print('Date:', str(self.firmware_year)+'-' +
-                          str(self.firmware_month)+'-'+str(self.firmware_day))
-                    print('Time', str(self.firmware_hour)+':' +
-                          str(self.firmware_minute)+':'+str(self.firmware_second))
-                    print()
-
-            if cmd == 0x05:
-                if payload[0] == 0x00:
-                    if self.verbose:
-                        print('CheckApp: IAP \n')
-                    self.app_state = 'IAP'
-                if payload[0] == 0x01:
-                    if self.verbose:
-                        print('CheckApp: Application \n')
-                    self.app_state = 'App'
-
-            if cmd == 0x08:
-                self.product_name = ''.join(
-                    [chr(byte) for byte in payload[0:18] if byte != 0x00])
-                self.product_revision = ''.join(
-                    [chr(byte) for byte in payload[18:24]])
-                self.product_serial = int.from_bytes(
-                    payload[24:28], 'little', signed=False)
-                self.product_year = int.from_bytes(
-                    payload[28:30], 'little', signed=False)
-                self.product_month = int.from_bytes(
-                    payload[30:31], 'little', signed=False)
-                self.product_day = int.from_bytes(
-                    payload[31:32], 'little', signed=False)
-
-                if self.verbose:
-                    print('Product Info')
-                    print('Name:', self.product_name)
-                    print('Revision:', self.product_revision)
-                    print('Serial', hex(self.product_serial))
-                    print('Production:', str(self.product_year)+'-' +
-                          str(self.product_month)+'-'+str(self.product_day))
-                    print()
-
-            if cmd == 0x0B:
-                val = None
-                if payload is not None:
-                    val = Gramophone.decode_payload(
-                        Gramophone.parameters[msn].type, bytes(payload))
-                if self.verbose:
-                    print('Read:', Gramophone.parameters[msn].info,
-                          'Value:', val)
-
-                if Gramophone.parameters[msn].name == 'ENCVEL':
-                    self.transmitter.emit_velocity(val)
-                    self.last_velocity = val
-                if Gramophone.parameters[msn].name == 'ENCPOS':
-                    self.transmitter.emit_position(val)
-                    self.last_position = val
-                if Gramophone.parameters[msn].name == 'SENSORS':
-                    self.sensor_values['VSEN3V3'] = val[0]
-                    self.sensor_values['VSEN5V'] = val[1]
-                    self.sensor_values['TSENMCU'] = val[2]
-                    self.sensor_values['TSENEXT'] = val[3]
-                if Gramophone.parameters[msn].name == 'DI':
-                    self.transmitter.emit_inputs(val)
-                    self.last_in_1 = val[0]
-                    self.last_in_2 = val[1]
-                if Gramophone.parameters[msn].name == 'DO':
-                    self.last_out_1 = val[0]
-                    self.last_out_2 = val[1]
-                    self.last_out_3 = val[2]
-                    self.last_out_4 = val[3]
-                if Gramophone.parameters[msn].name == 'REC':
-                    self.transmitter.emit_recorder(val)
-                    self.last_time = val[0]
-                    self.last_velocity = val[1]
-                    self.last_in_1 = val[2]
-                    self.last_in_2 = val[3]
-                    self.last_out_1 = val[4]
-                    self.last_out_2 = val[5]
-                    self.last_out_3 = val[6]
-                    self.last_out_4 = val[7]
-                if Gramophone.parameters[msn].name == 'LINM':
-                    self.last_time = val[0]
-                    self.last_position = val[1]
-                    self.last_in_1 = val[2]
-                    self.last_in_2 = val[3]
-                    self.last_out_1 = val[4]
-                    self.last_out_2 = val[5]
-                    self.last_out_3 = val[6]
-                    self.last_out_4 = val[7]
-
-            if cmd not in [0x00, 0x01, 0x02, 0x04, 0x05, 0x08, 0x0B]:
-                print('CMD', hex(cmd))
-                print('plen', plen)
-                print('payload', payload)
+        except usb.core.USBError as usb_error:
+            raise GramophoneError(usb_error)
 
     @background
     def start_burst(self, port, on_time, pause_time):
@@ -551,26 +446,6 @@ class Gramophone(hid.HidDevice):
     def stop_burst(self, port):
         self.bursting[port] = False
 
-    def start_reader(self, name, param, freq):
-        command = {'position': self.read_position,
-                   'velocity': self.read_velocity,
-                   'time': self.read_time,
-                   'inputs': self.read_inputs,
-                   'recorder': self.read_recorder_params
-                   }[param]
-        reader = Reader(name, command, freq)
-        thread = QThread()
-        # thread.setObjectName('thread_' + str(idx))
-        self.readers.append((thread, reader))
-        reader.moveToThread(thread)
 
-        thread.started.connect(reader.read)
-        thread.start()
-
-    def stop_reader(self, name=None):
-        if self.readers:
-            for thread, reader in self.readers:
-                if name is None or reader.name == name:
-                    reader.abort()
-                    thread.quit()
-                    thread.wait()
+class GramophoneError(Exception):
+    pass
