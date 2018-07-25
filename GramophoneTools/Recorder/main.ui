@@ -40,7 +40,7 @@
           </size>
          </property>
          <property name="toolTip">
-          <string>The list of all COM ports that have a Gramophone connected.</string>
+          <string>The list of all connected Gramophones</string>
          </property>
         </widget>
        </item>
@@ -59,7 +59,7 @@
           </size>
          </property>
          <property name="toolTip">
-          <string>Detect all connected Gramophones and refresh the list.</string>
+          <string>Detect all connected Gramophones and refresh the list</string>
          </property>
          <property name="text">
           <string>...</string>
@@ -78,6 +78,9 @@
            <height>26</height>
           </size>
          </property>
+         <property name="toolTip">
+          <string>Device settings</string>
+         </property>
          <property name="text">
           <string>...</string>
          </property>
@@ -94,6 +97,9 @@
            <width>26</width>
            <height>26</height>
           </size>
+         </property>
+         <property name="toolTip">
+          <string>Device information</string>
          </property>
          <property name="text">
           <string>...</string>
@@ -113,7 +119,7 @@
           </size>
          </property>
          <property name="toolTip">
-          <string>Connect to a Gramophone on the selected port.</string>
+          <string>Connect to the selected Gramophone</string>
          </property>
          <property name="text">
           <string>Connect</string>
@@ -144,7 +150,11 @@
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_5">
          <item>
-          <widget class="PlotWidget" name="graph"/>
+          <widget class="PlotWidget" name="graph">
+           <property name="toolTip">
+            <string>Live velocity in counts/second, one full rotation is 14400 counts</string>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>
@@ -400,6 +410,9 @@
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
        <widget class="QPushButton" name="plot_btn">
+        <property name="toolTip">
+         <string>Plot the selected record(s)</string>
+        </property>
         <property name="text">
          <string>Plot</string>
         </property>
@@ -407,6 +420,9 @@
       </item>
       <item>
        <widget class="QPushButton" name="select_all_btn">
+        <property name="toolTip">
+         <string>Select all records</string>
+        </property>
         <property name="text">
          <string>Select All</string>
         </property>
@@ -414,6 +430,9 @@
       </item>
       <item>
        <widget class="QPushButton" name="delete_btn">
+        <property name="toolTip">
+         <string>Delete selected record(s)</string>
+        </property>
         <property name="text">
          <string>Delete</string>
         </property>
