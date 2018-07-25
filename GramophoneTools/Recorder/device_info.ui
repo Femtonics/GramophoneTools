@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>316</height>
+    <height>319</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -105,7 +105,7 @@ External temperature: </string>
         </size>
        </property>
        <property name="toolTip">
-        <string>Detect all connected Gramophones and refresh the list.</string>
+        <string>Refresh sensor data</string>
        </property>
        <property name="text">
         <string>...</string>
