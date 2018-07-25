@@ -562,6 +562,10 @@
    </property>
   </action>
   <action name="actionLicense">
+   <property name="icon">
+    <iconset resource="res/resources.qrc">
+     <normaloff>:/icons/appbar.clipboard.paper.check.png</normaloff>:/icons/appbar.clipboard.paper.check.png</iconset>
+   </property>
    <property name="text">
     <string>License</string>
    </property>

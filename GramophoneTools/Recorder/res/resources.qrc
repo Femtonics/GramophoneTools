@@ -4,6 +4,7 @@
     <file>femtonics_logo_small.png</file>
   </qresource>
   <qresource prefix="icons">
+    <file>appbar.clipboard.paper.check.png</file>
     <file>appbar.office.excel.png</file>
     <file>appbar.settings.png</file>
     <file>appbar.information.png</file>
