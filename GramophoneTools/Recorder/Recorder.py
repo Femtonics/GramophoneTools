@@ -269,7 +269,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         """ Opens a new instance of the Gramophone recorder.
             New windows can be used for simultanious recording
             of an other Gramophone device. """
-        os.startfile(DIR+'/Main.pyw')
+        os.startfile('gramrec')
 
     def open(self):
         """ Opens a velocity log from file and sets it as the
