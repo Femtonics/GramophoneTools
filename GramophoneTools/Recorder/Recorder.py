@@ -560,7 +560,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
 
         if self.recording != bool(target_state):
             self.recording = bool(target_state)
-            self.timer_zero = self.gram.last_time/10
+            self.timer_zero = self.gram.read_time()/10
             if self.recording:
                 # self.gram.reset_time()
                 self.current_record = logger.MemoryRecord(
