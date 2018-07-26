@@ -296,6 +296,21 @@ class FileRecord(Record):
         return self.file_group.attrs['sampling_freq']
 
 
+    def save(self, log_file):
+        """ Saves the modified fields and returns itself. """
+        if self.unique_id not in log_file:
+            return super().save(log_file)
+        else:
+            if self.m_rec_id is not None:
+                log_file[self.unique_id].attrs['id'] = self.m_rec_id
+                self.m_rec_id = None
+
+            if self.m_comment is not None:
+                log_file[self.unique_id].attrs['comment'] = self.m_comment
+                self.m_comment = None
+
+            return self
+
 class DummyRecord(Record):
     """ A record with random data insted of recorded velocity. Can be used for
         testing purposes. """
