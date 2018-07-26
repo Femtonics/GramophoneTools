@@ -410,9 +410,9 @@ class Session(object):
         if grams:
             if self.gramophone_serial is None:
                 print('\nNo Gramophone specified. Using the first one.')
-                self.gramophone = grams[list(grams)[0]]
-            else:
-                self.gramophone = grams[self.gramophone_serial]
+                self.gramophone_serial = list(grams)[0]
+                
+            self.gramophone = grams[self.gramophone_serial]
         else:
             raise(LinMazeError('No gramophones connected.'))
 

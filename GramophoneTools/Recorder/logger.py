@@ -126,6 +126,7 @@ class Record(ABC):
     finish_time = NotImplemented
     comment = NotImplemented
     sampling_freq = NotImplemented
+    device_serial = NotImplemented
 
     @property
     def unique_id(self):
@@ -187,6 +188,7 @@ class Record(ABC):
         log_file[self.unique_id].attrs['length_hr'] = self.length_hr
         log_file[self.unique_id].attrs['mean_velocity'] = self.mean_vel
         log_file[self.unique_id].attrs['sampling_freq'] = self.sampling_freq
+        log_file[self.unique_id].attrs['device_serial'] = self.device_serial
 
         log_file[self.unique_id+'/time'] = self.times
         log_file[self.unique_id+'/velocity'] = self.velocities
@@ -196,7 +198,7 @@ class Record(ABC):
 class MemoryRecord(Record):
     """ A velocity record that is in memory ie. not saved yet. """
 
-    def __init__(self, rec_id, sampling_freq):
+    def __init__(self, rec_id, sampling_freq, device_serial):
         super().__init__()
 
         # Data
@@ -206,6 +208,7 @@ class MemoryRecord(Record):
         # Metadata
         self.rec_id = rec_id
         self.sampling_freq = float(sampling_freq)
+        self.device_serial = device_serial
         self.start_time = None
         self.finish_time = None
         self.comment = ''
@@ -321,6 +324,7 @@ class DummyRecord(Record):
         super().__init__()
         self.rec_id = randint(1, 999)
         self.sampling_freq = 100.0
+        self.device_serial = 42
         self.start_time = time.time()
         self.finish_time = time.time()+10
         self.times = np.linspace(0, 10_000, num=1001, dtype=np.uint64)
