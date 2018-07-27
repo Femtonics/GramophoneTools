@@ -22,6 +22,9 @@ sys.path.append(os.path.abspath('../../GramophoneTools/Comms'))
 import GramophoneTools
 import sphinx_rtd_theme
 
+# For ReadTheDocs matplotlib compatibility
+autodoc_mock_imports = ['matplotlib.pyplot']
+
 # -- Project information -----------------------------------------------------
 
 project = 'GramophoneTools'
@@ -183,3 +186,5 @@ texinfo_documents = [
 
 
 # -- Extension configuration -------------------------------------------------
+import matplotlib
+matplotlib.use('agg')
