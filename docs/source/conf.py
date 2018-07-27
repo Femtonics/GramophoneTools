@@ -23,7 +23,7 @@ import GramophoneTools
 import sphinx_rtd_theme
 
 # For ReadTheDocs matplotlib compatibility
-autodoc_mock_imports = ['_tkinter']
+autodoc_mock_imports = ['matplotlib']
 
 # -- Project information -----------------------------------------------------
 
