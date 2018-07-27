@@ -9,8 +9,8 @@ Gramophone class
 
 Helper classes
 --------------
-.. autoclass:: Gramophone.Transmitter
+.. autoclass:: Gramophone.Packet
    :members:
 
-.. autoclass:: Gramophone.Reader
+.. autoclass:: Gramophone.GramophoneError
    :members:

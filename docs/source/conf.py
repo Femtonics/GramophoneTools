@@ -22,6 +22,9 @@ sys.path.append(os.path.abspath('../../GramophoneTools/Comms'))
 import GramophoneTools
 import sphinx_rtd_theme
 
+# For ReadTheDocs matplotlib compatibility
+autodoc_mock_imports = ['_tkinter']
+
 # -- Project information -----------------------------------------------------
 
 project = 'GramophoneTools'

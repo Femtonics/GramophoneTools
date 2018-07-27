@@ -36,6 +36,7 @@ def find_devices():
     return devices
 
 class Packet(object):
+    """ A 64 byte data packet that can be sent to the Gramophone. """
     msn = 0
     def __init__(self, target, source, cmd, payload, msn=None):
         self.target = target
@@ -448,4 +449,5 @@ class Gramophone(object):
 
 
 class GramophoneError(Exception):
+    """ Exception for Gramophone related communication errors. """
     pass
