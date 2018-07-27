@@ -8,5 +8,5 @@ pyglet
 pyqtgraph
 matplotlib
 opencv-python
-pywinusb
+pyusb
 xlsxwriter
