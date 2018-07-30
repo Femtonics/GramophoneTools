@@ -1,32 +1,32 @@
 Overview
 ========
 
-The Gramophone is a Raw-HID (Human Interface Device). It can send and receive 65 bytes in an array. 
+The Gramophone is a Raw-HID (Human Interface Device). It can send and receive 64 byte long packets (byte arrays). Numbers that take up multiple bytes are encoded in a little endian manner.
 
+If you are implementing communication in Python you can use the GramophoneTools.Comms.Gramophone.Packet class to construct a packet.
+
+Note: Some communication modules require a 65 byte long packet. In this case the extra byte should be in the begining and equal to 0.
 
 Packet structure
 ----------------
 Each of the sent and received packets have a the following structure:
 
-packet[0] - Dummy
-    A dummy byte that should always be zero.
-
-packet[1:3] - Target
+packet[0:2] - Target
     The 2 byte adress of the target of the packet. Can be anything. The response packet will have this as its Source
 
-packet[3:5] - Source
+packet[2:4] - Source
     The 2 byte adress of the source of the packet. Can be anything. The response packet will have this as its Target
 
-packet[5] - MSN
+packet[4] - MSN
     A single byte that can be used for identification. The response packet will have the same MSN.
 
-packet[6] - CMD
+packet[5] - CMD
     The 1 byte ID of the command. See commands below.
 
-packet[7] - Payload length
+packet[6] - Payload length
     A single byte that holds the length of the payload. The payload will only be evaluated to whis length.
 
-packet[8:65] - Payload
+packet[7:64] - Payload
     The payload of the packet.
 
 Commands
