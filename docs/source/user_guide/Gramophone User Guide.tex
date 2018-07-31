@@ -395,7 +395,7 @@ Follow the installation steps:
 
 \newpage
 \subsection{Python modules}
-All Gramophone related modules are collected in a single python package. To install it run the following command as an administrator in Windows Power Shell, Command Prompt or Anaconda Prompt:
+All Gramophone related modules are collected in a single python package. To install it run the following command \textbf{as an administrator} in Windows Power Shell, Command Prompt or Anaconda Prompt:
 \begin{verbatim}
 pip install GramophoneTools
 \end{verbatim}
@@ -423,7 +423,7 @@ The velocity recorder produces .vlg files as an output (see: \ref{sec:recorder_o
 
 \note{The ProgramData folder is hidden in Windows so you have to type the location in the address bar to navigate there, or make hidden files and folders visible.}
 
-\note{You can also make an icon for \texttt{gramrec.exe} on the desktop to make starting it easier.}
+\note{You can also make a shortcut for \texttt{gramrec.exe} on the desktop to make starting it easier.}
 
 \section{Software overview}
 The GramophoneTools package has three modules. The \texttt{Comms} module handles all communication with the device. This can be used to develop your own application for the Gramophone. The Recorder module is an application with a GUI (Graphical User Interface) that can be used to record the animals velocity in a triggered manner. The LinMaze module is a collection of tools used to generate a 2 dimensional linear maze the mouse can navigate. Events and Rules can be added to this maze to implement various conditioning tasks.
@@ -431,6 +431,8 @@ The GramophoneTools package has three modules. The \texttt{Comms} module handles
 After installing the GramophoneTools package, you can use a number of commands. The \texttt{gramrec} command simply starts the Recorder application. You can include a path to a .vlg file as a command line argument to open it with the recorder. The \texttt{gram} command can be used for various things, run \texttt{gram help} to find out more.
 
 \note{You can open a terminal for these commands in Windows 10 by right clicking the start menu and selecting the 'Windows PowerShell' option, or you can run them in the Run window by pressing 'Win+R'.}
+
+\note{You can create shortcuts for these commands by right clicking where you want the shortcut to be (eg. on the Desktop) and entering the command as the location of the item.}
 
 \section{Recorder module} 
 The Gramophone recorder is software that can make high accuracy velocity recordings. To keep the velocity records in sync with two-photon measurements the digital input 1 (Figure \ref{fig:gram_ports}c) is used as a trigger input for recordings. 
@@ -751,6 +753,12 @@ Example:
 \begin{lstlisting}
 LVL.play(left_monitor=None, right_monitor=1, vel_ratio=2, gramofon_port='COM3', runtime_limit=5, fullscreen=True)
 \end{lstlisting}
+
+\subsection{Manual output control}
+During simulation you can manually control the outputs with Ctrl+numbers (eg. Ctrl+2 toggles digital output 2). Alternatively you can open the Recorder, connect to the same Gramophone and control the outputs there.
+
+\note{The LinMaze window must be active for the keyboard shortcuts to work. Click in the window that is displaying patterns or select it on the taskbar to activate it.}
+
 
 \subsection{Examples}
 A collection of examples are available on GitHub in the examples folder of the GramophoneTools repository. Alternatively you can open this folder of examples after installing the GramophoneTools package with the \texttt{gram examples} command.
