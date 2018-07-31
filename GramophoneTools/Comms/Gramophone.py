@@ -84,8 +84,11 @@ class Gramophone(object):
     """
     Representation of a Gramophone device.
 
-    :param device: The USB device identity
+    :param device: The USB device.
     :type device: usb.core.Device
+
+    :param verbose: If set to True the details of the communication are printed.
+    :type device: bool
     """
     error_codes = {0x00: 'PACKET_FAIL_UNKNOWNCMD',
                    0x01: 'PACKET_FAIL_INVALIDCMDSYNTAX',
@@ -169,6 +172,15 @@ class Gramophone(object):
         self.readers = []
 
     def decode_payload(self, param_id, payload):
+        """
+        Decodes the given payload based on the type of the parameter.
+
+        :param param_id: The key for the parameter dict. See: Gramophone.parameters
+        :type param_id: int
+
+        :param payload: The payload that will be decoded
+        :type payload: list
+        """
         if self.parameters[param_id].type == 'float':
             return struct.unpack('f', bytes(payload))[0]
 
@@ -193,51 +205,138 @@ class Gramophone(object):
             return values
 
     def read_input(self, input_id):
+        """
+        Read the state of a digital input.
+
+        :param input_id: The number of the digital input (1 or 2)
+        :type input_id: int
+
+        :returns: 0 if the input is low, 1 if it is high
+        :rtype: int
+        """
         return self.read_param(0x20+input_id-1)
 
     def read_inputs(self):
+        """
+        Read the state of all digital inputs.
+
+        :returns: dict with input numbers as keys, and their states as values. eg: {1:1, 2:1} when both inputs are high
+        :rtype: dict
+        """
         return self.read_params(0x25)
 
     def read_output(self, output_id):
+        """
+        Read the state of a digital output.
+
+        :param output_id: The number of the digital output (1 to 4)
+        :type output_id: int
+
+        :returns: 0 if the output is low, 1 if it is high
+        :rtype: int
+        """
         return self.read_param(0x30+output_id-1)
 
     def read_outputs(self):
+        """
+        Read the state of all digital outputs.
+
+        :returns: dict with output numbers as keys, and their states as values. eg: {1:0, 2:0, 3:0, 4:0} when both outputs are low
+        :rtype: dict
+        """
         return self.read_params(0x35)
 
     def read_analog_out(self):
+        """
+        Read the voltage of the analog output.
+
+        :returns: The voltage the analog output is set to.
+        :rtype: float
+        """
         return self.read_param(0x40)
         
     def read_sensors(self):
-        """ Returns the values read from the sensors in a dict with the parameter ids as keys. """
+        """
+        Read the values from the voltage and temperature sensors.
+        
+        :returns: A dict with the parameter ids as keys. See: Gramophone.parameters
+        :rtype: dict
+        """
         return self.read_params(0x0A)
 
     def read_voltages(self):
+        """
+        Read the values from the voltage sensors.
+        
+        :returns: A dict with the parameter ids as keys. See: Gramophone.parameters
+        :rtype: dict
+        """
         return self.read_params(0x0B)
 
     def read_temperatures(self):
+        """
+        Read the values from the temperature sensors.
+        
+        :returns: A dict with the parameter ids as keys. See: Gramophone.parameters
+        :rtype: dict
+        """
         return self.read_params(0x0C)
 
     def read_time(self):
+        """
+        Read the time from the Gramophone's clock
+
+        :returns: Time in ms/10
+        :rtype: int
+        """
         return self.read_param(0x05)
 
     def read_position(self):
+        """
+        Read the position register of the Gramophone.
+
+        :returns: The position in counts travelled (1 full rotation = 14400 counts)
+        :rtype: int
+        """
         return self.read_param(0x10)
 
     def read_velocity(self):
+        """
+        Read the velocity of the Gramophones disk. Velocity is averaged in a window with a set size.
+
+        :returns: Velocity in counts/sec (1 full rotation = 14400 counts)
+        :rtype: 
+        """
         return self.read_param(0x11)
 
     def read_window_size(self):
+        """
+        Read the window size of the velocity calculation, ie. how many position differences are averaged to
+        get the velocity. Larger windows result in smoother velocity but slower response.
+
+        :retruns: The window size
+        :rtype: int
+        """
         return self.read_param(0x12)
 
     def read_homing_state(self):
         """
+        Reads wheter the device is homing. A home position can be set and this value changes when it is reached.
         0 if the encoder is not trying to find the home position, 
         1 if it is homing and 2 if the home position was found. 
+
+        :returns: 0, 1 or 2 dependin on the state
+        :rtype: int
         """
         return self.read_param(0x13)
 
-    def read_homing_poition(self):
-        """ The home postion that can be found by homing. """
+    def read_homing_position(self):
+        """
+        The home postion that can be found by homing.
+        
+        :returns: The position
+        :rtype: int
+        """
         return self.read_param(0x14)
 
     def read_firmware_info(self):
@@ -282,6 +381,13 @@ class Gramophone(object):
         return info
 
     def read_product_info(self):
+        """ 
+        Read the product information from the Gramophone.
+        Sets the product related variables of the object.
+
+        :returns: A dictionary with the product info fields in a human readable format.
+        :rtype: dict
+        """
         ask_product_info = Packet(self.target, self.source, 0x08, [])
         product_info_packet = self.send(ask_product_info)
         payload = product_info_packet.payload
@@ -312,9 +418,21 @@ class Gramophone(object):
         return info
 
     def read_recorder_params(self):
+        """
+        Read the parameters for the Recorder module. Time, velocity, and IO combined.
+
+        :retruns: A dict with the read parameters, with ids as keys
+        :rtype: dict
+        """
         return self.read_params(0xAA)
 
     def read_linmaze_params(self):
+        """ 
+        Read the parameters for the LineMaze module. Time, position, and IO combined.
+
+        :retruns: A dict with the read parameters, with ids as keys
+        :rtype: dict
+        """
         return self.read_params(0xBB)
 
     def read_dev_state(self):
@@ -335,9 +453,23 @@ class Gramophone(object):
         return state
 
     def write_output(self, output, value):
+        """Set the given output to a given state, eg. output 1 to 1 (high). 
+        
+        :param output: The output to set (1 to 4)
+        :type output: int
+
+        :param value: The state to set (1 is high, 0 is low)
+        :type value: int
+        """
         self.write_param(0x30+output-1, [int(value)])
 
     def write_analog(self, value):
+        """
+        Set the analog output to the given voltage, eg. to 2.1 V
+
+        :param value: The voltage that will be set.
+        :type value: float
+        """
         self.write_param(0x40, list(struct.pack('f', value)))
 
     def ping(self):
@@ -378,12 +510,23 @@ class Gramophone(object):
             return self.error_codes[response.payload[0]]
             
     def reset_time(self):
+        """ Reset the Gramophone's internal clock to 0. """
         self.write_param(0x05, [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])
 
     def reset_position(self):
+        """ Reset the Gramophone's internal position counter to 0. """
         self.write_param(0x10, [0x00, 0x00, 0x00, 0x00])
 
     def read_param(self, param_id):
+        """
+        Read a single parameter and return its value.
+        
+        :param param_id: The id of the parameter that should be read.
+        :type param_id: int
+
+        :returns: The value of the parameter
+        :rtype: depends on the parameter, see: Gramophone.parameters
+        """
         ask_param = Packet(self.target, self.source, 0x0B, [param_id])
         payload = self.send(ask_param).payload
 
@@ -395,6 +538,7 @@ class Gramophone(object):
         return val
 
     def read_params(self, combo_id):
+        """ Read multiple parameters and return them in a dict. """
         ask_params = Packet(self.target, self.source, 0x0B, self.combos[combo_id])
         payload = self.send(ask_params).payload
         values = self.decode_payload(combo_id, payload)
