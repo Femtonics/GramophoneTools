@@ -32,10 +32,12 @@ setup(
         'User Guide': 'http://gramophonetools.readthedocs.io/en/latest/_downloads/Gramophone%20User%20Guide.pdf',
         'Product page':'http://femtonics.eu/femtonics-accessories/gramophone/'},
     packages=['GramophoneTools', 'GramophoneTools.Comms', 'GramophoneTools.LinMaze',
-              'GramophoneTools.LinMaze.Tools', 'GramophoneTools.Recorder', 'GramophoneTools.examples', 'GramophoneTools.docs'],
-    # py_modules=["GramophoneTools.ver"],
+              'GramophoneTools.LinMaze.Tools', 'GramophoneTools.Recorder', 'GramophoneTools.examples', 
+              'GramophoneTools.docs', 'GramophoneTools.res'],
+    py_modules=['GramophoneTools.shortcuts'],
     package_dir={'GramophoneTools.examples': 'examples',
-                 'GramophoneTools.docs': 'docs/build/html'},
+                 'GramophoneTools.docs': 'docs/build/html',
+                 'GramophoneTools.res': 'res'},
     install_requires=[
         'h5py',
         'PyQt5',
@@ -59,7 +61,8 @@ setup(
         'GramophoneTools.LinMaze': ['res/icon.png', '*.dll'],
         'GramophoneTools.Recorder': ['*.ui'],
         'GramophoneTools.Comms': ['*.dll'],
-        'GramophoneTools.docs': ['*', '*/*', '*/*/*', '*/*/*/*']
+        'GramophoneTools.docs': ['*', '*/*', '*/*/*', '*/*/*/*'],
+        'GramophoneTools.shortcuts': ['res/*.ico']
     },
     include_package_data=True,
     entry_points={

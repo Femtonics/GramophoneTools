@@ -5,7 +5,7 @@ import os
 import sys
 import subprocess
 
-__version__ = '0.6.6'
+__version__ = '0.6.7'
 
 def main(args=None):
     """ The main routine. """
@@ -25,7 +25,10 @@ def main(args=None):
         if args[0] == 'ver':
             print('\n Gramophone Tools version:', __version__)
             input(' Press ENTER to continnue...')
-        if args[0] not in ['examples', 'guide', 'docs', 'ver']:
+        if args[0] == 'make_icons':
+            from GramophoneTools import shortcuts
+            shortcuts.install_shortcuts()
+        if args[0] not in ['examples', 'guide', 'docs', 'ver', 'make_icons']:
             help_text()
     else:
         help_text()
@@ -36,5 +39,6 @@ def help_text():
     print('    guide - Opens the user guide of the Gramophone system.')
     print('    docs - Opens the documentation of the GramophoneTools package.')
     print('    examples - Opens a folder containing examples for the LinMaze submodule.')
+    print('    make_icons - Create shortcuts for Gramohone related things on the desktop (admin).')
     print('\n eg.: gram guide\n')
     input(' Press ENTER to continnue...')
