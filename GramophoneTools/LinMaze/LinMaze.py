@@ -53,7 +53,7 @@ class VRWindow(pyglet.window.Window):
                          fullscreen=fullscreen, visible=False)
 
         self.set_mouse_visible(False)
-        self.set_caption('pyVR - Monitor #' + str(screen_number + 1))
+        self.set_caption('LinMaze - Monitor #' + str(screen_number + 1))
 
         dir = os.path.dirname(__file__)
         icon = pyglet.image.load(dir+'\\res\\icon.png')
