@@ -20,7 +20,7 @@ from PyQt5.uic import loadUiType
 from GramophoneTools import Comms
 from GramophoneTools.Recorder import logger
 
-DIR = os.path.dirname(__file__)
+DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(DIR+'/.')
 
 # GLOBALS
@@ -346,7 +346,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         """ Opens the Gramophone User Guide in the default
             pdf reader. """
         os.startfile(
-            DIR+"/../../docs/source/user_guide/Gramophone User Guide.pdf")
+            DIR+"/../docs/_downloads/Gramophone User Guide.pdf")
 
     def show_settings(self):
         """ Opens a settings window. """
