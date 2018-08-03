@@ -28,8 +28,8 @@ setup(
     keywords='femtonics gramophone',
     project_urls={
         'GitHub': 'https://github.com/Femtonics/GramophoneTools',
-        'Documentation': 'http://gramophonetools.readthedocs.io',
-        'User Guide': 'http://gramophonetools.readthedocs.io/en/latest/_downloads/Gramophone%20User%20Guide.pdf',
+        'Documentation': 'http://gramophone.femtonics.eu',
+        'User Guide': 'http://gramophone.femtonics.eu/_downloads/Gramophone%20User%20Guide.pdf',
         'Product page':'http://femtonics.eu/femtonics-accessories/gramophone/'},
     packages=['GramophoneTools', 'GramophoneTools.Comms', 'GramophoneTools.LinMaze',
               'GramophoneTools.LinMaze.Tools', 'GramophoneTools.Recorder', 'GramophoneTools.examples', 
