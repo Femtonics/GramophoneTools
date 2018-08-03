@@ -12,3 +12,5 @@ docs/source/user_guide/*.log
 docs/source/user_guide/*.out
 docs/source/user_guide/*.toc
 docs/source/user_guide/*.dvi
+upload.log
+upload.bat
