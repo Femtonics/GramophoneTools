@@ -154,6 +154,9 @@
 
 \newcommand{\note}[1]{\textit{Note: {#1}}}
 
+\newcommand{\hlink}[1]{\href{#1}{#1}}
+\newcommand{\mlink}[1]{\href{mailto:#1}{#1}}
+
 % ------------------------ BODY ------------------------
 \begin{document}
 \maketitle
@@ -171,21 +174,21 @@ The Gramophone system is a single dimension locomotion tracking device for head-
 \section{Compatibility}
 The system is compatible with Microsoft Windows 7 or newer. To run the computer software, a Python 3.6 interpreter is required.
 
-The system can be used in conjunction with Femtonics SMART microscopes and certain custom built models. To get further information about compatibility with your device, please contact Femtonics Ltd. at \href{mailto:info@femtonics.eu}{info@femtonics.eu}.
+The system can be used in conjunction with Femtonics SMART microscopes and certain custom built models. To get further information about compatibility with your device, please contact Femtonics Ltd. at \mlink{info@femtonics.eu}.
 
 \section{Links}
 \begin{itemize}
-\item Python Package Index - https://pypi.org/project/GramophoneTools
-\item GitHub - https://github.com/Femtonics/GramophoneTools
-\item Documentation - 
-\item User guide - 
+\item Python Package Index - \hlink{https://pypi.org/project/GramophoneTools}
+\item GitHub - \hlink{https://github.com/Femtonics/GramophoneTools}
+\item Documentation - \hlink{http://gramophone.femtonics.eu/}
+\item User guide - \hlink{http://gramophone.femtonics.eu/user\_guide.html}
 \end{itemize}
 
 %\section{Warranty}
 %\enote{TODO}
 
 \section{Contact}
-If you need further assistance, please contact Femtonics Ltd. via e-mail at \href{mailto:info@femtonics.eu}{info@femtonics.eu} or visit our website \href{http://femtonics.eu/contact}{http://femtonics.eu/contact}
+If you need further assistance, please contact Femtonics Ltd. via e-mail at \mlink{info@femtonics.eu} or visit our website \hlink{http://femtonics.eu/contact}
 
 \section{Cleaning instructions}
 \subsection{Disk}
@@ -483,7 +486,7 @@ Configure the microscope to pull its digital output to hight for the time period
 \end{enumerate}
 
 \subsection{Recording results \label{sec:recorder_out}}
-The velocity log file is an HDF5 file with a \texttt{.vlg} extension. For more information about it's structure please visit the \href{http://gramophonetools.readthedocs.io/en/latest/gramrec_out.html}{\textbf{online documentation of the Recorder module}}.
+The velocity log file is an HDF5 file with a \texttt{.vlg} extension. For more information about it's structure please visit the \href{http://gramophone.femtonics.eu/gramrec_out.html}{\textbf{online documentation of the Recorder module}}.
 
 \section{LinMaze module}
 LinMaze is a simple virtual linear maze system. It can generate patterns based on parameters and stitch these patterns together into an endless loop the mouse can navigate in using the Gramophone. Optionally, you can define rules to condition the mouse to a task eg. to differentiate between different patterns and behave accordingly.
@@ -766,7 +769,7 @@ A collection of examples are available on GitHub in the examples folder of the G
 \subsection{Simulation results}
 When you call the play command you will be presented with a file selection window, on which you can select the location and filename of your log file. The log is automatically saved every 10 seconds or on the end of the simulation (on proper exit, do not close the console window, close the simulation window or select it and exit with the \texttt{Esc} key).\\
 
-The log file is an HDF5 file with a \texttt{.vrl} extension. For more information about it's structure please visit the \href{http://gramophonetools.readthedocs.io/en/latest/linmaze_out.html}{\textbf{online documentation of the LinMaze module}}.
+The log file is an HDF5 file with a \texttt{.vrl} extension. For more information about it's structure please visit the \href{http://gramophone.femtonics.eu/linmaze_out.html}{\textbf{online documentation of the LinMaze module}}.
 
 %\begin{itemize}
 %\param{analogue\_input} the state of the analogue input [0,1024]
