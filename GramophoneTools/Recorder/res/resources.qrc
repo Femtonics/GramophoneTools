@@ -15,6 +15,7 @@
     <file>appbar.new.window.png</file>
     <file>appbar.save.png</file>
     <file>appbar.page.png</file>
+    <file>appbar.lifesaver.png</file>
     <file>appbar.refresh.png</file>
   </qresource>
 </RCC>

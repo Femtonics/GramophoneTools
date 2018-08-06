@@ -155,6 +155,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         # Properties
         self.recording = False
         self.timer_zero = 0
+        self.autosave = False
 
         # Live plot
         self.graph.setBackground(None)
@@ -196,6 +197,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         self.actionOpen.triggered.connect(self.open)
         self.actionSave.triggered.connect(self.save)
         self.actionSave_As.triggered.connect(self.save_as)
+        self.actionAutosave.triggered.connect(self.set_autosave)
         self.actionQuit.triggered.connect(self.close)
         self.actionAbout.triggered.connect(self.show_about)
         self.actionLicense.triggered.connect(self.show_license)
@@ -300,6 +302,12 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
             to save to an other file. '''
         if self.select_file():
             self.save()
+
+    def set_autosave(self, val):
+        self.autosave = val
+        if val:
+            self.autosave = self.save()
+            self.actionAutosave.setChecked(self.autosave)
 
     def select_file(self, mode='save', filename=None):
         ''' Displays a file selection dialog for velocity
@@ -586,6 +594,8 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
                 self.counter_box.setEnabled(True)
                 self.counter_box.stepUp()
 
+                if self.autosave: self.save()
+
     def update_output_state(self, out_1, out_2, out_3, out_4):
         self.out_1_btn.setChecked(bool(out_1))
         self.out_2_btn.setChecked(bool(out_2))
@@ -727,6 +737,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         self.log_model.add_record(dummy)
         self.update_table_size()
         self.log_changed()
+        if self.autosave: self.save()
 
 
 class VelLogModel(QAbstractTableModel):
