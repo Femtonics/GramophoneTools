@@ -304,6 +304,12 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
             self.save()
 
     def set_autosave(self, val):
+        """
+        Turns automatic saving on (True) or off (False)
+        
+        :param val: The sate to set
+        :type val: bool
+        """
         self.autosave = val
         if val:
             self.autosave = self.save()
