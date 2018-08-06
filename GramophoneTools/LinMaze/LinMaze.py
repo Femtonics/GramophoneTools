@@ -461,10 +461,10 @@ class Session(object):
                 self.movement(velocity)
 
             self.check_zone()
-            self.check_rules(velocity)
+            self.check_rules(-velocity)
 
             if not self.skip_save:
-                self.log.make_entry(velocity, params['TIME'],
+                self.log.make_entry(-velocity, params['TIME'],
                                     params['DI-1'], params['DI-2'],
                                     params['DO-1'],  params['DO-2'],
                                     params['DO-3'],  params['DO-4'])

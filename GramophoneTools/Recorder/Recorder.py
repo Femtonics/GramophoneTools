@@ -525,7 +525,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
     @pyqtSlot(int, float, int, int, int, int, int, int)
     def receiver(self, timer, velocity, in_1, in_2, out_1, out_2, out_3, out_4):
         self.update_timer(timer/10)
-        self.update_graph(velocity)
+        self.update_graph(-velocity)
         self.update_rec_state(in_1, in_2)
         self.update_output_state(out_1, out_2, out_3, out_4)
         if self.recording:
@@ -533,7 +533,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
                 current_state = in_1
             if self.settings['trigger_channel'] == 2:
                 current_state = in_2
-            self.current_record.append(timer/10, velocity, current_state)
+            self.current_record.append(timer/10, -velocity, current_state)
 
     def update_timer(self, millis):
         """ Slot for the time_signal of the Gramophone. Updates the
