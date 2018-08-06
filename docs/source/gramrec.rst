@@ -4,7 +4,7 @@ Recorder module
 Main module
 -----------
 
-.. automodule:: Recorder
+.. automodule:: Recorder.Recorder
    :members:
 
 
