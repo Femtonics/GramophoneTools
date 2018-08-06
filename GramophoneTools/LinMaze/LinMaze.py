@@ -439,7 +439,6 @@ class Session(object):
         if right_monitor is not None:
             right_window = VRWindow(
                 self, self.right_monitor, mirrored=True, fullscreen=fullscreen)
-
         def main_loop(dt):
             '''
             Commands executed at each frame refresh.
@@ -461,10 +460,10 @@ class Session(object):
                 self.movement(velocity)
 
             self.check_zone()
-            self.check_rules(-velocity)
+            self.check_rules(velocity)
 
             if not self.skip_save:
-                self.log.make_entry(-velocity, params['TIME'],
+                self.log.make_entry(velocity, params['TIME'],
                                     params['DI-1'], params['DI-2'],
                                     params['DO-1'],  params['DO-2'],
                                     params['DO-3'],  params['DO-4'])
@@ -559,6 +558,10 @@ class Session(object):
             print("Training is limited to", self.runtime_limit,
                   'minutes. It will automatically end at',
                   time.strftime("%H:%M", time.localtime(finish_time)), '\n')
+
+        # Reset gramophone reisters
+        self.gramophone.reset_time()
+        self.gramophone.reset_position()
 
         # Main app run
         pyglet.app.run()
