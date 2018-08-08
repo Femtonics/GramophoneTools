@@ -4,6 +4,7 @@ from collections import deque
 from abc import ABC, abstractmethod
 
 import numpy as np
+import pyglet
 
 from GramophoneTools.LinMaze import Event
 from GramophoneTools.LinMaze.Tools.Timer import Timer
@@ -255,3 +256,24 @@ class SpeedRule(Rule):
                 self.done = False
 
         # print('sum: ', norm)
+
+
+
+class KeyPressRule(Rule):
+    """
+    A Rule that triggers when a selected key on the keyboard is pressed.
+
+    :param key: The key that triggers the rule.
+    :type key: str
+    """
+    keys = pyglet.window.key.__dict__
+    def __init__(self, level, event, key):
+        super().__init__(level, event)
+        self.key = key.upper()
+
+    def __str__(self):
+        return self.key + " keypress"
+
+    def check(self, key):
+        if key == self.keys[self.key]:
+            self.trigger()

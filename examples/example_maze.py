@@ -56,4 +56,6 @@ if __name__ == '__main__':
     LVL.add_rule('velocity', 'start_front_puffs', 'above', 5, 8)
     LVL.add_rule('velocity', 'stop_front_puffs', 'below', 5, 0)
 
+    LVL.add_rule('keypress', 'tp_to_any', 'F1')
+
     LVL.play(left_monitor=1, right_monitor=None, vel_ratio=2*1280, fullscreen=False, skip_save=True)

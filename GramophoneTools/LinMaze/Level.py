@@ -205,6 +205,11 @@ class Level(object):
                 self, self.events[event_name], args[0], args[1], args[2]))
             # speed_rule_type, threshold, bin_size
 
+        if rule_type == "keypress":
+            self.rules.append(Rule.KeyPressRule(
+                self, self.events[event_name], args[0]))
+            # key
+
     def render(self):
         ''' Renders all the frames of the level, making it ready to be played. '''
         if not self.rendered:

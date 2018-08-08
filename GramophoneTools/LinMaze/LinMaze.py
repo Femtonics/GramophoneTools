@@ -83,11 +83,10 @@ class VRWindow(pyglet.window.Window):
         if symbol == pyglet.window.key.ESCAPE:
             pyglet.app.exit()
 
-        if symbol == pyglet.window.key.R:
-            self.session.teleport(0)
-
-        if symbol == pyglet.window.key.M:
-            self.minimize()
+        for rule in self.session.level.rules:
+            # Check keypress rules
+            if type(rule) is Rule.KeyPressRule:
+                rule.check(symbol)
 
         if modifiers & pyglet.window.key.MOD_CTRL:
             if symbol == pyglet.window.key._1:
