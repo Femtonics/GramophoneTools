@@ -173,6 +173,9 @@ class Level(object):
         if event_type == "unpause":
             self.events[name] = Event.UnPause(self, args[0])
 
+        if event_type == "print":
+            self.events[name] = Event.Print(self, args[0])
+
     def add_rule(self, rule_type, event_name, *args):
         '''
         Adds a rule that triggers events based on animal behaviour.

@@ -281,3 +281,22 @@ class UnPause(Event):
     def __str__(self):
         pos_name = 'current' if self.unpause_position is None else str(self.unpause_position)
         return "Unpause at " + pos_name + " position"
+
+
+class Print(Event):
+    """
+    Prints the given message to the console window.
+
+    :param message: The message that will be printed when triggered
+    :type message: str
+    """
+    def __init__(self, level, message):
+        super().__init__(level)
+        self.message = message
+
+    def __str__(self):
+        return self.message
+
+    @property
+    def triggerable(self):
+        return True

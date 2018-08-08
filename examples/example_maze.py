@@ -43,6 +43,8 @@ if __name__ == '__main__':
     LVL.add_event('start_back_puffs', 'start_burst', 2, 0.7, 0.25)
     LVL.add_event('stop_back_puffs', 'stop_burst', 2)
 
+    LVL.add_event('say_hello', 'print', 'Hello!')
+
     # RULES
     LVL.add_rule('zone', 'tp_to_non_neutral', 'neutral', 12)
     LVL.add_rule('zone', 'tp_to_any', 'right', 12)
@@ -57,5 +59,6 @@ if __name__ == '__main__':
     LVL.add_rule('velocity', 'stop_front_puffs', 'below', 5, 0)
 
     LVL.add_rule('keypress', 'tp_to_any', 'F1')
+    LVL.add_rule('keypress', 'say_hello', 'F2')
 
     LVL.play(left_monitor=1, right_monitor=None, vel_ratio=2*1280, fullscreen=False, skip_save=True)
