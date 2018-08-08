@@ -8,10 +8,11 @@ import numpy as np
 from GramophoneTools.LinMaze import Event
 from GramophoneTools.LinMaze.Tools.Timer import Timer
 
+
 class Rule(ABC):
     '''
     Generic Rule all specific Rules intherit from.
-        
+
     :param level: The Level this Rule is active on.
     :type level: Level
 
@@ -31,7 +32,7 @@ class Rule(ABC):
             self.event.trigger()
             self.done = True
             # print(self.event)
-    
+
     @abstractmethod
     def check(self):
         ''' Check whether the rules's event should be triggered. '''
@@ -41,16 +42,16 @@ class Rule(ABC):
 class ZoneRule(Rule):
     ''' 
     A Rule that triggers if the animal is in a given type of zone.
-        
+
     :param level: The Level this Rule is active on.
     :type level: Level
 
     :param event: The event the rule triggers.
     :type event: Event
-    
+
     :param zone_type: The type of Zone this Rule is active in.
     :type zone_type: str
-    
+
     :param delay: How many seconds should be spent in the Zone before triggering.
     :type delay: float
     '''
@@ -68,7 +69,7 @@ class ZoneRule(Rule):
     def check(self, current_zone_type):
         """ 
         Check whether the Zone rule should be triggered.
-        
+
         :param current_zone_type: Type of the curren zone.
         :type current_zone_type: str
         """
@@ -97,7 +98,7 @@ class ZoneRule(Rule):
 class VelocityRule(Rule):
     '''
     A Rule that triggers if the velocity is above or below a certain threshold.
-    
+
     :param level: The Level this Rule is active on.
     :type level: Level
 
@@ -129,7 +130,7 @@ class VelocityRule(Rule):
     def check(self, vel):
         """ 
         Check whether the Velocity rule should be triggered.
-        
+
         :param vel: The current velocity.
         :type vel: int
         """
@@ -153,10 +154,11 @@ class VelocityRule(Rule):
             self.trigger()
             # self.delay_timer.reset()
 
+
 class SmoothVelocityRule(VelocityRule):
     '''
     A Rule that triggers if the moveing average of velocity is above or below a certain threshold.
-        
+
     :param level: The Level this Rule is active on.
     :type level: Level
 
@@ -189,7 +191,7 @@ class SmoothVelocityRule(VelocityRule):
     def check(self, vel):
         """ 
         Check whether the Smooth velocity rule should be triggered.
-        
+
         :param vel: The current velocity.
         :type vel: int
         """
@@ -201,7 +203,7 @@ class SmoothVelocityRule(VelocityRule):
 class SpeedRule(Rule):
     '''
     A Rule that triggers if the absolute integral of the velocity on a given range is above or below a given threshold.
-        
+
     :param level: The Level this Rule is active on.
     :type level: Level
 
@@ -213,7 +215,7 @@ class SpeedRule(Rule):
 
     :param threshold: The calculated integral should be above or below this value.
     :type threshold: float
-     
+
     :param bin_size: How many velocities should be used for the integral.
     :type bin_size: int
      '''
@@ -232,7 +234,7 @@ class SpeedRule(Rule):
     def check(self, vel):
         """ 
         Check whether the Speed rule should be triggered.
-        
+
         :param vel: The current velocity.
         :type vel: int
         """
