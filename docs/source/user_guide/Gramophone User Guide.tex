@@ -665,6 +665,10 @@ can define.\\
 \texttt{unpause} & Continues the simulation at a given position. Set position to None if you want to unpause right where the animal is. & \texttt{unpause\_position} \\ 
 
 \hline 
+\rule[-1ex]{0pt}{2.5ex} 
+\texttt{print} & Displays the given message in the console. & \texttt{message} \\ 
+
+\hline 
 \end{tabularx} 
 
 \begin{paramlist}
@@ -673,6 +677,7 @@ can define.\\
 \param{port} The digital output port used for this event. An integer number between 1 and 4.
 \param{on\_time} A parameter for bursting. The time for which the port will be pulled high in seconds.
 \param{pause\_time} A parameter for bursting. The time for which the port will be pulled low in seconds.
+\param{message} The message that will be displayed. Must be a string.
 \end{paramlist}
 
 
@@ -707,12 +712,35 @@ Rule type & Description & Parameters \\
 
 \hline 
 \rule[-1ex]{0pt}{2.5ex} 
+\texttt{smooth\_velocity} & Same as the velocity rule but a given number of velocities are averaged to smooth out the data. & \texttt{bin\_size, vel\_rule\_type, threshold, delay} \\ 
+
+\hline 
+\rule[-1ex]{0pt}{2.5ex} 
 \texttt{speed} & If the absolute sum of the last x velocities are above or below a certain threshold, the given event will trigger. & \texttt{speed\_rule\_type, threshold, bin\_size} \\ 
+
+
+\hline 
+\rule[-1ex]{0pt}{2.5ex} 
+\texttt{keypress} & Pressing the given key on the keyboard triggers the event. & \texttt{key} \\ 
+
+\hline 
+\rule[-1ex]{0pt}{2.5ex} 
+\texttt{input} & Triggers when the given input rises, falls or changes. & \texttt{input\_id, trigger\_type} \\ 
 
 \hline 
 \end{tabularx}
 \\
 
+\begin{paramlist}
+\param{zone\_type} The group of Frames you want this rule to trigger in.
+\param{delay} How much time should pass (in seconds) before the rule is triggered, ie. how long should the animal stay in the zone or be above or below a velocity threshold.
+\param{threshold} The threshold above or below which the rule triggers.
+\param{vel\_rule\_type, speed\_rule\_type} Can be \lstinline{'above'} or \lstinline{'below'} depending on how you want to compare the animals movement to the threshold.
+\param{bin\_size} How many velocity points should be summed or averaged.
+\param{key} The key on the keyboard that triggers the rule. Should be given as a string eg.: \lstinline{'space'}, \lstinline{'F8'}, \lstinline{'NUM_5'}, \lstinline{'A'}. Do not use \lstinline{'ESCAPE'} as it is always set to exit the simulation.
+\param{input\_id} The number of the digital input on the device you want to use for the rule (1 or 2).
+\param{trigger\_type} If set to \lstinline{'rise'} the rule will trigger when the state of the given input changes from low to high. If set to \lstinline{'fall'} it triggers when the change is from high to low. If set to \lstinline{'change'} it triggers in both cases. 
+\end{paramlist}
 
 To add a rule you can call your Level's \texttt{add\_rule} command like so: \texttt{LVL.add\_rule(rule\_type, event, rule\_parameters)}\\
 
