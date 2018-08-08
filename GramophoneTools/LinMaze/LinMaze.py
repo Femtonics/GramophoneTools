@@ -459,7 +459,7 @@ class Session(object):
                 self.movement(velocity)
 
             self.check_zone()
-            self.check_rules(velocity)
+            self.check_rules(velocity, params['DI-1'], params['DI-2'])
 
             if not self.skip_save:
                 self.log.make_entry(velocity, params['TIME'],
@@ -672,12 +672,18 @@ class Session(object):
         self.current_zone = [zone for zone in self.level.zones
                              if zone.check(self.virtual_position)][0]
 
-    def check_rules(self, vel):
+    def check_rules(self, vel, in_1, in_2):
         '''
         Checks all the rules of the Level.
         
         :param vel: The current velocity (for velocity based rules).
         :type vel: int
+
+        :param in_1: The state of input 1
+        :type in_1: int
+
+        :param in_2: The state of input 2
+        :type in_2: int
         '''
 
         for rule in self.level.rules:
@@ -687,3 +693,7 @@ class Session(object):
             # Check speed and velocity rules
             if type(rule) in [Rule.SpeedRule, Rule.VelocityRule, Rule.SmoothVelocityRule]:
                 rule.check(vel)
+            # Check input rules
+            if type(rule) is Rule.InputRule:
+                rule.check(1, in_1)
+                rule.check(2, in_2)

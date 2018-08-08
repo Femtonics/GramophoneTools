@@ -277,3 +277,38 @@ class KeyPressRule(Rule):
     def check(self, key):
         if key == self.keys[self.key]:
             self.trigger()
+
+
+class InputRule(Rule):
+    """
+    A Rule that triggers when the given digital output rises, falls or changes.
+
+    :param input_id: The number of the input (1 or 2)
+    :type input_id: int
+
+    :param trigger_type: 'rise', 'fall' or 'change'
+    :type trigger_type: str
+    """
+    def __init__(self, level, event, input_id, trigger_type):
+        super().__init__(level, event)
+        self.input_id = input_id
+        self.trigger_type = trigger_type
+        self.last_state = 0
+
+    def __str__(self):
+        return "Input " + str(self.input_id) + " " + self.trigger_type
+    
+    def check(self, input_id, state):
+        if input_id == self.input_id and state != self.last_state:
+            if self.trigger_type == 'change':
+                self.trigger()
+
+            if self.trigger_type == 'rise':
+                if self.last_state < state:
+                    self.trigger()
+
+            if self.trigger_type == 'fall':
+                if self.last_state > state:
+                    self.trigger()
+
+            self.last_state = state

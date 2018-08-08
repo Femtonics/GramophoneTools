@@ -213,6 +213,11 @@ class Level(object):
                 self, self.events[event_name], args[0]))
             # key
 
+        if rule_type == "input":
+            self.rules.append(Rule.InputRule(
+                self, self.events[event_name], args[0], args[1]))
+            # input_id, trigger_type
+
     def render(self):
         ''' Renders all the frames of the level, making it ready to be played. '''
         if not self.rendered:
