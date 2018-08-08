@@ -25,9 +25,20 @@ Smooth Velocity Rule
    :members:
    :show-inheritance:
 
-
 Speed Rule
 ----------
 .. autoclass:: Rule.SpeedRule
+   :members:
+   :show-inheritance:
+
+Keypress Rule
+-------------
+.. autoclass:: Rule.KeyPressRule
+   :members:
+   :show-inheritance:
+
+Input Rule
+----------
+.. autoclass:: Rule.InputRule
    :members:
    :show-inheritance:

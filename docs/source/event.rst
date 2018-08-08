@@ -51,3 +51,8 @@ Pausing/Unpausing
    :members:
    :show-inheritance:
 
+Printing messages
+-----------------
+.. autoclass:: Event.Print
+   :members:
+   :show-inheritance:
