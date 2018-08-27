@@ -12,6 +12,7 @@ from GramophoneTools.LinMaze import Rule
 from GramophoneTools.LinMaze.Tools.Stopwatch import Stopwatch
 from GramophoneTools.LinMaze.Tools.filehandler import select_file
 import GramophoneTools.Comms as Comms
+import GramophoneTools
 
 class LinMazeError(Exception):
     """
@@ -203,6 +204,7 @@ class VRLog(object):
         self.vrl.attrs['right_monitor'] = str(session.right_monitor)
         self.vrl.attrs['gramophone_serial'] = str(session.gramophone_serial)
         self.vrl.attrs['velocity_ratio'] = session.vel_ratio
+        self.vrl.attrs['software_version'] = GramophoneTools.__version__
 
         self.vrl.create_dataset("time", (0,),
                                 maxshape=(None,), dtype=np.float64)

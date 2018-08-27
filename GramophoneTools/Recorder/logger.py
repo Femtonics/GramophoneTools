@@ -7,6 +7,7 @@ from abc import ABC, abstractmethod
 import h5py
 import numpy as np
 import xlsxwriter
+from ..__init__ import __version__ as gtver
 
 
 class VelocityLog(object):
@@ -83,6 +84,8 @@ class VelocityLog(object):
                 metadata_sheet.write(5, 0, 'Length')
                 metadata_sheet.write(6, 0, 'Mean velocity')
                 metadata_sheet.write(7, 0, 'Comment')
+                metadata_sheet.write(8, 0, 'Device serial')
+                metadata_sheet.write(9, 0, 'Software version')
 
                 metadata_sheet.write(0, (counter+2)//2, record.unique_id)
                 metadata_sheet.write(1, (counter+2)//2, record.rec_id)
@@ -92,6 +95,8 @@ class VelocityLog(object):
                 metadata_sheet.write(5, (counter+2)//2, record.length_hr)
                 metadata_sheet.write(6, (counter+2)//2, record.mean_vel)
                 metadata_sheet.write(7, (counter+2)//2, record.comment)
+                metadata_sheet.write(8, (counter+2)//2, record.device_serial)
+                metadata_sheet.write(9, (counter+2)//2, record.software_version)
 
                 counter += 2
 
@@ -127,6 +132,7 @@ class Record(ABC):
     comment = NotImplemented
     sampling_freq = NotImplemented
     device_serial = NotImplemented
+    software_version = gtver
 
     @property
     def unique_id(self):
@@ -189,6 +195,7 @@ class Record(ABC):
         log_file[self.unique_id].attrs['mean_velocity'] = self.mean_vel
         log_file[self.unique_id].attrs['sampling_freq'] = self.sampling_freq
         log_file[self.unique_id].attrs['device_serial'] = self.device_serial
+        log_file[self.unique_id].attrs['software_version'] = self.software_version
 
         log_file[self.unique_id+'/time'] = self.times
         log_file[self.unique_id+'/velocity'] = self.velocities
