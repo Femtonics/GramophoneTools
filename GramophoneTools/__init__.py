@@ -5,7 +5,7 @@ import os
 import sys
 import subprocess
 
-__version__ = '0.6.14'
+__version__ = '0.6.15'
 
 def main(args=None):
     """ The main routine. """

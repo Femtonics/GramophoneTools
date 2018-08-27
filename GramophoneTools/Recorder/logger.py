@@ -7,8 +7,7 @@ from abc import ABC, abstractmethod
 import h5py
 import numpy as np
 import xlsxwriter
-from ..__init__ import __version__ as gtver
-
+import GramophoneTools
 
 class VelocityLog(object):
     """ A container object for velocity recordins. Handles
@@ -132,7 +131,7 @@ class Record(ABC):
     comment = NotImplemented
     sampling_freq = NotImplemented
     device_serial = NotImplemented
-    software_version = gtver
+    software_version = GramophoneTools.__version__
 
     @property
     def unique_id(self):
