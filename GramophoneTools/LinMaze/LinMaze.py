@@ -202,7 +202,7 @@ class VRLog(object):
         self.vrl.attrs['RGB'] = session.level.rgb
         self.vrl.attrs['left_monitor'] = str(session.left_monitor)
         self.vrl.attrs['right_monitor'] = str(session.right_monitor)
-        self.vrl.attrs['gramophone_serial'] = str(session.gramophone_serial)
+        self.vrl.attrs['device_serial'] = str(session.gramophone_serial)
         self.vrl.attrs['velocity_ratio'] = session.vel_ratio
         self.vrl.attrs['software_version'] = GramophoneTools.__version__
 
