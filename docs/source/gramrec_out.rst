@@ -35,3 +35,9 @@ length
     The length of the record in seconds
 length_hr
     The length of the record in a human readable format (%M:%S)
+device_serial
+    The serial number of the device the recording was made with
+sampling_freq
+    The target sampling frequency set in the software (actual value might be different)
+software_version
+    What version of GramophoneTools was used to make this log
