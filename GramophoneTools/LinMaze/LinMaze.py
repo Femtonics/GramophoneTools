@@ -474,10 +474,6 @@ class Session(object):
                     self.runtime.value() >= self.runtime_limit * 60:
                 pyglet.app.exit()
 
-        # pyglet.clock.set_fps_limit(30)
-        pyglet.clock.schedule(main_loop)
-        # pyglet.clock.schedule_interval(main_loop, 0.005)
-
         # Make an OpenGL texture from every frame's texture
         texture_ids = []
         textures = [frame.texture for frame in self.level.frames]
@@ -564,6 +560,11 @@ class Session(object):
         # Reset gramophone reisters
         self.gramophone.reset_time()
         self.gramophone.reset_position()
+
+        # Schedule main loop
+        pyglet.clock.schedule(main_loop)
+        # pyglet.clock.set_fps_limit(30)
+        # pyglet.clock.schedule_interval(main_loop, 0.005)
 
         # Main app run
         pyglet.app.run()
