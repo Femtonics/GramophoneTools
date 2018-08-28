@@ -561,6 +561,10 @@ class Session(object):
         self.gramophone.reset_time()
         self.gramophone.reset_position()
 
+        # Reset all Rule delay timers
+        for rule in [rule for rule in self.level.rules if type(rule) != Rule.SpeedRule]:
+            rule.delay_timer.reset()
+
         # Schedule main loop
         pyglet.clock.schedule(main_loop)
         # pyglet.clock.set_fps_limit(30)
