@@ -1,5 +1,5 @@
 import sys
-import Recorder
+from . import Recorder
 import os.path
 
 def main(args=None):
