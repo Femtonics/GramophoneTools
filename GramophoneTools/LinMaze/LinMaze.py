@@ -461,13 +461,14 @@ class Session(object):
                 self.movement(velocity)
 
             self.check_zone()
-            self.check_rules(velocity, params['DI-1'], params['DI-2'])
 
             if not self.skip_save:
                 self.log.make_entry(velocity, params['TIME'],
                                     params['DI-1'], params['DI-2'],
                                     params['DO-1'],  params['DO-2'],
                                     params['DO-3'],  params['DO-4'])
+            
+            self.check_rules(velocity, params['DI-1'], params['DI-2'])
 
             if self.runtime_limit is not None and\
                     self.runtime.value() >= self.runtime_limit * 60:
