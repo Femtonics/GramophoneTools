@@ -562,7 +562,7 @@ class Session(object):
         self.gramophone.reset_position()
 
         # Reset all Rule delay timers
-        for rule in [rule for rule in self.level.rules if type(rule) != Rule.SpeedRule]:
+        for rule in [rule for rule in self.level.rules if hasattr(rule, 'delay_timer')]:
             rule.delay_timer.reset()
 
         # Schedule main loop
