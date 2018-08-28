@@ -153,7 +153,8 @@ class VelocityRule(Rule):
 
         if self.active and not self.done and not self.delay_timer.is_running():
             self.trigger()
-            # self.delay_timer.reset()
+            self.delay_timer.reset()
+            self.done = False
 
 
 class SmoothVelocityRule(VelocityRule):
