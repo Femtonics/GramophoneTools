@@ -6,3 +6,4 @@ python setup.py bdist_wininst --bitmap "res\femtonics_installer.bmp"
 python setup.py clean --all
 twine upload dist/*
 call upload.bat
+git push
