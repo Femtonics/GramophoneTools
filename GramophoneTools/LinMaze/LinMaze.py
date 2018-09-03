@@ -457,8 +457,11 @@ class Session(object):
             velocity = round(self.vel_ratio*(params['ENCPOS'] - self.last_position)/14400)
             self.last_position = params['ENCPOS']
 
-            if not self.paused:
+            if self.paused:
+                self.movement(0)
+            else:
                 self.movement(velocity)
+                
 
             self.check_zone()
 
