@@ -304,6 +304,16 @@ class FileRecord(Record):
         """ Returns the record's mean velocity form file """
         return self.file_group.attrs['sampling_freq']
 
+    @property
+    def device_serial(self):
+        """ Returns the record's device id form file """
+        return self.file_group.attrs['device_serial']
+
+    @property
+    def software_version(self):
+        """ Returns the record's device id form file """
+        return self.file_group.attrs['software_version']
+
 
     def save(self, log_file):
         """ Saves the modified fields and returns itself. """
