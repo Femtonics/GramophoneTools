@@ -106,6 +106,12 @@ class VRWindow(pyglet.window.Window):
                 target = int(not self.session.last_read['DO-4'])
                 self.session.gramophone.write_output(4, target)
 
+            if symbol == pyglet.window.key.LEFT:
+                self.session.manual_vel += 5
+
+            if symbol == pyglet.window.key.RIGHT:
+                self.session.manual_vel -= 5
+
     def on_close(self):
         pyglet.app.exit()
 
@@ -406,6 +412,7 @@ class Session(object):
         self.gramophone_serial = gramophone_serial
         self.offset_arrow = offset_arrow
         self.skip_save = skip_save
+        self.manual_vel = 0 # For controlling movement with keyboard
 
         grams = Comms.find_devices()
         if grams:
@@ -462,6 +469,7 @@ class Session(object):
                 params = self.last_read
 
             velocity = round(self.vel_ratio*(params['ENCPOS'] - self.last_position)/14400)
+            velocity += self.manual_vel
             self.last_position = params['ENCPOS']
 
             if self.paused:
