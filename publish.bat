@@ -7,7 +7,3 @@ python setup.py clean --all
 twine upload dist/*
 call upload.bat
 git push
-rmdir build
-rmdir dist
-rmdir docs\build\
-rmdir GramophoneTools.egg-info
