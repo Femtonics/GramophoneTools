@@ -11,7 +11,7 @@ from pyglet.gl import *
 from GramophoneTools.LinMaze import Rule
 from GramophoneTools.LinMaze.Tools.Stopwatch import Stopwatch
 from GramophoneTools.LinMaze.Tools.filehandler import select_file
-import GramophoneTools.Comms as Comms
+from GramophoneTools import Comms
 import GramophoneTools
 
 class LinMazeError(Exception):
@@ -450,10 +450,17 @@ class Session(object):
             # print('FPS:', 1/dt)s
             
             params = {}
-            for key, val in self.gramophone.read_linmaze_params().items():
-                params[self.gramophone.parameters[key].name] = val       
+            try:
+                for key, val in self.gramophone.read_linmaze_params().items():
+                    params[self.gramophone.parameters[key].name] = val       
 
-            self.last_read = params
+                self.last_read = params
+            
+            except Comms.GramophoneError as err:
+                print("Communication ERROR:", err)
+                print("Using the previously read values.")
+                params = self.last_read
+
             velocity = round(self.vel_ratio*(params['ENCPOS'] - self.last_position)/14400)
             self.last_position = params['ENCPOS']
 
