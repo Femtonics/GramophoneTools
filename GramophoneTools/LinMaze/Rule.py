@@ -259,7 +259,6 @@ class SpeedRule(Rule):
         # print('sum: ', norm)
 
 
-
 class KeyPressRule(Rule):
     """
     A Rule that triggers when a selected key on the keyboard is pressed.
@@ -268,6 +267,7 @@ class KeyPressRule(Rule):
     :type key: str
     """
     keys = pyglet.window.key.__dict__
+
     def __init__(self, level, event, key):
         super().__init__(level, event)
         self.key = key.upper()
@@ -290,6 +290,7 @@ class InputRule(Rule):
     :param trigger_type: 'rise', 'fall' or 'change'
     :type trigger_type: str
     """
+
     def __init__(self, level, event, input_id, trigger_type):
         super().__init__(level, event)
         self.input_id = input_id
@@ -298,7 +299,7 @@ class InputRule(Rule):
 
     def __str__(self):
         return "Input " + str(self.input_id) + " " + self.trigger_type
-    
+
     def check(self, input_id, state):
         if input_id == self.input_id and state != self.last_state:
             if self.trigger_type == 'change':

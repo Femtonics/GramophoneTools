@@ -2,6 +2,7 @@ import sys
 from . import Recorder
 import os.path
 
+
 def main(args=None):
     """The main routine."""
     if args is None:
@@ -22,6 +23,7 @@ def main(args=None):
         log_file = None
 
     Recorder.main(devmode=devmode, log_file=log_file)
+
 
 if __name__ == "__main__":
     main()

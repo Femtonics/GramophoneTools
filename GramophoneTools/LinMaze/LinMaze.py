@@ -14,16 +14,18 @@ from GramophoneTools.LinMaze.Tools.filehandler import select_file
 from GramophoneTools import Comms
 import GramophoneTools
 
+
 class LinMazeError(Exception):
     """
     Generic Exception for LinMaze related errors.
     """
     pass
 
+
 class VRWindow(pyglet.window.Window):
     '''
     A pyglet window that can display VR on a given screen.
-    
+
     :param session: The session that is played in this window.
     :type session: Session
 
@@ -36,7 +38,7 @@ class VRWindow(pyglet.window.Window):
 
     :param fullscreen: True if the window should be fullscreen. True by default.
     :type fullscreen: bool
-    
+
     '''
 
     def __init__(self, session, screen_number,
@@ -184,10 +186,11 @@ class VRWindow(pyglet.window.Window):
 class VRLog(object):
     """
     A logger for LinMaze Sessions.
-    
+
     :param session: The session that should be logged.
     :type session: Session
     """
+
     def __init__(self, session):
         self.session = session
 
@@ -365,37 +368,37 @@ class VRLog(object):
 class Session(object):
     '''
     A play/simulation session for a LinMaze Level.
-    
+
     :param level: The LinMaze Level that will be played in this Session.
     :type level: Level
-    
+
     :param vel_ratio: The velocity read from the Gramophone is multiplied 
         with this. 1 by default.
     :type vel_ratio: float
-    
+
     :param runtime_limit: How long should the simulation run in minutes. 
         Set to None to run infinately. None by default
     :type runtime_limit: float or None
-    
+
     :param left_monitor: The number of the monitor to the right of the animal. Set to 
         None to disable this monitor. 1 by default.
     :type left_monitor: int or None
-    
+
     :param right_monitor: The number of the monitor to the right of the animal. Set to 
         None to disable this monitor. None by default.
     :type right_monitor: int or None
-    
+
     :param gramophone_serial: The serial of the Gramophone used for the simulation.
         Set to None to find a Gramophone automatically. None by default.
     :type gramophone_serial: int or None
-    
+
     :param fullscreen: Should the simulation run in fullscreen mode? True by default.
     :type fullscreen: bool
-    
+
     :param offset_arrow: Should the zone_offset of the Level be shown as a red arrow on screen? 
         False by default.
     :type offset_arrow: bool
-    
+
     :param skip_save: Should the saving of a log be skipped for this Session? False by default.
     :type skip_save: bool
     '''
@@ -412,14 +415,14 @@ class Session(object):
         self.gramophone_serial = gramophone_serial
         self.offset_arrow = offset_arrow
         self.skip_save = skip_save
-        self.manual_vel = 0 # For controlling movement with keyboard
+        self.manual_vel = 0  # For controlling movement with keyboard
 
         grams = Comms.find_devices()
         if grams:
             if self.gramophone_serial is None:
                 print('\nNo Gramophone specified. Using the first one.')
                 self.gramophone_serial = list(grams)[0]
-                
+
             self.gramophone = grams[self.gramophone_serial]
         else:
             raise(LinMazeError('No gramophones connected.'))
@@ -447,28 +450,30 @@ class Session(object):
         if right_monitor is not None:
             right_window = VRWindow(
                 self, self.right_monitor, mirrored=True, fullscreen=fullscreen)
+
         def main_loop(dt):
             '''
             Commands executed at each frame refresh.
-            
+
             :param dt: Time since last reftesh is seconds. Passed by the pyglet clock.
             :type dt: float
             '''
             # print('FPS:', 1/dt)s
-            
+
             params = {}
             try:
                 for key, val in self.gramophone.read_linmaze_params().items():
-                    params[self.gramophone.parameters[key].name] = val       
+                    params[self.gramophone.parameters[key].name] = val
 
                 self.last_read = params
-            
+
             except Comms.GramophoneError as err:
                 print("Communication ERROR:", err)
                 print("Using the previously read values.")
                 params = self.last_read
 
-            velocity = round(self.vel_ratio*(params['ENCPOS'] - self.last_position)/14400)
+            velocity = round(
+                self.vel_ratio*(params['ENCPOS'] - self.last_position)/14400)
             velocity += self.manual_vel
             self.last_position = params['ENCPOS']
 
@@ -476,7 +481,6 @@ class Session(object):
                 self.movement(0)
             else:
                 self.movement(velocity)
-                
 
             self.check_zone()
 
@@ -485,7 +489,7 @@ class Session(object):
                                     params['DI-1'], params['DI-2'],
                                     params['DO-1'],  params['DO-2'],
                                     params['DO-3'],  params['DO-4'])
-            
+
             self.check_rules(velocity, params['DI-1'], params['DI-2'])
 
             if self.runtime_limit is not None and\
@@ -611,7 +615,7 @@ class Session(object):
     def movement(self, vel):
         '''
         Move on the map with given velocity.
-        
+
         :param vel: Distance to move in pixels.
         :type vel: int
         '''
@@ -639,7 +643,7 @@ class Session(object):
     def pause(self, position=None):
         '''
         Pauses the level at the given position.
-        
+
         :param position: Where should the simulation pause on the Level in pixels.
             Set to None to pause at current position. None by default.
         :type position: int or None
@@ -653,7 +657,7 @@ class Session(object):
     def unpause(self, position=None):
         '''
         Unpauses the level at the given position.
-        
+
         :param position: Where should the simulation unpause on the Level in pixels.
             Set to None to unpause at current position. None by default.
         :type position: int or None
@@ -671,7 +675,7 @@ class Session(object):
 
         :param target_pos: Where should the teleportation land in pixels.
         :type position: int
-        
+
         '''
         self.position = -(target_pos - self.level.zone_offset)
         self.teleported = True
@@ -679,14 +683,14 @@ class Session(object):
     def random_teleport(self, target_zone_types):
         '''
         Teleports to the middle of a random zone with one of the given zone types.
-        
+
         :param target_zone_types: list of possible landing zone types.
         :type target_zone_types: [str]
         '''
         zone_selection = [
             zone for zone in self.level.zones
             if zone.zone_type in target_zone_types]
-        #and zone.zone_type != self.current_zone.zone_type
+        # and zone.zone_type != self.current_zone.zone_type
 
         target_zone = random.choice(zone_selection)
         middle_of_target = (target_zone.begin + target_zone.end) // 2
@@ -701,7 +705,7 @@ class Session(object):
     def check_rules(self, vel, in_1, in_2):
         '''
         Checks all the rules of the Level.
-        
+
         :param vel: The current velocity (for velocity based rules).
         :type vel: int
 

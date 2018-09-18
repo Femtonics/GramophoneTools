@@ -7,19 +7,21 @@ import subprocess
 
 __version__ = '0.6.22'
 
+
 def main(args=None):
     """ The main routine. """
     project_dir = os.path.split(__file__)[0]
 
     if args is None:
         args = sys.argv[1:]
-    
+
     if args:
         if args[0] == 'examples':
             # subprocess.Popen(r'explorer "{}\examples"'.format(project_dir))
             os.startfile(project_dir+r'\examples')
         if args[0] == 'guide':
-            os.startfile(project_dir+r'\docs\_downloads\Gramophone User Guide.pdf')
+            os.startfile(
+                project_dir+r'\docs\_downloads\Gramophone User Guide.pdf')
         if args[0] == 'docs':
             os.startfile(project_dir+r'\docs\index.html')
         if args[0] == 'ver':
@@ -32,6 +34,7 @@ def main(args=None):
             help_text()
     else:
         help_text()
+
 
 def help_text():
     print('\n Use one of the following arguments:\n')

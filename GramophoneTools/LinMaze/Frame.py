@@ -63,8 +63,9 @@ def transition(left, right, transition_width):
 
     decrease = np.linspace(1, 0, tw1)
     increase = np.linspace(0, 1, tw1)
-    if left.ndim < 3 and right.ndim < 3: #can't transition between RGB frames
-        transition = np.round(decrease * left[:, -tw1:] + increase * right[:, :tw1])
+    if left.ndim < 3 and right.ndim < 3:  # can't transition between RGB frames
+        transition = np.round(
+            decrease * left[:, -tw1:] + increase * right[:, :tw1])
 
         left = left[:, :-tw2]
         right = right[:, tw2:]
@@ -91,25 +92,23 @@ def frame_transitions(list_of_frames, transition_width):
     if transition_width > 0:
 
         for i, _ in enumerate(frames):
-            j = (i+1)%(len(frames))
+            j = (i+1) % (len(frames))
             left_r, right_r = transition(
-                frames[i].texture[...,0], frames[j].texture[...,0], transition_width)
+                frames[i].texture[..., 0], frames[j].texture[..., 0], transition_width)
             left_g, right_g = transition(
-                frames[i].texture[...,1], frames[j].texture[...,1], transition_width)
+                frames[i].texture[..., 1], frames[j].texture[..., 1], transition_width)
             left_b, right_b = transition(
-                frames[i].texture[...,2], frames[j].texture[...,2], transition_width)
+                frames[i].texture[..., 2], frames[j].texture[..., 2], transition_width)
 
             frames[i].texture = np.dstack((left_r, left_g, left_b))
             frames[j].texture = np.dstack((right_r, right_g, right_b))
 
         # frames[-1].frame, frames[0].frame = transition(
         #     frames[-1].frame, frames[0].frame, transition_width)
-            
+
         for i in range(len(frames)):
             if isinstance(frames[i], ImageFile):
                 frames[i].frame = frames[i].texture
-
-
 
     return list(frames)
 
@@ -401,6 +400,7 @@ class SineWave(WaveFrame):
             self.wave_temp[index] = WaveFrame.wave_func(val)
         super().make()
 
+
 class SquareWave(WaveFrame):
     ''' Square wave modulated grating pattern Frame. '''
     display_name = "Square wave"
@@ -438,7 +438,7 @@ class ImageFile(Frame):
         self.frame = img.astype(np.uint8)
 
     def __str__(self):
-        return super().__str__() + " - Type: Image file - Filename: "+ self.filename
+        return super().__str__() + " - Type: Image file - Filename: " + self.filename
 
     def make(self):
         self.make_texture()

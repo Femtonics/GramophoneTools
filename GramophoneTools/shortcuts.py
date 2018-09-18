@@ -8,6 +8,7 @@ if sys.platform == 'win32':
 
 DIR = os.path.dirname(os.path.abspath(__file__))
 
+
 def create_shortcut(name, target, icon, arguments='', comment=''):
     desktopFolder = os.getenv('PUBLIC')+'\\Desktop'
     linkName = name+'.lnk'
@@ -22,6 +23,7 @@ def create_shortcut(name, target, icon, arguments='', comment=''):
     shortcut.Description = comment
     shortcut.save()
     print("Created shortcut for '{}' called '{}'.".format(target, name))
+
 
 def install_shortcuts():
     """ Make Windows shotcuts on the public desktop. """
@@ -38,6 +40,7 @@ def install_shortcuts():
                     os.path.join(DIR, 'res\\update.ico'),
                     arguments='install -U GramophoneTools',
                     comment='Use pip to update the GramophoneTools package to the newest version')
+
 
 if __name__ == '__main__':
     install_shortcuts()

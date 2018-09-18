@@ -14,7 +14,7 @@ class Level(object):
     ''' 
     An object that can be played for conditioning.
     You can add frames, events and rules to it to tune your conditioning. 
-    
+
     :param name: The name this Level will be refered to by (eg. in the default filename when saving)
     :type name:  str
 
@@ -223,7 +223,8 @@ class Level(object):
         if not self.rendered:
             print('\n'+self.name,  '>>\n')
             self.frames = Frame.multi_make(self.frames)
-            self.frames = Frame.frame_transitions(self.frames, self.transition_width)
+            self.frames = Frame.frame_transitions(
+                self.frames, self.transition_width)
 
             loadtime = Stopwatch.Stopwatch()
             for count, frame in enumerate(self.frames):

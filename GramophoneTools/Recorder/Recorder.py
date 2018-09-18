@@ -112,13 +112,15 @@ class deviceInfoWindow(DEVINFO_WIN_BASE, DEVINFO_WIN_UI):
         self.product_label.setText(
             prod_name+'\n'+revision+'\n'+serial+'\n'+production)
 
-        release = 'Relase:'+ firmware_info['release']
-        build = 'Build:'+ firmware_info['build']
-        date = 'Date ({}): {}'.format(firmware_info['date_format'], firmware_info['date'])
-        ftime = 'Time ({}): {}'.format(firmware_info['time_format'], firmware_info['time'])
+        release = 'Relase:' + firmware_info['release']
+        build = 'Build:' + firmware_info['build']
+        date = 'Date ({}): {}'.format(
+            firmware_info['date_format'], firmware_info['date'])
+        ftime = 'Time ({}): {}'.format(
+            firmware_info['time_format'], firmware_info['time'])
 
         self.firmware_label.setText(release+'\n'+build+'\n'+date+'\n'+ftime)
-        
+
         self.refresh_sensor_label()
         self.refresh_btn.clicked.connect(self.refresh_sensor_label)
 
@@ -127,10 +129,14 @@ class deviceInfoWindow(DEVINFO_WIN_BASE, DEVINFO_WIN_UI):
         for key, val in self.gram.read_sensors().items():
             sensors[self.gram.parameters[key].name] = val
 
-        voltage3v3 = 'Voltage on 3.3V rail: ' +'{0:.2f}'.format(sensors['VSEN3V3'])+' V'
-        voltage5v = 'Voltage on 5V rail: ' +'{0:.2f}'.format(sensors['VSEN5V'])+' V'
-        mcu_temp = 'MCU temperature: ' +'{0:.2f}'.format(sensors['TSENMCU'])+' C'
-        ext_temp = 'External temperature: ' + '{0:.2f}'.format(sensors['TSENEXT'])+' C'
+        voltage3v3 = 'Voltage on 3.3V rail: ' + \
+            '{0:.2f}'.format(sensors['VSEN3V3'])+' V'
+        voltage5v = 'Voltage on 5V rail: ' + \
+            '{0:.2f}'.format(sensors['VSEN5V'])+' V'
+        mcu_temp = 'MCU temperature: ' + \
+            '{0:.2f}'.format(sensors['TSENMCU'])+' C'
+        ext_temp = 'External temperature: ' + \
+            '{0:.2f}'.format(sensors['TSENEXT'])+' C'
 
         self.sensor_label.setText(
             voltage3v3+'\n'+voltage5v+'\n'+mcu_temp+'\n'+ext_temp)
@@ -219,7 +225,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
     @property
     def log(self):
         return self._log
-    
+
     @log.setter
     def log(self, value):
         if self.log is not None:
@@ -235,7 +241,6 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         # self.records_table.resizeColumnsToContents()
         self.update_table_size()
         self.update_title()
-
 
     @pyqtSlot()
     def log_changed(self):
@@ -306,7 +311,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
     def set_autosave(self, val):
         """
         Turns automatic saving on (True) or off (False)
-        
+
         :param val: The sate to set
         :type val: bool
         """
@@ -323,13 +328,13 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
             options = QFileDialog.Options()
             fileformat = "pyGram logs (*.vlg)"
 
-            if mode == 'save': # Show a save dialog
+            if mode == 'save':  # Show a save dialog
                 filename, _ = QFileDialog.getSaveFileName(
                     self, "Save velocity log", "", fileformat, options=options)
                 if filename:
                     self.log.open_log_file(filename, 'w')
 
-            if mode == 'open': # Show an open dialog
+            if mode == 'open':  # Show an open dialog
                 filename, _ = QFileDialog.getOpenFileName(
                     self, "Open velocity log", "", fileformat, options=options)
 
@@ -342,8 +347,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         self.update_title()
         self.update_table_size()
 
-
-        print('File selected:',filename)
+        print('File selected:', filename)
         return bool(filename)
 
     def show_about(self):
@@ -378,7 +382,6 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
             self, "Save velocity log", "", fileformat, options=options)
         if filename:
             self.log.xls_export(filename)
-
 
     @pyqtSlot(bool)
     def toggle_out_1(self, value):
@@ -419,7 +422,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
             self.connect()
         else:
             self.disconnect()
-            
+
     @property
     def selected_gramophone(self):
         return self.gram_list[int(self.gram_dropdown.currentData(0), 16)]
@@ -447,7 +450,6 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
             self.reader.device_error.disconnect(self.gramophone_error)
 
             self.update_conn_state()
-            
 
     @pyqtSlot()
     def refresh_gram_list(self):
@@ -490,7 +492,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
     def update_conn_state(self):
         """ Updates the GUI depending on wheter the software is
             currently connected to a Gramophone. """
-        
+
         self.reset_graph()
         self.update_timer(0)
 
@@ -520,7 +522,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
             self.connect_btn.setProperty("text", "Connect")
             self.refresh_gram_list()
             self.statusbar.showMessage('Disconnected from Gramophone '
-                                       +  hex(self.gram.product_info['serial']), 3000)
+                                       + hex(self.gram.product_info['serial']), 3000)
 
     @pyqtSlot(int, float, int, int, int, int, int, int)
     def receiver(self, timer, velocity, in_1, in_2, out_1, out_2, out_3, out_4):
@@ -600,7 +602,8 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
                 self.counter_box.setEnabled(True)
                 self.counter_box.stepUp()
 
-                if self.autosave: self.save()
+                if self.autosave:
+                    self.save()
 
     def update_output_state(self, out_1, out_2, out_3, out_4):
         self.out_1_btn.setChecked(bool(out_1))
@@ -622,7 +625,6 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         msg_box.setStandardButtons(QMessageBox.Ok)
         msg_box.setDefaultButton(QMessageBox.Ok)
         msg_box.exec()
-
 
     @pyqtSlot()
     def update_table_size(self):
@@ -743,7 +745,8 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
         self.log_model.add_record(dummy)
         self.update_table_size()
         self.log_changed()
-        if self.autosave: self.save()
+        if self.autosave:
+            self.save()
 
 
 class VelLogModel(QAbstractTableModel):
@@ -819,7 +822,7 @@ class VelLogModel(QAbstractTableModel):
                 self.log.records[index.row()].comment = value
                 self.dataChanged.emit(index, index)
                 return True
-        
+
         return False
 
     def headerData(self, section, orientation, role):
@@ -912,9 +915,10 @@ class Reader(QObject):
                 out_2 = result[0x31]
                 out_3 = result[0x32]
                 out_4 = result[0x33]
-                self.recorder_signal.emit(gtime, vel, in_1, in_2, out_1, out_2, out_3, out_4)
+                self.recorder_signal.emit(
+                    gtime, vel, in_1, in_2, out_1, out_2, out_3, out_4)
                 time.sleep(1/self.frequency)
-     
+
     def start(self):
         self.thread = QThread()
         # self.readers.append((thread, reader))
@@ -927,6 +931,7 @@ class Reader(QObject):
         self.reading = False
         self.thread.quit()
         self.thread.wait()
+
 
 def main(devmode=False, log_file=None):
     if not os.path.exists(PROGRAM_DATA + '/GramophoneTools'):

@@ -20,7 +20,6 @@ class Event(ABC):
         self.trigger_count += 1
         print(self, "["+str(self.trigger_count)+"]", '\n')
 
-
     @abstractproperty
     def triggerable(self):
         ''' Tell whether it makes sense to trigger this event at the moment. '''
@@ -156,7 +155,6 @@ class PortOff(Event):
         if self.port == 4:
             return bool(self.session.gramophone.last_out_4)
 
-
     def __str__(self):
         return "Turn OFF port " + str(self.port)
 
@@ -164,11 +162,11 @@ class PortOff(Event):
 class StartBurst(Event):
     '''
     Starts bursting a port on the Level's gramophone.
-    
-    
+
+
     :param level: The Level this Event will be used on.
     :type level: Level
-    
+
     :param port: Which output to use on the device.
     :type port: int
 
@@ -202,7 +200,7 @@ class StartBurst(Event):
 class StopBurst(Event):
     '''
     Stops bursting a port on the Level's gramophone.
-    
+
     :param level: The Level this Event will be used on.
     :type level: Level
 
@@ -218,7 +216,7 @@ class StopBurst(Event):
         self.session.gramophone.stop_burst(self.port)
         super().trigger()
 
-            # print("Bursting is already off on port", self.port, '\n')
+        # print("Bursting is already off on port", self.port, '\n')
     @property
     def triggerable(self):
         return self.session.gramophone.bursting[self.port]
@@ -233,7 +231,7 @@ class Pause(Event):
 
     :param level: The Level this Event will be used on.
     :type level: Level
-    
+
     :param pause_position: Set to None to pause at current position. None by default.
     :type pause_position: int or None
     '''
@@ -251,17 +249,18 @@ class Pause(Event):
         return not self.session.paused
 
     def __str__(self):
-        pos_name = 'current' if self.pause_position is None else str(self.pause_position)
+        pos_name = 'current' if self.pause_position is None else str(
+            self.pause_position)
         return "Pause at " + pos_name + " position"
 
 
 class UnPause(Event):
     '''
     Unpauses the Level where it is or at a given position.
-    
+
     :param level: The Level this Event will be used on.
     :type level: Level
-    
+
     :param unpause_position: Set to None to pause at current position. None by default.
     :type unpause_position: int or None
     '''
@@ -279,7 +278,8 @@ class UnPause(Event):
         return self.session.paused
 
     def __str__(self):
-        pos_name = 'current' if self.unpause_position is None else str(self.unpause_position)
+        pos_name = 'current' if self.unpause_position is None else str(
+            self.unpause_position)
         return "Unpause at " + pos_name + " position"
 
 
@@ -290,6 +290,7 @@ class Print(Event):
     :param message: The message that will be printed when triggered
     :type message: str
     """
+
     def __init__(self, level, message):
         super().__init__(level)
         self.message = message

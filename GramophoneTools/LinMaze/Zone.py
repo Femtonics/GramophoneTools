@@ -4,7 +4,7 @@
 class Zone(object):
     '''
     Correlates with beginning and end of Frames to add functionality.
-    
+
     :param begin: The beginning of the Zone in pixels.
     :type begin: int
 
@@ -30,7 +30,7 @@ class Zone(object):
     def check(self, pos):
         '''
         Returns True if the given position is in the zone.
-        
+
         :param pos: The position in pixels.
         :type pos: int
 
