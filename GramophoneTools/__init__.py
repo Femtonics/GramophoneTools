@@ -5,7 +5,7 @@ import os
 import sys
 import subprocess
 
-__version__ = '0.6.23'
+__version__ = '0.6.24'
 
 
 def main(args=None):
