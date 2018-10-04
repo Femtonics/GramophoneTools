@@ -3,9 +3,8 @@ from . import Recorder
 from . import LinMaze
 import os
 import sys
-import subprocess
 
-__version__ = '0.6.24'
+__version__ = '0.6.25'
 
 
 def main(args=None):
@@ -17,7 +16,6 @@ def main(args=None):
 
     if args:
         if args[0] == 'examples':
-            # subprocess.Popen(r'explorer "{}\examples"'.format(project_dir))
             os.startfile(project_dir+r'\examples')
         if args[0] == 'guide':
             os.startfile(
