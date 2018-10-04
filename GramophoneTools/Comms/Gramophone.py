@@ -36,7 +36,25 @@ def find_devices():
     return devices
 
 class Packet(object):
-    """ A 64 byte data packet that can be sent to the Gramophone. """
+    """
+    A 64 byte data packet that can be sent to the Gramophone.
+    
+    :param target: 2 byte address of the target. source of the reply given to this packet
+    :type target: [int, int]
+    
+    :param source: 2 byte address of the source. target of the reply given to this packet
+    :type source: [int, int]
+    
+    :param cmd: Identifier of the command
+    :type cmd: int
+    
+    :param payload: The payload for the command eg.: the value to write
+    :type payload: list of ints
+    
+    :param msn: Any number. The reply packet's msn will be the same.
+    :type msn: int
+
+    """
     msn = 0
     def __init__(self, target, source, cmd, payload, msn=None):
         self.target = target
@@ -88,7 +106,7 @@ class Gramophone(object):
     :type device: usb.core.Device
 
     :param verbose: If set to True the details of the communication are printed.
-    :type device: bool
+    :type verbose: bool
     """
     error_codes = {0x00: 'PACKET_FAIL_UNKNOWNCMD',
                    0x01: 'PACKET_FAIL_INVALIDCMDSYNTAX',
@@ -550,6 +568,7 @@ class Gramophone(object):
         return values
 
     def write_param(self, param, payload):
+        """ Write the given payload into the given parameter. """
         set_param = Packet(self.target, self.source, 0x0C, [param]+payload)
         response = self.send(set_param)
 
@@ -581,6 +600,18 @@ class Gramophone(object):
 
     @background
     def start_burst(self, port, on_time, pause_time):
+        """
+        Start turning the given port on and off in the background.
+
+        :param port: The port that will be turned on and off
+        :type port: int (1-4)
+
+        :param on_time: How long should the port be on (high) in seconds
+        :type on_time: float
+
+        :param pause_time: How long should the port be off (low) in seconds
+        :type pause_time: float
+        """
         self.bursting[port] = True
         while self.bursting[port]:
             self.write_output(port, 1)
@@ -589,8 +620,14 @@ class Gramophone(object):
             sleep(pause_time)
 
     def stop_burst(self, port):
-        self.bursting[port] = False
+        """
+        Stop turning the given port on and off. see: start_burst
 
+        :param port: The port that will stop being turned on and off
+        :type port: int (1-4)
+        """
+        self.bursting[port] = False
+        
 
 class GramophoneError(Exception):
     """ Exception for Gramophone related communication errors. """
