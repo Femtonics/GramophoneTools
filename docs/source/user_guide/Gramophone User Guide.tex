@@ -1,7 +1,6 @@
 \documentclass[11pt,a4paper]{article}
 
 % Packages
-%\usepackage{fullpage}
 \usepackage[left=2cm,right=2cm,top=3.5cm,bottom=3.5cm]{geometry}
 \usepackage{titling}
 \usepackage{titlesec}
@@ -23,14 +22,10 @@
 \usepackage[titles]{tocloft}
 \usepackage{textcomp}
 \usepackage{subcaption}
-%\usepackage[obeyspaces]{url}
 
 %Font settings
-%\usepackage[T1]{fontenc}
 \usepackage{lmodern} %For Standard
-%\usepackage{helvet} %For Helvetica
 \usepackage{classico} %For Classico
-%\renewcommand{\familydefault}{\sfdefault}
 
 % Document info
 \title{Gramophone User Guide}
@@ -64,14 +59,10 @@
   tabsize=3,
 }
 
-
-
-
 % Custom titlepage 
 \addtolength{\wpYoffset}{-12.5cm}
 \renewcommand{\maketitle}{
 \begin{titlepage}
-%\ThisULCornerWallPaper{1}{mouse.jpg}
 \ThisLLCornerWallPaper{1}{arcualt_design_element.pdf}
 \ThisCenterWallPaper{0.5}{femtonics-logo_silver_with_tagline.png}
 \begin{center}
@@ -82,10 +73,7 @@
 
 \vspace{2.1cm}
 
-%\includegraphics[scale=0.25]{Gramophone.jpg}
 \includegraphics[width=.9\textwidth]{Gramophone_titlepage.JPG}
-
-
 
 \end{center}
 \end{titlepage}
@@ -98,12 +86,11 @@
 \setlength{\cftsecindent}{0em}
 \setlength{\cftsubsecindent}{2em}
 \setlength{\cftsubsubsecindent}{3em}
-%\dottedcontents{section}[1.5em]{}{1.3em}{.6em}
 
 % Custom section spacing and formatting
 % -- Section
 \titleformat{\section}
-	{\Large\bf\raggedright} %\classico
+	{\Large\bf\raggedright}
 	{\hspace{-1.5em}{\fontsize{50}{0}\selectfont\textcolor{lightgray}\thesection}} %\hspace{0em}
 	{-0.5cm}
 	{}
@@ -122,7 +109,7 @@
 % -- Subsection
 \titleformat{\subsection}
 	{\large\bfseries}
-	{\hspace{0cm}} %\hspace{-1cm}\textcolor{Gray}\thesubsection
+	{\hspace{0cm}}
 	{0em}
 	{}
 	[]
@@ -136,10 +123,6 @@
 {}
 []
 \titlespacing{\subsubsection}{0pt}{15pt}{3pt}
-
-%\let\mtcontentsname\contentsname
-%\renewcommand\contentsname{\MakeUppercase\mtcontentsname}
-%\renewcommand\cftaftertoctitle{\par\noindent\hrulefill\par\vskip-4.3em}
 
 % Don't indent paragraphs
 \setlength{\parindent}{0in}
@@ -160,9 +143,7 @@
 % ------------------------ BODY ------------------------
 \begin{document}
 \maketitle
-%\ULCornerWallPaper{1}{2016_header.jpg}
 \ULCornerWallPaper{1}{Femtonics_header_letter.png}
-%\LLCornerWallPaper{1}{2016_footer_info.jpg
 \LLCornerWallPaper{1}{Femtonics_footer_letter.png}
 \tableofcontents
 
@@ -205,7 +186,6 @@ If you need further assistance, please contact Femtonics Ltd. via e-mail at \mli
 \section{Cleaning instructions}
 \subsection{Disk}
 Remove the disk (Figure \ref{fig:gram_overview}a) by unscrewing its mounting screw (Figure \ref{fig:gram_overview}b) and clean it with warm soapy water. The disk can be sterilized with alcohol-based disinfectants.
-% and is resistant to temperatures up to \enote{add temp resisitance when available} \degree C.
 
 \subsection{System}
 Disconnect the device from the computer by unplugging the USB cable (Figure \ref{fig:gram_ports}b). Clean the device with a damp cloth.
@@ -284,8 +264,6 @@ The distance between the head-holder and the disk can be adjusted to fit mice of
 \caption{Inputs and outputs on the Gramophone device.}
 \label{fig:gram_height_2}
 \end{figure}
-
-
 
 \subsection{Position adjustment}
 The position of the head-holder can be adjusted both sideways and back and forth to position the mouse anywhere on the disk.
@@ -810,66 +788,6 @@ A collection of examples are available on GitHub in the examples folder of the G
 When you call the play command you will be presented with a file selection window, on which you can select the location and filename of your log file. The log is automatically saved every 10 seconds or on the end of the simulation (on proper exit, do not close the console window, close the simulation window or select it and exit with the \texttt{Esc} key).\\
 
 The log file is an HDF5 file with a \texttt{.vrl} extension. For more information about it's structure please visit the \href{http://gramophone.femtonics.eu/linmaze_out.html}{\textbf{online documentation of the LinMaze module}}.
-
-%\begin{itemize}
-%\param{analogue\_input} the state of the analogue input [0,1024]
-%\param{g\_time} the time of the microcontroller
-%\item \texttt{paused} array of zeros and ones, value is 1 if the simulation was paused at that point
-%\param{ports} the satte of the 3 outputs in separate arrays, 1 if the output was high, 0 if it was low
-%\begin{itemize}
-%\param{A} the states of port A
-%\param{B} the states of port B
-%\param{C} the states of port C
-%\end{itemize}
-%\param{position} the position in the maze in pixels
-%\param{teleport} array of zeros and ones, 1 if there was a teleport at that point
-%\param{time} time axis, array float values of the computers time
-%\param{velocity} array of signed integers with the velocity in pixels/record
-%\param{zone} n$\times$m matrix of ones and zeros. Each column is an array of ones and zeros for that zone
-%\param{zone\_types} a group of arrays of zeros and ones for each zone type that was defined
-%\begin{itemize}
-%\param{zone\_type\_1} 1 when the mouse was in a type\_1 zone
-%\param{zone\_type\_2} 1 when the mouse was in a type\_2 zone
-%\item \texttt{Etc.}
-%\end{itemize}
-%\end{itemize}
-
-% \newpage
-% \section{Release notes}
-
-
-% \subsection{LinMaze changelog}
-% \subsubsection*{2018.03.01.}
-% \begin{itemize}
-% \item The play command no longer has \texttt{screen\_number} and \texttt{dual\_screen} arguments. Instead it has a \texttt{left\_screen} and \texttt{right\_screen} arguments. \texttt{left\_monitor} is the number of the monitor that is on the left side of the mouse, \texttt{right\_monitor} is the number of the one on the right (its the mirror of the left). These can be a number or None if there is only a monitor on one side. \texttt{right\_monitor} is None by default. If you want everything to be the same change \texttt{screen\_number} to \texttt{left\_monitor} in your levels. Sorry for the inconvenience!
-% \item Logging is changed. Instead of a .csv file you get a .vrl file. This is a structured HDF5 that stores more data about your session. The log is automatically saved every 10 seconds but closing the console is still not advisable (exit with escape or close the simulation window on the task-bar)
-% \item The play command now has a \texttt{fullscreen} option. It is True by default, if you set it to False the simulation will run in a window (handy for testing your level).
-% \item The LinMaze related modules in MES RozsaLab toolbox now work with .vrl files too.
-% \item Updated the user guide with these changes. I have also attached it. The new things are in the "Playing your level" and "Simulation results" chapters.
-% \item The initial filename of the log file now includes the name of the level in parentheses 
-% \end{itemize}
-
-% \subsubsection*{2017.12.12.}
-% \begin{itemize}
-% \item Random teleports can no longer land in the same zone type as the starting zone (eg. no teleport from cloud to cloud, left to left etc.). Such events caused the animal to be stuck in a zone after teleport, because the rule didn't reset.
-% \item The save window now initially opens in the same location you run your level from (instead of \verb|C:\VR\...|). 
-% \end{itemize}
-
-% \subsubsection*{2017.09.28. (LinMaze 2.0)}
-% \begin{itemize}
-% \item Levels are no longer needed to be saved, you can just run the .py file that describes it.
-% \item The rendering of levels is now done with multiprocessing, making it marginally faster
-% \item The frames made are now locally cached on the computer, so the software never does the same calculation twice
-% \item A new parameter (\texttt{transition\_width}) was added to control the width of the transition area, so sharp transitions can be avoided (the example attached has 100 pixel wide transitions)
-% \item A new parameter (rgb) was added to control the proportion of the displayed colors. eg. setting it to (0,0,1) has the same effect as the currently used blue foils in front of the screens.
-% \item During the operation of the VR only relevant messages will be shown. eg. if a port is already closed, the close port event won't trigger again
-% \item All save operations now display an operating system specific save window. This window also handles overwrite warnings and suggests names for your files.
-% \item The data received from the Gramophone is now filtered, resulting in a smoother velocity curve. This is also visible during the VR operation, the displayed image is less choppy.
-% \item The state of the A1 analogue input of the Arduino is now recorded during the simulation. You can attach a lick port or other sensor here and its value will be saved.
-% \item The internal clock of the Arduino is reset on the start of the simulation and its value is also recorded in the log.
-% \item You can now save a human readable summary of your level with the \texttt{Level.save\_summary()} command. 
-% \end{itemize}
-
 
 
 \end{document}
