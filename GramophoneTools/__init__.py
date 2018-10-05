@@ -4,7 +4,7 @@ from . import LinMaze
 import os
 import sys
 
-__version__ = '0.6.25'
+__version__ = '0.6.26'
 
 
 def main(args=None):
