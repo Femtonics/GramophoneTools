@@ -115,13 +115,13 @@ class PortOn(Event):
     @property
     def triggerable(self):
         if self.port == 1:
-            return not bool(self.session.gramophone.last_read['DO-1'])
+            return not bool(self.session.last_read['DO-1'])
         if self.port == 2:
-            return not bool(self.session.gramophone.last_read['DO-2'])
+            return not bool(self.session.last_read['DO-2'])
         if self.port == 3:
-            return not bool(self.session.gramophone.last_read['DO-3'])
+            return not bool(self.session.last_read['DO-3'])
         if self.port == 4:
-            return not bool(self.session.gramophone.last_read['DO-4'])
+            return not bool(self.session.last_read['DO-4'])
 
 
 class PortOff(Event):
@@ -147,13 +147,13 @@ class PortOff(Event):
     @property
     def triggerable(self):
         if self.port == 1:
-            return bool(self.session.gramophone.last_read['DO-1'])
+            return bool(self.session.last_read['DO-1'])
         if self.port == 2:
-            return bool(self.session.gramophone.last_read['DO-2'])
+            return bool(self.session.last_read['DO-2'])
         if self.port == 3:
-            return bool(self.session.gramophone.last_read['DO-3'])
+            return bool(self.session.last_read['DO-3'])
         if self.port == 4:
-            return bool(self.session.gramophone.last_read['DO-4'])
+            return bool(self.session.last_read['DO-4'])
 
     def __str__(self):
         return "Turn OFF port " + str(self.port)
