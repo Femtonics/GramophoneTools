@@ -498,6 +498,7 @@ class pyGramWindow(MAIN_WIN_BASE, MAIN_WIN_UI):
 
         if self.connected:
             # Change GUI for connected state
+            self.settings_win.close()
             self.gram_dropdown.setEnabled(False)
             self.refresh_btn.setEnabled(False)
             self.settings_btn.setEnabled(False)
