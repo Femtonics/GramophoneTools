@@ -1,4 +1,4 @@
-''' Triggers an event on a given criteria '''
+""" Triggers an event on a given criteria """
 from statistics import mean
 from collections import deque
 from abc import ABC, abstractmethod
@@ -7,27 +7,29 @@ import numpy as np
 import pyglet
 
 from GramophoneTools.LinMaze import Event
+from GramophoneTools.LinMaze import Level
+
 from GramophoneTools.LinMaze.Tools.Timer import Timer
 
 
 class Rule(ABC):
-    '''
+    """
     Generic Rule all specific Rules intherit from.
 
     :param level: The Level this Rule is active on.
     :type level: Level
 
     :param event: The event the rule triggers.
-    :type event: Event
-    '''
+    :type event: Event.Event
+    """
 
     def __init__(self, level, event):
-        self.level = level
-        self.event = event
+        self.level: Level = level
+        self.event: Event.Event = event
         self.done = False
 
     def trigger(self):
-        ''' Triggers the associated event and prints out a message about it. '''
+        """ Triggers the associated event and prints out a message about it. """
         if self.event.triggerable:
             print(self, "rule triggered")
             self.event.trigger()
@@ -35,27 +37,27 @@ class Rule(ABC):
             # print(self.event)
 
     @abstractmethod
-    def check(self):
-        ''' Check whether the rules's event should be triggered. '''
+    def check(self, *arg):
+        """ Check whether the rules's event should be triggered. """
         pass
 
 
 class ZoneRule(Rule):
-    ''' 
+    """ 
     A Rule that triggers if the animal is in a given type of zone.
 
     :param level: The Level this Rule is active on.
     :type level: Level
 
     :param event: The event the rule triggers.
-    :type event: Event
+    :type event: Event.Event
 
     :param zone_type: The type of Zone this Rule is active in.
     :type zone_type: str
 
     :param delay: How many seconds should be spent in the Zone before triggering.
     :type delay: float
-    '''
+    """
 
     def __init__(self, level, event, zone_type, delay):
         super().__init__(level, event)
@@ -97,14 +99,14 @@ class ZoneRule(Rule):
 
 
 class VelocityRule(Rule):
-    '''
+    """
     A Rule that triggers if the velocity is above or below a certain threshold.
 
     :param level: The Level this Rule is active on.
     :type level: Level
 
     :param event: The event the rule triggers.
-    :type event: Event
+    :type event: Event.Event
 
     :param vel_rule_type: Type of comparison. Can be 'above' or 'below'.
     :type vel_rule_type: str
@@ -114,7 +116,7 @@ class VelocityRule(Rule):
 
     :param delay: How long should the absolute velocity be above or below the threshold.
     :type delay: float    
-    '''
+    """
 
     def __init__(self, level, event, vel_rule_type, threshold, delay):
         super().__init__(level, event)
@@ -158,14 +160,14 @@ class VelocityRule(Rule):
 
 
 class SmoothVelocityRule(VelocityRule):
-    '''
+    """
     A Rule that triggers if the moveing average of velocity is above or below a certain threshold.
 
     :param level: The Level this Rule is active on.
     :type level: Level
 
     :param event: The event the rule triggers.
-    :type event: Event
+    :type event: Event.Event
 
     :param bin_size: How many velocities should be used for calculating the moving average.
     :type bin_size: int
@@ -178,7 +180,7 @@ class SmoothVelocityRule(VelocityRule):
 
     :param delay: How long should the smoothed absolute velocity be above or below the threshold.
     :type delay: float
-    '''
+    """
 
     def __init__(self, level, event, bin_size, vel_rule_type, threshold, delay):
         super().__init__(level, event, vel_rule_type, threshold, delay)
@@ -203,24 +205,26 @@ class SmoothVelocityRule(VelocityRule):
 
 
 class SpeedRule(Rule):
-    '''
-    A Rule that triggers if the absolute integral of the velocity on a given range is above or below a given threshold.
+    """A Rule that triggers if the absolute integral of the velocity on a
+    given range is above or below a given threshold.
 
     :param level: The Level this Rule is active on.
     :type level: Level
 
     :param event: The event the rule triggers.
-    :type event: Event
+    :type event: Event.Event
 
-    :param speed_rule_type: Type of comparison. Can be 'above' or 'below'.
+    :param speed_rule_type: Type of comparison. Can be 'above'
+        or 'below'.
     :type speed_rule_type: str
 
-    :param threshold: The calculated integral should be above or below this value.
+    :param threshold: The calculated integral should be above or below
+        this value.
     :type threshold: float
 
     :param bin_size: How many velocities should be used for the integral.
     :type bin_size: int
-     '''
+     """
 
     def __init__(self, level, event, speed_rule_type, threshold, bin_size):
         super().__init__(level, event)
@@ -234,8 +238,7 @@ class SpeedRule(Rule):
             str(self.speed_rule_type) + " " + str(self.threshold)
 
     def check(self, vel):
-        """ 
-        Check whether the Speed rule should be triggered.
+        """Check whether the Speed rule should be triggered.
 
         :param vel: The current velocity.
         :type vel: int
@@ -281,8 +284,8 @@ class KeyPressRule(Rule):
 
 
 class InputRule(Rule):
-    """
-    A Rule that triggers when the given digital output rises, falls or changes.
+    """A Rule that triggers when the given digital output rises, falls or
+    changes.
 
     :param input_id: The number of the input (1 or 2)
     :type input_id: int

@@ -1,4 +1,4 @@
-''' Everything related to making LinMaze Frames. '''
+"""Everything related to making LinMaze Frames."""
 import os
 import math
 from time import sleep
@@ -14,14 +14,13 @@ from GramophoneTools.LinMaze.Tools import Stopwatch, progressbar
 
 
 def multi_make(list_of_frames):
-    ''' 
-    Renders a list of frames with multiprocessing.
+    """Renders a list of frames with multiprocessing.
 
-    :param list_of_frames: A list of Frame objects that sould be rendered.
+    :param list_of_frames: A list of Frame objects that should be rendered.
     :type list_of_frames: [Frame]
 
     :returns: A list of rendered Frames.
-     '''
+    """
 
     pool = Pool()
     runtime = Stopwatch.Stopwatch()
@@ -41,8 +40,7 @@ def multi_make(list_of_frames):
 
 
 def transition(left, right, transition_width):
-    """ 
-    Takes two 2 dimensional matrices representing a grayscale image 
+    """Takes two 2 dimensional matrices representing a grayscale image
     and returns them with a smooth transition of given width between them. 
 
     :param left: The image on the left.
@@ -73,12 +71,11 @@ def transition(left, right, transition_width):
         left[:, -tw2:] = transition[:, :tw2]
         right[:, :tw2] = transition[:, -tw2:]
 
-    return (left, right)
+    return left, right
 
 
 def frame_transitions(list_of_frames, transition_width):
-    ''' 
-    Makes a list of frames with smooth transitions between them.
+    """Makes a list of frames with smooth transitions between them.
 
     :param list_of_frames: A list of Frame objects without transitions.
     :type list_of_frames: [Frame]
@@ -87,7 +84,8 @@ def frame_transitions(list_of_frames, transition_width):
     :type transition_width: int
 
     :returns: A list of Frames with transitions.
-    '''
+    """
+
     frames = list_of_frames
     if transition_width > 0:
 
@@ -109,19 +107,18 @@ def frame_transitions(list_of_frames, transition_width):
         for i in range(len(frames)):
             if isinstance(frames[i], ImageFile):
                 frames[i].frame = frames[i].texture
-
     return list(frames)
 
 
 def combine(list_of_frames):
-    '''
-    Makes a Frame that is a combination of a list of Frames.
+    """Makes a Frame that is a combination of a list of Frames.
 
     :param list_of_frames: A list of Frame objects without transitions.
     :type list_of_frames: [Frame]
 
     :returns: Frame
-    '''
+    """
+
     combined = list_of_frames[0].texture
     for fid in range(len(list_of_frames) - 1):
         combined = np.concatenate(
@@ -134,8 +131,7 @@ def combine(list_of_frames):
 
 
 class Frame(object):
-    '''
-    The visual component of the blocks that the mouse navigates in.
+    """The visual component of the blocks that the mouse navigates in.
 
     :param width: The width of the Frame in pixels.
     :type width: int
@@ -145,7 +141,8 @@ class Frame(object):
 
     :param rgb: The Red, Green and Blue levels of the Frame.
     :type rgb: (float, float, float)
-    '''
+    """
+
     frame_id = 0
     display_name = "Frame"
 
@@ -159,18 +156,18 @@ class Frame(object):
         self.made = False
         self.rgb = rgb
 
-    def __str__(self):
+    def __repr__(self):
         string = "Frame #" + str(self.frame_id).ljust(2) + \
             " - Size: " + str(self.width) + "×" + str(self.height)
         return string
 
     def __eq__(self, other):
-        ''' Compares Frames based on type and all properties except id. '''
+        """Compares Frames based on type and all properties except id."""
         return type(self) is type(other) and \
             list(self.__dict__.items())[1:] == list(other.__dict__.items())[1:]
 
     def __hash__(self):
-        ''' The hash of the Frame. '''
+        """The hash of the Frame."""
         import binascii
         hash_keys = ['width', 'height', 'seed',
                      'side_length', 'wavelength', 'angle']
@@ -182,39 +179,40 @@ class Frame(object):
 
     @staticmethod
     def ext_make(frame):
-        '''
-        Tries to load the given Frame from cache or makes it and returns
+        """Tries to load the given Frame from cache or makes it and returns
         the rendered Frame.
-        '''
+        """
+
         frame.make()
         return frame
 
     def make(self):
-        ''' Renders the Frame. '''
+        """Renders the Frame."""
+
         self.make_texture()
         self.made = True
 
     def make_img(self):
-        ''' Makes a PIL Image of the Frame. '''
+        """Makes a PIL Image of the Frame."""
         if not self.made:
             self.make()
         return Image.fromarray(np.flip(self.texture, 0))
 
     def show_img(self):
-        ''' Displays the bitmap image of the Frame. '''
+        """Displays the bitmap image of the Frame."""
         self.make_img().show()
 
     def save_img(self, filename):
-        '''
-        Saves the bitmap image of the Frame with the given filename.
+        """Saves the bitmap image of the Frame with the given filename.
 
         :param filename: The filename the image should be saved as.
         :type filename: str
-        '''
+        """
+
         self.make_img().convert('RGB').save(filename)
 
     def make_texture(self):
-        ''' Makes the Frame's texture field that stores RGB data to be used as an OpenGL texture . '''
+        """Makes the Frame's texture field that stores RGB data to be used as an OpenGL texture ."""
         if self.texture is None:
             # Flip Frame up and down to fit with opengl indexing
             flipped_frame = np.flip(
@@ -226,16 +224,15 @@ class Frame(object):
             self.texture = data.astype(np.uint8)
 
     def mirror(self):
-        ''' Horizontally mirrors the Frame '''
+        """Horizontally mirrors the Frame"""
         self.frame = np.flip(self.frame, 1)
 
 
 class RandomFrame(Frame):
-    '''
-    Abstract class all randomly generated Frames inherit from.
+    """Abstract class all randomly generated Frames inherit from.
 
     :param seed: The seed of the random number generator
-    '''
+    """
 
     def __init__(self, width, height, seed):
         super().__init__(width, height)
@@ -243,7 +240,7 @@ class RandomFrame(Frame):
 
 
 class BinaryNoise(RandomFrame):
-    ''' Creates a Frame with noise, that only has black and white pixels '''
+    """Creates a Frame with noise, that only has black and white pixels"""
     display_name = "Binary noise"
 
     def __str__(self):
@@ -257,7 +254,7 @@ class BinaryNoise(RandomFrame):
 
 
 class GreyNoise(RandomFrame):
-    ''' Generates a frame with grayscale noise '''
+    """Generates a frame with grayscale noise"""
     display_name = "Grayscale noise"
 
     def __str__(self):
@@ -269,13 +266,12 @@ class GreyNoise(RandomFrame):
 
 
 class Checkerboard(Frame):
-    '''
-    A Frame with a checkerboard pattern.
+    """A Frame with a checkerboard pattern.
 
-    :param side_length: The lenght of sides of the squares that make up 
+    :param side_length: The length of sides of the squares that make up
         the checkerboard pattern in pixels.
     :type side_length: int
-    '''
+    """
     display_name = "Checkerboard"
 
     def __init__(self, width, height, side_length):
@@ -302,7 +298,7 @@ class Checkerboard(Frame):
 
 
 class Cloud(RandomFrame):
-    ''' A Frame with a random cloud pattern in it. '''
+    """A Frame with a random cloud pattern in it."""
     display_name = "Cloud"
 
     def __str__(self):
@@ -314,7 +310,7 @@ class Cloud(RandomFrame):
 
 
 class Marble(RandomFrame):
-    ''' Generates a Frame with a marble pattern. '''
+    """Generates a Frame with a marble pattern."""
     display_name = "Marble"
 
     def __str__(self):
@@ -326,7 +322,7 @@ class Marble(RandomFrame):
 
 
 class Wood(RandomFrame):
-    ''' Generates a Frame with a wood grain pattern. '''
+    """Generates a Frame with a wood grain pattern."""
     display_name = "Wood"
 
     def __str__(self):
@@ -338,8 +334,7 @@ class Wood(RandomFrame):
 
 
 class WaveFrame(Frame):
-    '''
-    Generic grating Frame, for more specific ones to inherit form.
+    """Generic grating Frame, for more specific ones to inherit form.
 
     :param wavelength: The wavelength of the grating in pixels,
         ie. the distance between the middles of the white portions.
@@ -347,7 +342,7 @@ class WaveFrame(Frame):
 
     :param angle: The angle of the graing where 0 is vertical.
     :type angle: float
-    '''
+    """
     display_name = "Generic wave"
 
     def __init__(self, width, height, wavelength, angle):
@@ -358,14 +353,14 @@ class WaveFrame(Frame):
 
     @staticmethod
     def wave_func(val):
-        ''' Trigonometric function for a sinusoidal wave. '''
+        """Trigonometric function for a sinusoidal wave."""
         return math.ceil(127.5 + 127.5 * -1 * math.cos(val))
 
     def make(self):
         self.frame = np.zeros((self.height, self.width))
 
         def norm(x, y):
-            """ Distance from origin along a line with angle. """
+            """Distance from origin along a line with angle."""
             return abs(math.sin(self.angle) * y + math.cos(self.angle) * x)
 
         for [y, x], _ in np.ndenumerate(self.frame):
@@ -388,7 +383,7 @@ class WaveFrame(Frame):
 
 
 class SineWave(WaveFrame):
-    ''' Sine wave modulated grating pattern Frame. '''
+    """Sine wave modulated grating pattern Frame."""
     display_name = "Sine wave"
 
     def __str__(self):
@@ -402,7 +397,7 @@ class SineWave(WaveFrame):
 
 
 class SquareWave(WaveFrame):
-    ''' Square wave modulated grating pattern Frame. '''
+    """Square wave modulated grating pattern Frame."""
     display_name = "Square wave"
 
     def __str__(self):
@@ -416,8 +411,7 @@ class SquareWave(WaveFrame):
 
 
 class ImageFile(Frame):
-    """
-    A Frame made from a given image file.
+    """A Frame made from a given image file.
 
     :param filename: The name of the file the Frame should be made from.
     :type filename: string
