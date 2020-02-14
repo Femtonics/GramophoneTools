@@ -14,17 +14,16 @@ from GramophoneTools.LinMaze.Tools.filehandler import select_file
 from GramophoneTools import Comms
 import GramophoneTools
 
+# from typing import List, Tuple
+
 
 class LinMazeError(Exception):
-    """
-    Generic Exception for LinMaze related errors.
-    """
+    """Generic Exception for LinMaze related errors."""
     pass
 
 
 class VRWindow(pyglet.window.Window):
-    '''
-    A pyglet window that can display VR on a given screen.
+    """A pyglet window that can display VR on a given screen.
 
     :param session: The session that is played in this window.
     :type session: Session
@@ -38,8 +37,7 @@ class VRWindow(pyglet.window.Window):
 
     :param fullscreen: True if the window should be fullscreen. True by default.
     :type fullscreen: bool
-
-    '''
+    """
 
     def __init__(self, session, screen_number,
                  mirrored=False, fullscreen=True):
@@ -49,8 +47,8 @@ class VRWindow(pyglet.window.Window):
         disp = pyglet.window.Display()
         screens = disp.get_screens()
         screen_number -= 1
-        super().__init__(self.session.level.screen_width,
-                         self.session.level.screen_height,
+        super().__init__(self.session.collection.screen_width,
+                         self.session.collection.screen_height,
                          screen=screens[screen_number],
                          resizable=False, vsync=True,
                          fullscreen=fullscreen, visible=False)
@@ -65,8 +63,8 @@ class VRWindow(pyglet.window.Window):
         # OpenGL init
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
-        glOrtho(0, self.session.level.screen_width, 0,
-                self.session.level.screen_height, -1, 1)
+        glOrtho(0, self.session.collection.screen_width, 0,
+                self.session.collection.screen_height, -1, 1)
         glMatrixMode(GL_MODELVIEW)
         glDisable(GL_DEPTH_TEST)
         glClearColor(0.0, 0.0, 0.0, 0.0)
@@ -86,10 +84,11 @@ class VRWindow(pyglet.window.Window):
         if symbol == pyglet.window.key.ESCAPE:
             pyglet.app.exit()
 
-        for rule in self.session.level.rules:
-            # Check keypress rules
-            if type(rule) is Rule.KeyPressRule:
-                rule.check(symbol)
+        for lvl in self.session.collection:
+            for rule in lvl.rules:
+                # Check keypress rules
+                if type(rule) is Rule.KeyPressRule:
+                    rule.check(symbol)
 
         if modifiers & pyglet.window.key.MOD_CTRL:
             if symbol == pyglet.window.key._1:
@@ -125,7 +124,7 @@ class VRWindow(pyglet.window.Window):
 
         # Dispay all vr units
         for vru in self.session.vr_units:
-            sy = self.session.level.screen_height
+            sy = self.session.collection.screen_height
             sx = vru["length"]
 
             glLoadIdentity()
@@ -134,7 +133,7 @@ class VRWindow(pyglet.window.Window):
 
             if self.mirrored:
                 glTranslatef((-1) * vru["position"] +
-                             self.session.level.screen_width -
+                             self.session.collection.screen_width -
                              vru["length"], 0, 0)
 
                 glBegin(GL_QUADS)
@@ -172,7 +171,7 @@ class VRWindow(pyglet.window.Window):
         if self.session.offset_arrow:
             glLoadIdentity()
             glColor3f(1.0, 0.0, 0.0)
-            glTranslatef(self.session.level.zone_offset, 0, 0)
+            glTranslatef(self.session.collection.zone_offset, 0, 0)
             glBindTexture(GL_TEXTURE_2D, 0)
             glBegin(GL_TRIANGLES)
             glVertex2i(-50, 0)
@@ -184,8 +183,7 @@ class VRWindow(pyglet.window.Window):
 
 
 class VRLog(object):
-    """
-    A logger for LinMaze Sessions.
+    """A logger for LinMaze Sessions.
 
     :param session: The session that should be logged.
     :type session: Session
@@ -196,19 +194,19 @@ class VRLog(object):
 
         # Make headers
         self.zone_types = list(
-            set([zone.zone_type for zone in session.level.zones]))
+            set([zone.zone_type for zone in session.collection.all_zones()]))
 
         self.vrl = h5py.File(session.filename, "w")
 
-        self.vrl.attrs['level_name'] = session.level.name
+        self.vrl.attrs['level_name'] = session.collection.name  # I'm not sure if it'd brake anything if I changed it.
         self.vrl.attrs['start_time'] = session.start_time
         self.vrl.attrs['start_time_hr'] = session.start_time_hr
         self.vrl.attrs['runtime_limit'] = str(session.runtime_limit)
-        self.vrl.attrs['screen_width'] = session.level.screen_width
-        self.vrl.attrs['screen_height'] = session.level.screen_height
-        self.vrl.attrs['zone_offset'] = session.level.zone_offset
-        self.vrl.attrs['transition_width'] = session.level.transition_width
-        self.vrl.attrs['RGB'] = session.level.rgb
+        self.vrl.attrs['screen_width'] = session.collection.screen_width
+        self.vrl.attrs['screen_height'] = session.collection.screen_height
+        self.vrl.attrs['zone_offset'] = session.collection.zone_offset
+        self.vrl.attrs['transition_width'] = session.collection.level_list[0].transition_width
+        self.vrl.attrs['RGB'] = session.collection[0].rgb
         self.vrl.attrs['left_monitor'] = str(session.left_monitor)
         self.vrl.attrs['right_monitor'] = str(session.right_monitor)
         self.vrl.attrs['device_serial'] = str(session.gramophone_serial)
@@ -240,7 +238,7 @@ class VRLog(object):
         self.vrl.create_dataset("output_4", (0,),
                                 maxshape=(None,), dtype=np.int8)
 
-        zone_count = len(session.level.zones)
+        zone_count = len(session.collection.all_zones())
         self.vrl.create_dataset("zone", (0, zone_count), maxshape=(
             None, zone_count), dtype=np.int8)
 
@@ -269,8 +267,7 @@ class VRLog(object):
         self.zone_type_records = {zt: [] for zt in self.zone_types}
 
     def make_entry(self, vel, g_time, in_1, in_2, out_1, out_2, out_3, out_4):
-        '''
-        Makes an entry in all the session logs.
+        """Makes an entry in all the session logs.
 
         :param vel: The velocity that sould be logged for this entry.
         :type vel: int
@@ -283,18 +280,18 @@ class VRLog(object):
 
         :param in_2: The state of digital input 2.
         :type in_2: int
-        '''
+        """
         self.time_record.append(self.session.runtime.value())
         self.g_time_record.append(g_time)
         self.vel_record.append(-vel)
-        self.pos_record.append(self.session.virtual_position)
+        self.pos_record.append(self.session.virtual_relative_position)
 
         for zone_type in self.zone_types:
             self.zone_type_records[zone_type].append(
                 int(self.session.current_zone.zone_type == zone_type))
 
         zone_row = [int(self.session.current_zone.zone_id == zone.zone_id)
-                    for zone in self.session.level.zones]
+                    for zone in self.session.collection.active_level.zones]
         self.zone_id_records = np.append(
             self.zone_id_records, [zone_row], axis=0)
 
@@ -314,7 +311,7 @@ class VRLog(object):
             self.flush_all()
 
     def flush_all(self):
-        ''' Writes all temporary data to file. '''
+        """Writes all temporary data to file."""
 
         self.flush(self.time_record, 'time')
         self.flush(self.g_time_record, 'g_time')
@@ -335,29 +332,29 @@ class VRLog(object):
 
         self.flush(self.zone_id_records, 'zone')
 
-    def flush(self, record, fieldname):
-        '''
-        Writes the record list into the given field and clears it.
+    def flush(self, record, field_name):
+        """Writes the record list into the given field and clears it.
 
         :param record: The record that should be written to file.
         :type record: list or np.ndarray
 
-        :param fieldname: The name of the field in the HDF5 file this record should 
+        :param field_name: The name of the field in the HDF5 file this record should 
             be written into.
-        :type fieldname: str
-        '''
+        :type field_name: str
+        """
+
         if type(record) is np.ndarray:
-            new_count = record.shape[0] - self.vrl[fieldname].shape[0]
-            self.vrl[fieldname].resize(record.shape[0], axis=0)
-            self.vrl[fieldname][-new_count:] = record[-new_count:]
+            new_count = record.shape[0] - self.vrl[field_name].shape[0]
+            self.vrl[field_name].resize(record.shape[0], axis=0)
+            self.vrl[field_name][-new_count:] = record[-new_count:]
         else:
-            self.vrl[fieldname].resize(
-                self.vrl[fieldname].shape[0] + len(record), axis=0)
-            self.vrl[fieldname][-len(record):] = record
+            self.vrl[field_name].resize(
+                self.vrl[field_name].shape[0] + len(record), axis=0)
+            self.vrl[field_name][-len(record):] = record
             del record[:]
 
     def close(self):
-        ''' Record the time and close the log. '''
+        """Record the time and close the log."""
         end_time = time.time()
         self.vrl.attrs['end_time'] = end_time
         self.vrl.attrs['end_time_hr'] = time.strftime(
@@ -366,18 +363,17 @@ class VRLog(object):
 
 
 class Session(object):
-    '''
-    A play/simulation session for a LinMaze Level.
+    """A play/simulation session for a LinMaze Level.
 
-    :param level: The LinMaze Level that will be played in this Session.
-    :type level: Level
+    :param collection: The LinMaze Level that will be played in this Session.
+    :type collection: LevelCollection
 
     :param vel_ratio: The velocity read from the Gramophone is multiplied 
         with this. 1 by default.
     :type vel_ratio: float
 
     :param runtime_limit: How long should the simulation run in minutes. 
-        Set to None to run infinately. None by default
+        Set to None to run infinitely. None by default
     :type runtime_limit: float or None
 
     :param left_monitor: The number of the monitor to the right of the animal. Set to 
@@ -401,13 +397,13 @@ class Session(object):
 
     :param skip_save: Should the saving of a log be skipped for this Session? False by default.
     :type skip_save: bool
-    '''
+    """
 
-    def __init__(self, level, vel_ratio=1, runtime_limit=None,
+    def __init__(self, collection, vel_ratio=1, runtime_limit=None,
                  left_monitor=1, right_monitor=None, gramophone_serial=None,
                  fullscreen=True, offset_arrow=False, skip_save=False):
 
-        self.level = level
+        self.collection = collection
         self.vel_ratio = vel_ratio
         self.runtime_limit = runtime_limit
         self.left_monitor = left_monitor
@@ -416,6 +412,7 @@ class Session(object):
         self.offset_arrow = offset_arrow
         self.skip_save = skip_save
         self.manual_vel = 0  # For controlling movement with keyboard
+        self.virtual_relative_position = 1
 
         grams = Comms.find_devices()
         if grams:
@@ -429,35 +426,43 @@ class Session(object):
 
         self.vr_units = []
         self.runtime = Stopwatch()
-        self.position = level.zone_offset - 1
-        self.current_zone = self.level.zones[0]
+        self.position = self.collection.zone_offset - 1
+        self.current_zone = self.collection.active_level.zones[0]
         self.paused = False
         self.teleported = False
         self.last_position = 0
 
         # Render the level if it wasn't pre rendered
-        if not level.rendered:
-            level.render()
+        if not collection.rendered:
+            collection.render()
+
+        self.calculate_level_offsets()
 
         # Set session for all events
-        for key in self.level.events:
-            self.level.events[key].set_session(self)
+        for lvl in self.collection:
+            for key in lvl.events:
+                lvl.events[key].set_session(self)
 
         # Make the window
         if left_monitor is not None:
             left_window = VRWindow(
                 self, self.left_monitor, mirrored=False, fullscreen=fullscreen)
+        else:
+            left_window = None
+
         if right_monitor is not None:
             right_window = VRWindow(
                 self, self.right_monitor, mirrored=True, fullscreen=fullscreen)
+        else:
+            right_window = None
 
-        def main_loop(dt):
-            '''
-            Commands executed at each frame refresh.
+        def main_loop(_):
+            """Commands executed at each frame refresh.
 
-            :param dt: Time since last reftesh is seconds. Passed by the pyglet clock.
-            :type dt: float
-            '''
+            :param _: Time since last refresh is seconds.
+                Passed by the pyglet clock. UNUSED
+            :type _: float
+            """
             # print('FPS:', 1/dt)s
 
             params = {}
@@ -498,8 +503,10 @@ class Session(object):
 
         # Make an OpenGL texture from every frame's texture
         texture_ids = []
-        textures = [frame.texture for frame in self.level.frames]
-        textures.append(self.level.dummy_frame.texture)
+        textures = []
+        for level in self.collection:
+            textures += [frame.texture for frame in level.frames]
+            textures.append(level.dummy_frame.texture)
         for tex in textures:
             # from PIL import Image
             # Image.fromarray(tex).show()
@@ -517,19 +524,25 @@ class Session(object):
             glGenerateMipmap(GL_TEXTURE_2D)
             texture_ids.append(tid)
 
-        # Make VR units
-        for i, frame in enumerate(self.level.frames):
-            self.vr_units.append(
-                {"length": frame.width - self.level.transition_width,
-                 "texture_id": texture_ids[i],
-                 "position": self.level.zones[i].begin})
+        vr_unit_end_pos = 0
+        i = 0
+        for level in self.collection:
+            # Make VR units
+            for frame in level.frames:
+                unit = {"length": frame.width,
+                        "texture_id": texture_ids[i],
+                        "position": vr_unit_end_pos}
+                self.vr_units.append(unit)
+                vr_unit_end_pos = unit['position'] + unit['length']
+                i += 1
 
-        # VR unit of dummy frame
-        self.vr_units.append(
-            {"length": self.level.dummy_frame.width,
-             "texture_id": texture_ids[-1],
-             "position": self.level.zones[-1].end})
-
+            # VR unit of dummy frame
+            unit = {"length": level.dummy_frame.width,
+                    "texture_id": texture_ids[i],
+                    "position": vr_unit_end_pos}
+            self.vr_units.append(unit)
+            vr_unit_end_pos = unit['position'] + unit['length']
+            i += 1
         # Calculate level length
         self.virtual_length = 0
         for vru in self.vr_units:
@@ -548,7 +561,7 @@ class Session(object):
             "%Y.%m.%d - %H:%M:%S", time.localtime(self.start_time))
         default_filename = time.strftime(
             "%Y-%m-%d %H_%M", time.localtime(self.start_time)) +\
-            ' (' + self.level.name + ')'
+            ' (' + self.collection.name + ')'
 
         # Set up VR logger
         self.filename = None
@@ -562,14 +575,14 @@ class Session(object):
             self.log = VRLog(self)
 
         # Show the window
-        if left_monitor is not None:
+        if left_window is not None:
             left_window.set_visible()
-        if right_monitor is not None:
+        if right_window is not None:
             right_window.set_visible()
 
         # Reset runtime & display start message
         self.runtime.reset()
-        print("Starting VR session \n  Level: " + self.level.name +
+        print("Starting VR session \n  Level(s): " + ", ".join(l.name for l in self.collection) +
               "\n  Date & Time: " + self.start_time_hr +
               "\n  Log file: " + str(self.filename) + "\n")
 
@@ -579,13 +592,12 @@ class Session(object):
                   'minutes. It will automatically end at',
                   time.strftime("%H:%M", time.localtime(finish_time)), '\n')
 
-        # Reset gramophone reisters
+        # Reset gramophone registers
         self.gramophone.reset_time()
         self.gramophone.reset_position()
 
+        collection.reset_rules()
         # Reset all Rule delay timers
-        for rule in [rule for rule in self.level.rules if hasattr(rule, 'delay_timer')]:
-            rule.delay_timer.reset()
 
         # Schedule main loop
         pyglet.clock.schedule(main_loop)
@@ -612,17 +624,26 @@ class Session(object):
             self.log.flush_all()
             self.log.close()
 
+    def calculate_level_offsets(self):
+        offset = 0
+        for i, lvl in enumerate(self.collection):
+            lvl.offset = offset
+            offset += lvl.length + self.collection.screen_width
+
     def movement(self, vel):
-        '''
-        Move on the map with given velocity.
+        """Move on the map with given velocity.
 
         :param vel: Distance to move in pixels.
         :type vel: int
-        '''
+        """
+        active = self.collection.active_level
 
         # Base movement (used to calculate others, loops around)
-        self.position += vel
-        self.position %= -self.virtual_length + self.level.screen_width
+        self.position = -self.position  # easier to understand in positive
+        self.position += vel - active.offset  # becomes relative
+        self.position %= active.length  # looping
+        self.position += active.offset  # back to absolute
+        self.position = -self.position  # back to negative
 
         # Image movement
         img_move = self.position - self.vr_units[0]["position"]
@@ -630,24 +651,23 @@ class Session(object):
             vru["position"] += img_move
 
         # Virtual movement (position of the "character")
-        limit = self.virtual_length - self.level.screen_width \
-            - self.level.zone_offset
-
-        if -self.position > limit:
-            self.virtual_position = -self.position - \
-                (self.virtual_length - self.level.screen_width -
-                 self.level.zone_offset)
+        relative_positive_position = -self.position - active.offset
+        limit = active.length - self.collection.zone_offset
+        if relative_positive_position > limit:
+            self.virtual_relative_position = (relative_positive_position
+                                              - active.length
+                                              + self.collection.zone_offset)
         else:
-            self.virtual_position = -self.position + self.level.zone_offset
+            self.virtual_relative_position = (relative_positive_position
+                                              + self.collection.zone_offset)
 
     def pause(self, position=None):
-        '''
-        Pauses the level at the given position.
+        """Pauses the level at the given position.
 
         :param position: Where should the simulation pause on the Level in pixels.
             Set to None to pause at current position. None by default.
         :type position: int or None
-        '''
+        """
 
         if not self.paused:
             if position is not None:
@@ -655,13 +675,12 @@ class Session(object):
             self.paused = True
 
     def unpause(self, position=None):
-        '''
-        Unpauses the level at the given position.
+        """Unpauses the level at the given position.
 
         :param position: Where should the simulation unpause on the Level in pixels.
             Set to None to unpause at current position. None by default.
         :type position: int or None
-        '''
+        """
         if self.paused:
             if position is not None:
                 self.teleport(position)
@@ -670,41 +689,67 @@ class Session(object):
             self.paused = False
 
     def teleport(self, target_pos):
-        '''
-        Teleports to the given position.
+        """Teleports to the given position.
 
         :param target_pos: Where should the teleportation land in pixels.
-        :type position: int
-
-        '''
-        self.position = -(target_pos - self.level.zone_offset)
+        :type target_pos: int
+        """
+        self.position = -(target_pos - self.collection.zone_offset)
         self.teleported = True
 
     def random_teleport(self, target_zone_types):
-        '''
-        Teleports to the middle of a random zone with one of the given zone types.
+        """Teleports to the middle of a random zone with one of the given zone types.
 
         :param target_zone_types: list of possible landing zone types.
         :type target_zone_types: [str]
-        '''
-        zone_selection = [
-            zone for zone in self.level.zones
-            if zone.zone_type in target_zone_types]
-        # and zone.zone_type != self.current_zone.zone_type
+        """
 
-        target_zone = random.choice(zone_selection)
-        middle_of_target = (target_zone.begin + target_zone.end) // 2
+        target_selection = self.get_target_level_and_zone(*target_zone_types)
+        if target_selection:
+            target_level, target_zone = random.choice(target_selection)
+            self.collection.active_level = target_level
+        else:
+            target_zone = self.current_zone
 
-        self.teleport(middle_of_target)
+        # this is not the middle. transition_width missed
+        target_zone_middle_offset = target_zone.length // 2
+
+        self.teleport(self.collection.active_level.offset
+                      + target_zone.offset
+                      + target_zone_middle_offset)
+
+    def get_target_level_and_zone(
+            self, *target_zones: str):  # -> List[Tuple[Level, Zone.Zone]]:
+        ret = []  # List[Tuple[Level, Zone.Zone]] = []
+        print(target_zones)
+        for t in target_zones:
+            try:
+                level_name, zone_name = t.split('.')
+            except ValueError:
+                level_name = self.collection.active_level.name
+                zone_name = t
+
+            level = self.collection.get_level_by_name(level_name)
+            if level is None:
+                print(f"Error: level with name '{level_name}' was not found.")
+                continue
+
+            zone = level.get_zone_by_name(zone_name)
+            if zone is None:
+                print(f"Error: zone with name '{zone_name}' "
+                      f"was not found in level {level_name}.")
+                continue
+
+            ret.append((level, zone))
+        return ret
 
     def check_zone(self):
-        ''' Updates the current zone. '''
-        self.current_zone = [zone for zone in self.level.zones
-                             if zone.check(self.virtual_position)][0]
+        """Updates the current zone."""
+        self.current_zone = next(zone for zone in self.collection.active_level.zones
+                                 if zone.check(self.virtual_relative_position))
 
     def check_rules(self, vel, in_1, in_2):
-        '''
-        Checks all the rules of the Level.
+        """Checks all the rules of the Level.
 
         :param vel: The current velocity (for velocity based rules).
         :type vel: int
@@ -714,9 +759,9 @@ class Session(object):
 
         :param in_2: The state of input 2
         :type in_2: int
-        '''
+        """
 
-        for rule in self.level.rules:
+        for rule in self.collection.active_level.rules:
             # Check zone rules
             if type(rule) is Rule.ZoneRule:
                 rule.check(self.current_zone.zone_type)

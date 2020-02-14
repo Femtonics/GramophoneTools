@@ -1,8 +1,9 @@
-''' Contains the Level object '''
+"""Contains the Level object"""
+
+from typing import List, Union, Dict
 
 import os
 import numpy as np
-from PIL import Image
 
 from GramophoneTools.LinMaze import LinMaze, Frame, Event, Rule
 from GramophoneTools.LinMaze.Zone import Zone
@@ -10,9 +11,8 @@ from GramophoneTools.LinMaze.Tools import Stopwatch, progressbar
 from GramophoneTools.LinMaze.Tools.filehandler import select_file
 
 
-class Level(object):
-    ''' 
-    An object that can be played for conditioning.
+class _Level(object):
+    """An object that can be played for conditioning.
     You can add frames, events and rules to it to tune your conditioning. 
 
     :param name: The name this Level will be refered to by (eg. in the default filename when saving)
@@ -30,7 +30,7 @@ class Level(object):
 
     :param rgb: Red, Green and Blue levels of the frames as floats between 0 and 1.
     :type rgb: float, float, float
-    '''
+    """
 
     def __init__(self, name, screen_res, zone_offset,
                  transition_width=100, rgb=(1, 1, 1)):
@@ -42,13 +42,14 @@ class Level(object):
         self.zone_offset = zone_offset
         self.transition_width = transition_width
         self.rgb = rgb
+        self.offset = 0
 
         self.rendered = False
 
-        self.frames = []
-        self.events = {}
-        self.zones = []
-        self.rules = []
+        self.frames: List[Frame] = []
+        self.events: Dict[Event] = {}
+        self.zones: List[Zone] = []
+        self.rules: List[Rule] = []
 
     def __str__(self):
         level_string = self.name + '\nResolution: ' + str(self.screen_width)+'×'+str(self.screen_height) + \
@@ -68,7 +69,7 @@ class Level(object):
 
     @property
     def dummy_frame(self):
-        ''' A frame that looks like the begining of the level. '''
+        """A frame that looks like the begining of the level."""
         dummy_frame = Frame.Frame(self.screen_width, self.screen_height)
         dummy_frame.texture = self.combined_frame.texture[:, :self.screen_width].astype(
             np.uint8)
@@ -77,7 +78,7 @@ class Level(object):
 
     @property
     def combined_frame(self):
-        ''' All the frames combined left to right. '''
+        """All the frames combined left to right."""
         if not self.rendered:
             self.render()
 
@@ -85,11 +86,11 @@ class Level(object):
 
     @property
     def image(self):
-        ''' An image of the Level's combined frames. '''
+        """An image of the Level's combined frames."""
         return self.combined_frame.make_img()
 
-    def add_block(self, frame_type, *args, **kwargs):
-        ''' Adds a block of the specified type and parameters to the level. '''
+    def add_block(self, frame_type, **kwargs):
+        """Adds a block of the specified type and parameters to the level."""
 
         frame_type = frame_type.lower()
 
@@ -119,13 +120,10 @@ class Level(object):
         frame = frame_maker()
 
         # New zone starts at the end of the last one
+        offset = 0
         if self.zones:
-            begin = self.zones[-1].end
-            end = self.zones[-1].end + frame.width - self.transition_width
-        else:  # Fist zone starts at 0
-            begin = 0
-            end = frame.width - self.transition_width
-        zone = Zone(begin, end, kwargs.get('zone_type', 'generic'))
+            offset = self.zones[-1].offset + self.zones[-1].length
+        zone = Zone(offset, frame.width, kwargs.get('zone_type', 'generic'))
 
         self.frames.append(frame)
         self.zones.append(zone)
@@ -135,8 +133,7 @@ class Level(object):
         print(str(zone))
 
     def add_event(self, name, event_type, *args):
-        ''' 
-        Adds an Event to the level which can be triggered by Rules.
+        """Adds an Event to the level which can be triggered by Rules.
 
         :param name: The name this Event can be referenced by
         :type name: string
@@ -146,13 +143,16 @@ class Level(object):
         :type event_type: string
 
         :param args: The arguments for the Event of the given type.
-        '''
+        """
 
         if event_type == "teleport":
             self.events[name] = Event.Teleport(self, args[0])
 
         if event_type == "random_teleport":
             self.events[name] = Event.RandomTeleport(self, args[0])
+
+        if event_type == "teleport_to_level":
+            self.events[name] = Event.RandomTeleport(args[0], args[1])
 
         if event_type == "start_burst":
             self.events[name] = Event.StartBurst(
@@ -177,8 +177,7 @@ class Level(object):
             self.events[name] = Event.Print(self, args[0])
 
     def add_rule(self, rule_type, event_name, *args):
-        '''
-        Adds a rule that triggers events based on animal behaviour.
+        """Adds a rule that triggers events based on animal behaviour.
 
         :param rule_type: The type of this rule, can be 'zone', 'velocity' or 'speed'.
         :type rule_type: string
@@ -187,7 +186,8 @@ class Level(object):
         :type event_name: string
 
         :param args: The arguments for the Rule of the given type.
-        '''
+        """
+        
         if rule_type == "zone":
             self.rules.append(Rule.ZoneRule(
                 self, self.events[event_name], args[0], args[1]))
@@ -218,8 +218,13 @@ class Level(object):
                 self, self.events[event_name], args[0], args[1]))
             # input_id, trigger_type
 
+    def reset_rules(self):
+        for rule in self.rules:
+            if hasattr(rule, 'delay_timer'):
+                rule.delay_timer.reset()
+
     def render(self):
-        ''' Renders all the frames of the level, making it ready to be played. '''
+        """Renders all the frames of the level, making it ready to be played."""
         if not self.rendered:
             print('\n'+self.name,  '>>\n')
             self.frames = Frame.multi_make(self.frames)
@@ -240,11 +245,11 @@ class Level(object):
             self.rendered = True
 
     def show_image(self):
-        ''' Displays the level as a picture '''
+        """Displays the level as a picture"""
         self.image.show()
 
     def save_image(self):
-        ''' Saves the picture of the Level '''
+        """Saves the picture of the Level"""
         filename = select_file(defaultextension='.bmp',
                                filetypes=[('VR Level image', '.bmp')],
                                title='Save image of Level',
@@ -253,7 +258,7 @@ class Level(object):
         self.image.convert('RGB').save(filename)
 
     def save_summary(self):
-        ''' Saves a human readable summary of the Level '''
+        """Saves a human readable summary of the Level"""
         filename = select_file(defaultextension='.txt',
                                filetypes=[('Text summary', '.txt')],
                                title='Save summary of Level',
@@ -264,15 +269,165 @@ class Level(object):
             summary_file.write(str(self))
 
     def play(self, *args, **kwargs):
-        '''
-        Plays the Level by making a Session for it.
+        """Plays the Level by making a Session for it.
 
         :param args: Arguments of the Session created.
         :param kwargs: Keyword arguments of the Session created.
-
-        '''
+        """
         try:
             LinMaze.Session(self, *args, **kwargs)
         except LinMaze.LinMazeError as err:
             print('\nERROR:', err)
             input()
+
+    @property
+    def length(self):
+        return sum(zone.length for zone in self.zones)
+
+    def get_zone_by_name(self, zone_name: str) -> Union[Zone, None]:
+        try:
+            return next(zone for zone in self.zones
+                        if zone.zone_type == zone_name)
+        except StopIteration:
+            return None
+    
+    # @property
+    # def offset(self):
+    #     return self.index * self.
+
+
+class LevelCollection:
+    screen_width: int
+    screen_height: int
+    level_list: List[_Level] = []
+
+    # def __new__(cls):
+    #     print("new")
+    #     return self
+    #     self.screen_width, self.screen_height = screen_res
+    #     cls.create_level(name, transition_width, rgb)
+
+    def __init__(self, name, zone_offset, screen_res, *args, **kwargs):
+        self.name: str = name
+        self.zone_offset: int = zone_offset
+        self.screen_width, self.screen_height = screen_res
+
+        self.active_level: Union[_Level, None] = None
+        self.frames: List[Frame] = []
+
+        self._extra_args = args
+        self._extra_kwargs = kwargs
+
+    def create_level(self, name, transition_width=100, rgb=(1, 1, 1)):
+        new_level = _Level(name, (self.screen_width, self.screen_height),
+                           self.zone_offset, transition_width, rgb)
+
+        self.level_list.append(new_level)
+        return new_level
+
+    def __iter__(self):
+        return iter(self.level_list)
+
+    def __len__(self):
+        return len(self.level_list)
+
+    def index(self, obj: _Level):
+        return self.level_list.index(obj)
+
+    @property
+    def rendered(self):
+        return all(lvl.rendered for lvl in self.level_list)
+
+    @property
+    def dummy_frame(self):
+        dummy_frame = Frame.Frame(self.screen_width, self.screen_height)
+        dummy_frame.texture = self.combined_frame.texture[:, :self.screen_width].astype(
+            np.uint8)
+        dummy_frame.made = True
+        return dummy_frame
+
+    @property
+    def combined_frame(self):
+        self.render()
+        return Frame.combine(self.frames)
+
+    @property
+    def image(self):
+        return self.combined_frame.make_img()
+
+    def show_image(self):
+        self.image.show()
+
+    def render(self):
+        self.frames = []
+        for lvl in self.level_list:
+            lvl.render()
+            self.frames += lvl.frames  # list append
+
+    def reset_rules(self):
+        for lvl in self.level_list:
+            lvl.reset_rules()
+
+    def get_level_by_name(self, level_name: str) -> Union[_Level, None]:
+        try:
+            return next(level for level in self.level_list
+                        if level.name == level_name)
+        except StopIteration:
+            return None
+
+    def create_default_level(self):
+        if not self.level_list:
+            new_level = _Level("default_level",
+                               (self.screen_width, self.screen_height),
+                               self.zone_offset,
+                               *self._extra_args,
+                               **self._extra_kwargs)
+            self.level_list.append(new_level)
+            self.active_level = new_level
+
+    def add_block(self, *args, **kwargs):
+        """Mimics Level.add_block for compatibility"""
+        self.create_default_level()
+        self.active_level.add_block(*args, **kwargs)
+
+    def add_event(self, *args, **kwargs):
+        """Mimics Level.add_event for compatibility"""
+        self.create_default_level()
+        self.active_level.add_event(*args, **kwargs)
+
+    def add_rule(self, *args, **kwargs):
+        """Mimics Level.add_event for compatibility"""
+        self.create_default_level()
+        self.active_level.add_rule(*args, **kwargs)
+
+    def all_zones(self):
+        zones = []
+        for level in self.level_list:
+            zones += level.zones
+        return zones
+
+    def play(self, *args, **kwargs):
+        if not self.level_list:
+            raise RuntimeError("Level sequence is empty")
+
+        param_starting_level = kwargs.pop('starting_level', 'default_level')
+        if isinstance(param_starting_level, str):
+            starting_level = self.get_level_by_name(param_starting_level)
+        else:
+            starting_level = param_starting_level
+
+        if starting_level is not None:
+            self.active_level = starting_level
+        else:
+            self.active_level = self.level_list[0]
+
+        try:
+            LinMaze.Session(self, *args, **kwargs)
+        except LinMaze.LinMazeError as err:
+            print('\nERROR:', err)
+            input()
+
+
+# compatibility rename
+class Level(LevelCollection):
+    pass
