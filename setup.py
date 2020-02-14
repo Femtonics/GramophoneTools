@@ -44,7 +44,7 @@ setup(
         'numpy',
         'dill',
         'pillow',
-        'pyglet',
+        'pyglet==1.3.2',
         'pyqtgraph',
         'matplotlib',
         'opencv-python',
