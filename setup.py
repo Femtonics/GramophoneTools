@@ -30,7 +30,7 @@ setup(
         'GitHub': 'https://github.com/Femtonics/GramophoneTools',
         'Documentation': 'http://gramophone.femtonics.eu',
         'User Guide': 'http://gramophone.femtonics.eu/_downloads/Gramophone%20User%20Guide.pdf',
-        'Product page':'http://femtonics.eu/femtonics-accessories/gramophone/'},
+        'Product page':'https://femtonics.eu/products/#nav-gramophone-accessories'},
     packages=['GramophoneTools', 'GramophoneTools.Comms', 'GramophoneTools.LinMaze',
               'GramophoneTools.LinMaze.Tools', 'GramophoneTools.Recorder', 'GramophoneTools.examples', 
               'GramophoneTools.docs', 'GramophoneTools.res'],
