@@ -206,7 +206,7 @@ class VRLog(object):
         self.vrl.attrs['screen_height'] = session.collection.screen_height
         self.vrl.attrs['zone_offset'] = session.collection.zone_offset
         self.vrl.attrs['transition_width'] = session.collection.level_list[0].transition_width
-        self.vrl.attrs['RGB'] = session.collection[0].rgb
+        # self.vrl.attrs['RGB'] = session.collection[0].rgb
         self.vrl.attrs['left_monitor'] = str(session.left_monitor)
         self.vrl.attrs['right_monitor'] = str(session.right_monitor)
         self.vrl.attrs['device_serial'] = str(session.gramophone_serial)
