@@ -1,7 +1,7 @@
 certifi==2022.12.7
 cycler==0.10.0
 dill==0.3.1.1
-future==0.18.2
+future==1.0.0
 GramophoneTools==0.6.28
 h5py==2.10.0
 kiwisolver==1.1.0
